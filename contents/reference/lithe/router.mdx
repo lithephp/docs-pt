@@ -1,0 +1,161 @@
+---
+title: Router  
+description: 'O Router é responsável por gerenciar as rotas e middlewares em uma aplicação PHP usando o Lithe. Ele permite definir rotas para diferentes métodos HTTP, adicionar middlewares e agrupar rotas.'  
+---
+
+## Descrição
+
+O `Router` é responsável por gerenciar as rotas e middlewares em uma aplicação PHP usando o Lithe. Ele atua como uma mini-aplicação, lidando apenas com funções de middleware e roteamento. Toda aplicação Lithe possui um roteador integrado.
+
+Você pode utilizar o roteador como argumento para o método `use()` da instância de uma aplicação Lithe ou para o método `use()` de outro roteador. A classe `Lithe\Http\Router` oferece métodos para definir rotas e aplicar middlewares.
+
+## Métodos
+
+### `get(string $path, callable|array ...$handler): void`
+
+- **Descrição**: Adiciona uma rota para requisições GET.
+- **Parâmetros**:
+  - **`$path`** (string): O caminho da rota.
+  - **`$handler`** (callable|array): Um ou mais manipuladores (callbacks) que processam a requisição.
+
+  ```php
+  $router->get('/home', function($req, $res) {
+      $res->send('Página Inicial');
+  });
+  ```
+
+### `post(string $path, callable|array ...$handler): void`
+
+- **Descrição**: Adiciona uma rota para requisições POST.
+- **Parâmetros**:
+  - **`$path`** (string): O caminho da rota.
+  - **`$handler`** (callable|array): Um ou mais manipuladores (callbacks) que processam a requisição.
+
+  ```php
+  $router->post('/submit', function($req, $res) {
+      $res->send('Formulário Enviado');
+  });
+  ```
+
+### `put(string $path, callable|array ...$handler): void`
+
+- **Descrição**: Adiciona uma rota para requisições PUT.
+- **Parâmetros**:
+  - **`$path`** (string): O caminho da rota.
+  - **`$handler`** (callable|array): Um ou mais manipuladores (callbacks) que processam a requisição.
+
+  ```php
+  $router->put('/update', function($req, $res) {
+      $res->send('Recurso Atualizado');
+  });
+  ```
+
+### `delete(string $path, callable|array ...$handler): void`
+
+- **Descrição**: Adiciona uma rota para requisições DELETE.
+- **Parâmetros**:
+  - **`$path`** (string): O caminho da rota.
+  - **`$handler`** (callable|array): Um ou mais manipuladores (callbacks) que processam a requisição.
+
+  ```php
+  $router->delete('/delete', function($req, $res) {
+      $res->send('Recurso Excluído');
+  });
+  ```
+
+### `patch(string $path, callable|array ...$handler): void`
+
+- **Descrição**: Adiciona uma rota para requisições PATCH.
+- **Parâmetros**:
+  - **`$path`** (string): O caminho da rota.
+  - **`$handler`** (callable|array): Um ou mais manipuladores (callbacks) que processam a requisição.
+
+  ```php
+  $router->patch('/modify', function($req, $res) {
+      $res->send('Recurso Modificado');
+  });
+  ```
+
+### `options(string $path, callable|array ...$handler): void`
+
+- **Descrição**: Adiciona uma rota para requisições OPTIONS.
+- **Parâmetros**:
+  - **`$path`** (string): O caminho da rota.
+  - **`$handler`** (callable|array): Um ou mais manipuladores (callbacks) que processam a requisição.
+
+  ```php
+  $router->options('/options', function($req, $res) {
+      $res->send('Opções Disponíveis');
+  });
+  ```
+
+### `head(string $path, callable|array ...$handler): void`
+
+- **Descrição**: Adiciona uma rota para requisições HEAD.
+- **Parâmetros**:
+  - **`$path`** (string): O caminho da rota.
+  - **`$handler`** (callable|array): Um ou mais manipuladores (callbacks) que processam a requisição.
+
+  ```php
+  $router->head('/header', function($req, $res) {
+      $res->send('Informações do Cabeçalho');
+  });
+  ```
+
+### `any(string $path, callable|array ...$handler): void`
+
+- **Descrição**: Adiciona uma rota que lida com todos os métodos HTTP.
+- **Parâmetros**:
+  - **`$path`** (string): O caminho da rota.
+  - **`$handler`** (callable|array): Um ou mais manipuladores (callbacks) que processam a requisição.
+
+  ```php
+  $router->any('/all-methods', function($req, $res) {
+      $res->send('Lida com Todos os Métodos');
+  });
+  ```
+
+### `match(array $methods, string $path, callable|array ...$handler): void`
+
+- **Descrição**: Adiciona uma rota para múltiplos métodos HTTP especificados.
+- **Parâmetros**:
+  - **`$methods`** (array): Métodos HTTP que a rota deve lidar.
+  - **`$path`** (string): O caminho da rota.
+  - **`$handler`** (callable|array): Um ou mais manipuladores (callbacks) que processam a requisição.
+
+  ```php
+  $router->match(['GET', 'POST'], '/mixed', function($req, $res) {
+      $res->send('Lida com GET e POST');
+  });
+  ```
+
+### `use(string|callable|Router|array ...$middleware): void`
+
+- **Descrição**: Adiciona um middleware ou roteador à aplicação.
+- **Parâmetros**:
+  - **`$middleware`** (string|callable|Router|array): Os middlewares ou roteadores a serem adicionados.
+
+  ```php
+  $router->use('/prefix', function($req, $res, $next) {
+      // Lógica do middleware
+      $next();
+  });
+  ```
+
+### `route(string $path): object`
+
+- **Descrição**: Cria um objeto para definir rotas com um prefixo específico.
+- **Parâmetros**:
+  - **`$path`** (string): O prefixo da rota.
+- **Retorno**:
+  - Um objeto anônimo para definir rotas com o prefixo fornecido.
+
+  ```php
+  $router->route('/user')
+      ->get(function($req, $res) {
+          $res->send('Lista de Usuários');
+      })
+      ->post(function($req, $res) {
+          $res->send('Cria um usuário');
+      });
+  ```

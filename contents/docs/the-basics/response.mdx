@@ -1,0 +1,217 @@
+---
+title: Respostas HTTP
+description: "O objeto `Response` no Lithe oferece métodos poderosos para manipular e enviar respostas HTTP, proporcionando flexibilidade no desenvolvimento de aplicações web."
+---
+
+## Interagindo com a Resposta HTTP
+
+### Acessando a Resposta
+
+Para enviar respostas HTTP no Lithe, você deve acessá-la através do segundo parâmetro nos seus manipuladores de rota. O Lithe automaticamente passa a instância da resposta para este parâmetro, permitindo manipular respostas HTTP.
+
+```php
+$app->get('/', function ($req, $res) {
+    $res->send('Olá mundo!');
+});
+```
+
+Você também pode especificar a interface `Lithe\Contracts\Http\Response` como tipo no fechamento de uma rota.
+
+```php
+use Lithe\Contracts\Http\Response;
+
+$app->get('/', function ($req, Response $res) {
+    $res->send('Olá mundo!');
+});
+```
+
+### Renderizando Views
+
+As views ajudam a separar a lógica do seu controlador/aplicação da parte visual e são armazenadas por padrão no diretório `src/views`. Com o Lithe, você pode escolher entre diversos mecanismos de template para renderizar suas views, sendo o PHP puro o padrão.
+
+```html
+<!-- View armazenada em src/views/greeting.php -->
+
+<html>
+    <body>
+        <h1>Hello, William!</h1>
+    </body>
+</html>
+```
+
+Como essa view está armazenada em `src/views/greeting.php`, podemos retorná-la usando o  metódo `render` da seguinte maneira:
+
+```php
+$app->get('/', function ($req, $res) {
+    $res->render('greeting');
+});
+```
+
+> O método `render` no Lithe permite renderizar uma view utilizando o mecanismo de template configurado. Para aprender mais sobre como configurar e utilizar diferentes motores de template no Lithe, consulte a seção [Motores de template](/docs/the-basics/template-engines).
+
+Se preferir usar o ponto `.` para representar subdiretórios, utilize o método `view`. Por exemplo, suponha que temos um subdiretório `account` dentro do diretório `src/views`. Podemos renderizar uma view dentro desse subdiretório da seguinte maneira:
+
+```php
+$app->get('/', function ($req, $res) {
+    $res->view('account.settings');
+});
+```
+
+Você também pode exibir dados que são passados para suas views envolvendo a variável em chaves.
+
+```php
+$app->get('/', function ($req, $res) {
+    $res->render('greeting', ['nome' => '2pac']);
+});
+```
+
+Você pode exibir o conteúdo da variável `nome` assim:
+
+```php
+<h1>Hello, <?= $nome; ?></h1>
+``` 
+
+### Retornando Dados JSON
+
+Para retornar dados JSON, utilizamos o método `json` . O método `json` facilita o retorno de dados no formato JSON como resposta. Automaticamente configura o cabeçalho Content-Type para `application/json` e converte o array fornecido em JSON:
+
+```php
+$res->json(['message' => 'Success']);
+```
+
+Use este método para retornar respostas JSON de maneira prática e eficiente.
+
+### Redirecionamentos
+
+O método `redirect` redireciona o usuário para uma rota específica.
+
+```php
+$res->redirect('/home');
+```
+
+### Configuração de Cabeçalhos HTTP
+
+#### Definindo Cabeçalhos Individuais
+
+Você pode configurar cabeçalhos HTTP utilizando o método `setHeader`.
+
+```php
+$res->setHeader('Content-Type', 'application/json');
+```
+
+### Definindo Múltiplos Cabeçalhos
+
+Para definir múltiplos cabeçalhos de uma vez, use o método `setHeaders`. 
+
+```php
+$res->setHeaders([
+    'Content-Type' => 'application/json',
+    'X-My-Header' => 'value',
+]);
+```
+
+#### Configurando o Cabeçalho `Content-Type`
+
+O método `type` define o cabeçalho `Content-Type` de forma simplificada.
+
+```php
+$res->type('application/json');
+```
+
+#### Encadeando Métodos
+
+Os métodos `setHeader`, `setHeaders`, e `type` retornam o objeto de resposta, permitindo que você combine várias operações e envie a resposta de uma só vez.
+
+```php
+$res->setHeader('Content-Type', 'application/json')
+    ->setHeader('X-Custom-Header', 'value')
+    ->type('application/json')
+    ->send(['message' => 'Hello World']);
+```
+
+Neste exemplo, os cabeçalhos são configurados e a resposta é enviada em uma única linha de código.
+
+
+### Manipulação de Cookies
+
+Os métodos `cookie` e `clearCookie` permitem configurar e remover cookies, respectivamente. Ambos retornam o objeto de resposta, permitindo encadeamento de métodos.
+
+#### Configurando um Cookie
+
+Para definir um cookie, use o método `cookie`. 
+
+```php
+$res->cookie('user_id', 123);
+```
+
+Para configurar opções adicionais, como tempo de expiração, caminho e segurança, você pode passar um array de opções como terceiro argumento:
+
+```php
+$res->cookie('user_id', 123, [
+    'expire' => time() + 3600, // Expira em uma hora
+]);
+```
+
+**As opções que podem ser incluídas são:**
+
+- **`expire`** (int): Tempo de expiração do cookie em segundos a partir do momento atual (padrão: 0).
+- **`path`** (string): Caminho no servidor onde o cookie estará disponível (padrão: '/').
+- **`domain`** (string): O domínio para o qual o cookie está disponível (padrão: null).
+- **`secure`** (bool): Indica se o cookie deve ser transmitido apenas por uma conexão segura HTTPS (padrão: false).
+- **`httponly`** (bool): Quando verdadeiro, o cookie só pode ser acessado através do protocolo HTTP (padrão: true).
+
+#### Removendo um Cookie
+
+Para remover um cookie, utilize o método `clearCookie`:
+
+```php
+$res->clearCookie('user_id');
+```
+
+### Envio de Arquivos
+
+#### Exibindo um Arquivo no Navegador
+
+Para enviar um arquivo diretamente para o navegador, utilize o método `file`. Este método é ideal para exibir arquivos, como imagens ou PDFs, diretamente no navegador.
+
+```php
+$res->file('/path/to/file.txt');
+```
+
+#### Enviando um Arquivo para Download
+
+Para permitir que o usuário faça o download de um arquivo, use o método `download`. Este método define os cabeçalhos apropriados para iniciar o download e permite especificar um nome para o arquivo a ser baixado.
+
+```php
+$res->download('/path/to/file.txt', 'filename.txt');
+```
+
+### Configuração de Status HTTP
+
+#### Definindo e Recuperando o Código de Status HTTP
+
+O método `status` permite definir o código de status HTTP da resposta e retorna o objeto de resposta, possibilitando o encadeamento de métodos.
+
+```php
+$res->status(404)->json(['error' => 'Not Found']);
+```
+
+Para recuperar o código de status atual da resposta, use o método `getStatusCode`:
+
+```php
+$status = $res->getStatusCode();
+```
+
+### Finalização da Resposta
+
+A resposta é finalizada automaticamente quando você usa métodos que enviam dados para o cliente, como `send`, `json`, `view`, `file`, e `download`. Esses métodos enviam os cabeçalhos, o status HTTP e o conteúdo configurados.
+
+#### Forçando a Finalização da Resposta
+
+Se você deseja garantir que a resposta seja finalizada explicitamente, independentemente de outros métodos, use o método `end`:
+
+```php
+$res->end();
+```
+
+O método `end` envia todos os cabeçalhos e o status HTTP configurados, garantindo que a resposta seja finalizada.

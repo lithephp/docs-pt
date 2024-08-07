@@ -1,0 +1,170 @@
+---
+title: Response
+description: "O objeto `Response` no Lithe oferece métodos poderosos para manipular e enviar respostas HTTP, proporcionando flexibilidade no desenvolvimento de aplicações web."
+---
+
+## Métodos
+
+### `render(string $file, ?array $data = [])`
+  - **Descrição:** Renderiza uma visualização usando o mecanismo de visualização configurado.
+  - **Parâmetros:**
+    - `file` - Nome do arquivo de visualização.
+    - `data` - Dados a serem passados para a visualização.
+  - **Exceções:** Lança `\InvalidArgumentException` se o mecanismo de visualização não estiver configurado corretamente.
+    ```php
+    $app->get('/welcome', function($req, $res) {
+        return $res->render('welcome', ['user' => 'John Doe']);
+    });
+    ```
+
+### `getStatusCode(): ?int`
+  - **Descrição:** Retorna o código de status HTTP atual da resposta.
+  - **Retorno:** `int|null`
+    ```php
+    $app->get('/status', function($req, $res) {
+        $status = $res->getStatusCode();
+        // Exemplo: $status pode ser 200
+    });
+    ```
+
+### `view(string $file, ?array $data = [])`
+  - **Descrição:** Renderiza uma visualização. Alias para o método `render`.
+  - **Parâmetros:**
+    - `file` - Nome do arquivo de visualização.
+    - `data` - Dados a serem passados para a visualização.
+    ```php
+    $app->get('/profile', function($req, $res) {
+        return $res->view('profile', ['name' => 'Jane Doe']);
+    });
+    ```
+
+### `send(mixed $data)`
+  - **Descrição:** Envia uma resposta, que pode ser dados serializados em JSON ou texto.
+  - **Parâmetros:**
+    - `data` - Dados a serem enviados como resposta.
+    ```php
+    $app->get('/data', function($req, $res) {
+        return $res->send('Hello, World!');
+    });
+    ```
+
+### `redirect(string $url, bool $permanent = false)`
+  - **Descrição:** Redireciona para uma URL usando um redirecionamento HTTP.
+  - **Parâmetros:**
+    - `url` - URL para redirecionamento.
+    - `permanent` - Se o redirecionamento é permanente (código 301) ou temporário (código 302).
+    ```php
+    $app->get('/old-page', function($req, $res) {
+        return $res->redirect('/new-page', true);
+    });
+    ```
+
+### `json(mixed $data)`
+  - **Descrição:** Envia uma resposta em formato JSON.
+  - **Parâmetros:**
+    - `data` - Dados a serem enviados como resposta JSON.
+    ```php
+    $app->get('/api/data', function($req, $res) {
+        return $res->json(['status' => 'success', 'data' => [1, 2, 3]]);
+    });
+    ```
+
+### `status(int $statusCode): self`
+  - **Descrição:** Define o código de status HTTP para a resposta.
+  - **Parâmetros:**
+    - `statusCode` - Código de status HTTP.
+  - **Retorno:** O objeto atual `Response` para encadeamento de métodos.
+    ```php
+    $app->get('/not-found', function($req, $res) {
+        return $res->status(404)->send('Page Not Found');
+    });
+    ```
+
+### `setHeader(string $name, ?string $value = null): self`
+  - **Descrição:** Define um cabeçalho HTTP na resposta.
+  - **Parâmetros:**
+    - `name` - Nome do cabeçalho.
+    - `value` - Valor do cabeçalho (ou `null` para cabeçalhos sem valor).
+  - **Retorno:** O objeto atual `Response` para encadeamento de métodos.
+    ```php
+    $app->get('/headers', function($req, $res) {
+        return $res->setHeader('X-Custom-Header', 'Value')
+            ->send('Header set!');
+    });
+    ```
+
+### `setHeaders(array $headers): self`
+  - **Descrição:** Define múltiplos cabeçalhos de uma vez.
+  - **Parâmetros:**
+    - `headers` - Array associativo de cabeçalhos.
+  - **Retorno:** O objeto atual `Response` para encadeamento de métodos.
+    ```php
+    $app->get('/headers', function($req, $res) {
+        return $res->setHeaders([
+            'X-Custom-Header' => 'Value',
+            'X-Another-Header' => 'Another Value'
+        ])->send('Headers set!');
+    });
+    ```
+
+### `download(string $file, ?string $name = null, array $headers = [])`
+  - **Descrição:** Envia um arquivo para download.
+  - **Parâmetros:**
+    - `file` - Caminho para o arquivo.
+    - `name` - Nome do arquivo para download.
+    - `headers` - Cabeçalhos adicionais.
+    ```php
+    $app->get('/download', function($req, $res) {
+        return $res->download('/path/to/file.zip', 'file.zip');
+    });
+    ```
+
+### `file(string $file, array $headers = [])`
+  - **Descrição:** Exibe um arquivo no navegador.
+  - **Parâmetros:**
+    - `file` - Caminho para o arquivo.
+    - `headers` - Cabeçalhos adicionais.
+    ```php
+    $app->get('/view-file', function($req, $res) {
+        return $res->file('/path/to/file.pdf');
+    });
+    ```
+
+### `cookie(string $name, $value, array $options = []): self`
+  - **Descrição:** Define um novo cookie.
+  - **Parâmetros:**
+    - `name` - Nome do cookie.
+    - `value` - Valor do cookie.
+    - `options` - Opções para configurar o cookie.
+  - **Retorno:** O objeto atual `Response` para encadeamento de métodos.
+    ```php
+    $app->get('/set-cookie', function($req, $res) {
+        return $res->cookie('user', 'John Doe', [
+          'expires' => time() + 3600
+        ]);
+    });
+    ```
+
+### `clearCookie(string $name): self`
+  - **Descrição:** Remove um cookie.
+  - **Parâmetros:**
+    - `name` - Nome do cookie a ser removido.
+  - **Retorno:** O objeto atual `Response` para encadeamento de métodos.
+    ```php
+    $app->get('/clear-cookie', function($req, $res) {
+        return $res->clearCookie('user');
+    });
+    ```
+
+### `type(string $mimeType): self`
+  - **Descrição:** Define o tipo MIME para a resposta.
+  - **Parâmetros:**
+    - `mimeType` - Tipo MIME a ser definido.
+  - **Retorno:** O objeto atual `Response` para encadeamento de métodos.
+    ```php
+    $app->get('/json', function($req, $res) {
+        return $res->type('application/json')->json([
+          'status' => 'success'
+        ]);
+    });
+    ```

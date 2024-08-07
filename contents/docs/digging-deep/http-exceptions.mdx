@@ -1,0 +1,44 @@
+---
+title: Exceções HTTP
+description: No Lithe, você pode personalizar a resposta para erros HTTP específicos utilizando manipuladores. Isso permite que você forneça mensagens e comportamentos específicos para diferentes tipos de erros.
+---
+
+## Definindo Manipuladores Personalizados
+
+Para configurar a resposta da sua aplicação a erros HTTP específicos, registre manipuladores para os códigos de status desejados utilizando o método `httpException` na instância da aplicação Lithe. Este método aceita dois parâmetros: o código de status HTTP (por exemplo, 404, 500) e um manipulador que recebe os objetos da requisição e da resposta como parâmetros. Para erros 500, há um terceiro parâmetro adicional, o `exception`.
+
+```php
+// Manipulador para erro HTTP 400 (Bad Request)
+$app->httpException(400, function($req, $res) {
+    $res->send('Página não encontrada.');
+});
+
+// Manipulador para erro HTTP 500 (Internal Server Error)
+$app->httpException(500, function($req, $res, $exception) {
+    $res->send('Ocorreu um erro interno.');
+});
+```
+
+Esses manipuladores ajudam a garantir que seus usuários recebam mensagens claras e úteis quando algo dá errado.
+
+---
+
+## Lançando Exceções HTTP
+
+Lançar exceções HTTP é uma maneira eficaz de gerar respostas de erro específicas quando sua aplicação encontra problemas.
+
+
+```php
+use Lithe\Contracts\Http\HttpException;
+
+$app->get('/some-route', function($req, $res) {
+    // Lança uma exceção para erro 404 (Not Found)
+    throw new HttpException(404, 'Página não encontrada.');
+});
+```
+
+Quando uma exceção é lançada, o Lithe irá automaticamente buscar um manipulador registrado para o código de status e executar a função correspondente.
+
+---
+
+Gerenciar exceções HTTP corretamente é essencial para fornecer uma experiência de usuário consistente e informativa. Utilizando os manipuladores e lançadores de exceção do Lithe, você pode personalizar as respostas para erros e garantir que seus usuários recebam informações úteis em situações inesperadas.

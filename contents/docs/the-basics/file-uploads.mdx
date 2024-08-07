@@ -1,0 +1,128 @@
+---
+title: Upload de Arquivos  
+description: "O objeto `Request` do Lithe permite acessar e manipular arquivos enviados com a requisição HTTP, facilitando a movimentação de arquivos para diretórios específicos, validação de extensões permitidas, e a recuperação de informações sobre os arquivos enviados."
+---
+
+## Manipulando Uploads de Arquivos
+
+No Lithe, você pode lidar com uploads de arquivos acessando a instância da requisição e processando os arquivos enviados. A seguir, veja como configurar o envio de arquivos e como processá-los na sua aplicação.
+
+### Configurando o Formulário HTML para Upload
+
+Para enviar arquivos via HTTP, o formulário HTML deve usar o atributo `enctype="multipart/form-data"`. Aqui está um exemplo básico de como criar um formulário para enviar arquivos:
+
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload de Arquivo</title>
+</head>
+<body>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="file">
+        <button type="submit">Enviar</button>
+    </form>
+</body>
+</html>
+```
+
+### Acessando Arquivos Enviados
+
+Para acessar um arquivo enviado com a requisição HTTP no Lithe, você pode usar o método `file` da instância `Request`. Este método retorna uma instância da classe `\Lithe\Component\Upload`, que pode ser usada para manipular o arquivo.
+
+```php
+$app->post('/upload', function ($req, $res) {
+    $file = $req->file('file');
+
+    if ($file !== null) {
+        // Operações com o arquivo
+    }
+});
+```
+
+Aqui, `'file'` deve ser substituído pelo nome do campo de entrada do arquivo no formulário HTML.
+
+### Acessando Todos os Arquivos Enviados
+
+Além de acessar um arquivo usando o metódo `file`, você pode usar a propriedade `files` para obter um objeto que contém todas as informações dos arquivos enviados. Este método é útil quando você precisa processar múltiplos arquivos ao mesmo tempo.
+
+```php
+$app->post('/upload', function ($req, $res) {
+    $files = $req->files;
+
+    // Exemplo de como acessar um arquivo específico
+    $file = $files->file;
+
+    // Itera sobre as propriedades do objeto, cada uma é um arquivo enviado
+    foreach ($files as $key => $file) {
+        if ($file !== null) {
+            // Operações com cada arquivo
+        }
+    }
+});
+```
+
+### Movendo o Arquivo para um Diretório
+
+Para mover um arquivo enviado para um diretório específico e gerar um nome de arquivo único, utilize o método `move` da classe `Upload`. Este método também permite validar a extensão do arquivo se uma lista de extensões permitidas for fornecida.
+
+```php
+$filePath = $file->move('/path/to/upload/dir', ['jpg', 'png', 'pdf']);
+if ($filePath !== null) {
+    $res->send("Arquivo movido com sucesso: " . $filePath);
+}
+```
+
+### Informações Sobre o Arquivo
+
+#### Verificando se o Arquivo Foi Enviado
+
+Use o método `isUploaded` para verificar se o arquivo foi enviado corretamente:
+
+```php
+if ($file->isUploaded()) {
+    // Arquivo enviado com sucesso.
+}
+```
+
+#### Recuperando o Tipo MIME
+
+Para obter o tipo MIME do arquivo enviado, utilize o método `getMimeType`:
+
+```php
+$mimeType = $file->getMimeType();
+```
+
+O método `getMimeType()` retorna uma string que representa o tipo MIME do arquivo enviado. O tipo MIME (Multipurpose Internet Mail Extensions) é um padrão da internet usado para indicar o tipo de conteúdo de um arquivo. Ele ajuda a identificar o formato do arquivo, permitindo que as aplicações saibam como processá-lo corretamente.
+
+Por exemplo, aqui estão alguns tipos MIME comuns que podem ser retornados por este método:
+
+- Para uma imagem JPEG: `image/jpeg`
+- Para uma imagem PNG: `image/png`
+- Para um documento PDF: `application/pdf`
+- Para um arquivo de texto: `text/plain`
+
+Esses tipos MIME são úteis para validar e manipular arquivos conforme o tipo de conteúdo que eles contêm.
+
+#### Recuperando o Tamanho do Arquivo
+
+Para obter o tamanho do arquivo em bytes, utilize o método `getSize`:
+
+```php
+$fileSize = $file->getSize();
+```
+
+Isso permite que você verifique e manipule o tamanho do arquivo conforme necessário, como por exemplo, para garantir que o arquivo não exceda um limite de tamanho específico.
+
+### Tratamento de Erros
+
+Caso ocorra um erro durante o processo de upload, a classe `Upload` lança uma exceção. É recomendável capturar essas exceções para lidar com erros adequadamente:
+
+```php
+try {
+    $filePath = $file->move('/path/to/upload/dir');
+} catch (Exception $e) {
+    echo "Erro: " . $e->getMessage();
+}
+```

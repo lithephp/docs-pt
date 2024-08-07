@@ -1,0 +1,65 @@
+---
+title: Criando uma Aplicação
+description: Aprenda a criar sua primeira aplicação com o Lithe.
+---
+
+## Instanciando a Aplicação
+
+Para começar a desenvolver com o Lithe, crie uma nova instância da classe `Lithe\App` no arquivo `src/App.php` e defina uma rota:
+
+```php
+$app = new \Lithe\App;
+
+$app->get('/', function ($req, $res) {
+    $res->send('Hello World!');
+});
+```
+
+A classe `App` é a principal interface para configurar e gerenciar sua aplicação Lithe. Ela centraliza a configuração e a gestão da aplicação, facilitando a criação e organização de sua aplicação web de maneira eficiente.
+
+---
+
+## Rodando a Aplicação
+
+Para que sua aplicação funcione, é necessário chamar o método `listen`:
+
+```php {7}
+$app = new \Lithe\App;
+
+$app->get('/', function ($req, $res) {
+    $res->send('Hello World!');
+});
+
+$app->listen(); 
+```
+
+O método `listen` é responsável por iniciar a aplicação e escutar as solicitações recebidas. Após configurar todas as rotas e registrar os recursos necessários, chamar `listen` faz com que a aplicação comece a processar e responder às requisições dos clientes.
+
+---
+
+## Servindo a Aplicação
+
+### Usando o Servidor Embutido
+
+Para testar sua aplicação localmente, você precisa ter o PHP instalado no seu sistema. Com o PHP instalado, execute o servidor embutido usando o seguinte comando:
+
+```bash
+php line serve
+```
+
+Isso iniciará o servidor na porta padrão `8000`. Se desejar especificar uma porta diferente, você pode usar o parâmetro opcional `PORT`. Por exemplo, para iniciar o servidor na porta `9000`, use:
+
+```bash
+php line serve 9000
+```
+
+Acesse `http://localhost:9000/` no seu navegador para visualizar sua aplicação funcionando.
+
+### Usando o Apache ou Outro Servidor Web
+
+Se preferir usar o Apache ou outro servidor web, o diretório `public` é ponto de entrada. Dependendo da configuração do seu servidor, você pode acessar sua aplicação através de URLs como:
+
+- **Ambiente de Desenvolvimento Local (Exemplo):** `http://localhost/seu-projeto/public/`
+- **Ambiente de Produção (Exemplo):** `http://seu-dominio.com/`
+
+Certifique-se de ajustar o caminho de acesso com base na configuração específica do seu ambiente e servidor web.

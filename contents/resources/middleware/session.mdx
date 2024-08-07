@@ -1,0 +1,129 @@
+---
+title: Sessão
+description: O middleware de sessão no Lithe gerencia a configuração e o controle das sessões de usuário.
+---
+
+## Usando o Middleware de Sessão
+
+O Lithe possui um middleware de sessão para gerenciar as sessões dos usuários e suas variáveis. Para configurar o middleware em sua aplicação, adicione-o com o método `use()`:
+
+```php
+use Lithe\Middleware\Session\session;
+
+$app->use(session());
+```
+
+Isso garante que a sessão seja corretamente iniciada e configurada para todas as requisições.
+
+### Configurando o Middleware de Sessão
+
+O middleware de sessão pode ser configurado com os seguintes parâmetros:
+
+- **lifetime**: Define o tempo de vida da sessão em segundos. O padrão é 2592000 segundos (30 dias).
+- **domain**: Define o domínio para o qual o cookie da sessão é válido. O padrão é `null`.
+- **secure**: Indica se o cookie da sessão deve ser enviado apenas por conexões seguras (HTTPS). O padrão é `false`.
+- **httponly**: Indica se o cookie da sessão deve ser acessível apenas através de requisições HTTP. O padrão é `true`.
+- **samesite**: Define o atributo SameSite do cookie da sessão. Pode ser `'Lax'`, `'Strict'`, ou `'None'`. O padrão é `'Lax'`.
+- **path**: Define o caminho onde os arquivos de sessão serão armazenados. O padrão é `'storage/framework/session'`.
+
+Exemplo de configuração:
+
+```php
+$app->use(Session([
+    'lifetime' => 3600,
+    'domain' => 'example.com',
+    'secure' => true,
+    'httponly' => true,
+    'samesite' => 'Strict',
+    'path' => '../storage/framework/session',
+]));
+```
+
+### Usando Variáveis de Sessão
+
+Após a configuração, você pode acessar e manipular variáveis de sessão através do objeto `Request`. Aqui estão alguns métodos disponíveis:
+
+- **put(string $name, mixed $value): void**
+
+  Define uma variável de sessão.
+
+  ```php
+  $req->session->put('user', 'John Doe');
+  ```
+
+- **get(string $name, mixed $default = null): mixed**
+
+  Obtém o valor de uma variável de sessão. Retorna o valor padrão se a variável não estiver definida.
+
+  ```php
+  $user = $req->session->get('user');
+  ```
+
+- **forget(mixed $name): void**
+
+  Remove uma ou mais variáveis de sessão.
+
+  ```php
+  $req->session->forget('user');
+  ```
+
+- **destroy(): void**
+
+  Destrói todas as variáveis de sessão.
+
+  ```php
+  $req->session->destroy();
+  ```
+
+- **isActive(): bool**
+
+  Verifica se a sessão está ativa.
+
+  ```php
+  $isActive = $req->session->isActive();
+  ```
+
+- **regenerate(bool $deleteOldSession = true): bool**
+
+  Regenera o ID da sessão. Se `$deleteOldSession` for `true`, a antiga sessão será deletada.
+
+  ```php
+  $req->session->regenerate();
+  ```
+
+- **getId(): string|false**
+
+  Obtém o ID da sessão atual.
+
+  ```php
+  $sessionId = $req->session->getId();
+  ```
+
+- **setId(string $sessionId): bool**
+
+  Define um novo ID para a sessão.
+
+  ```php
+  $req->session->setId('newSessionId');
+  ```
+
+- **all(): array**
+
+  Obtém todas as variáveis de sessão.
+
+  ```php
+  $allSessionData = $req->session->all();
+  ```
+
+- **has(string|array $names): bool**
+
+  Verifica se uma ou mais variáveis de sessão existem.
+
+  ```php
+  $hasUser = $req->session->has('user');
+  ```
+
+### Considerações
+
+- **Criação do Diretório de Sessão**: O middleware garante que o diretório para armazenamento das sessões exista. Se não existir, ele será criado.
+- **Tratamento de Erros**: Caso ocorra um erro durante a configuração ou o início da sessão, o middleware irá registrá-lo e continuar a execução.

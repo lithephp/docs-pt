@@ -1,0 +1,83 @@
+---
+title: Flash Messages
+description: O middleware de Flash Messages no Lithe permite armazenar e recuperar mensagens temporárias entre requisições.
+---
+
+## Usando o Middleware de Flash Messages
+
+O middleware de Flash Messages no Lithe permite que você armazene mensagens temporárias na sessão que podem ser acessadas na próxima requisição. Isso é útil para exibir mensagens de status, como confirmações ou erros, após uma operação.
+
+### Configuração do Middleware Flash
+
+Para usar o middleware de flash messages, você deve adicioná-lo ao seu aplicativo com o método `use()`:
+
+```php
+use Lithe\Middleware\Session\flash;
+
+$app->use(flash());
+```
+
+Isso adiciona a funcionalidade de flash messages à sua aplicação, permitindo que você armazene e recupere mensagens temporárias.
+
+### Definindo Flash Messages
+
+Para definir uma flash message, você pode usar o método mágico `__set` ou o método `set` da classe `Flash`. Ambas as abordagens armazenam a mensagem na sessão para que esteja disponível na próxima requisição.
+
+- **Usando o método mágico `__set`**:
+
+  ```php
+  $req->flash->successMessage = 'Operação realizada com sucesso!';
+  ```
+
+- **Usando o método `set`**:
+
+  ```php
+  $req->flash->set('successMessage', 'Operação realizada com sucesso!');
+  ```
+
+### Obtendo Flash Messages
+
+Para recuperar e remover uma flash message da sessão, você pode usar o método mágico `__get` ou o método `get` da classe `Flash`. Essas mensagens são removidas da sessão após serem recuperadas.
+
+- **Usando o método mágico `__get`**:
+
+  ```php
+  $message = $req->flash->successMessage;
+  ```
+
+- **Usando o método `get`**:
+
+  ```php
+  $message = $req->flash->get('successMessage');
+  ```
+
+### Verificando Flash Messages
+
+Para verificar se uma ou mais flash messages existem na sessão, use o método `has`:
+
+- **Verificação única**:
+
+  ```php
+  $exists = $req->flash->has('successMessage');
+  ```
+
+- **Verificação múltipla**:
+
+  ```php
+  $exists = $req->flash->has(['successMessage', 'errorMessage']);
+  ```
+
+### Mantendo Flash Messages
+
+Se você deseja manter uma flash message para a próxima requisição (ou seja, para que ela esteja disponível em mais de uma requisição), use o método `keep`:
+
+```php
+$req->flash->keep('successMessage');
+```
+
+Isso reconfigura a mensagem para a próxima requisição após a recuperação.
+
+## Considerações
+
+- **Persistência**: As mensagens de flash são removidas da sessão após a primeira recuperação, a menos que você use o método `keep` para preservá-las.
+- **Segurança**: Lembre-se de tratar as mensagens recuperadas para evitar problemas de segurança, como ataques XSS.

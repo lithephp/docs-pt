@@ -1,0 +1,223 @@
+---
+title: Middleware
+description: Os middlewares fornecem um mecanismo conveniente para inspecionar e filtrar requisições HTTP que entram na sua aplicação. Por exemplo, o Lithe inclui um middleware que verifica se o usuário da sua aplicação está autenticado. Se o usuário não estiver autenticado, o middleware redirecionará o usuário para a tela de login da sua aplicação. No entanto, se o usuário estiver autenticado, o middleware permitirá que a requisição prossiga para o interior da aplicação.
+---
+
+## Funcionamento
+
+No Lithe, Middleware são funções que têm acesso ao objeto de solicitação (`$req`), objeto de resposta (`$res`) e à função `$next` no ciclo de solicitação-resposta da aplicação. A função `$next` é uma função no roteador do Lithe que, quando invocada, executa o middleware seguinte ao middleware atual.
+
+Funções de middleware fornecem um mecanismo conveniente para inspecionar, filtrar e manipular requisições HTTP que entram em seu aplicativo.
+
+Funções de middleware podem realizar as seguintes tarefas:
+
+- Executar qualquer código.
+- Fazer alterações nos objetos de solicitação e resposta.
+- Encerrar o ciclo de solicitação-resposta.
+- Chamar o próximo middleware na pilha.
+
+Se a função de middleware atual não encerrar o ciclo de solicitação-resposta, ela deve chamar `$next()` para passar o controle para a próxima função de middleware. Caso contrário, a solicitação ficará pendente.
+
+---
+
+## Elementos de uma Função de Middleware
+
+O código a seguir mostra os elementos de uma chamada de função de middleware:
+```php
+$app->get('/', function ($req, $res, $next) {
+    $next();
+});
+```
+
+Onde:
+    - `$req`: Argumento de solicitação HTTP para a função middleware, chamado de "$req" por convenção.
+    - `$res`: Argumento de resposta HTTP para a função middleware, chamado de "$res" por convenção.
+    - `$next`: Argumento de retorno de chamada para a função middleware, chamado de "$next" por convenção.
+
+---
+
+## Definindo Middleware
+
+Vamos começar com um exemplo simples de middleware chamado `myLogger`. Este middleware imprime a mensagem `LOGGED` toda vez que uma solicitação passa por ele. O middleware é definido como uma função atribuída a uma variável chamada myLogger:
+```php
+$myLogger = function ($req, $res, $next) {
+  echo 'LOGGED';
+  $next();
+};
+```
+Observe a chamada para `$next()` acima. Chamar essa função invoca a próxima função de middleware na aplicação. A função `$next()` não faz parte do PHP ou do Lithe, mas é o terceiro argumento passado para a função middleware. A função `$next()` poderia ter qualquer nome, mas por convenção ela é sempre chamada de "next". Para evitar confusão, sempre use essa convenção.
+
+### Criando Middleware via Linha de Comando
+
+Você também pode criar um novo middleware usando o comando Line `make:middleware`:
+
+```bash
+php line make:middleware EnsureTokenIsValid
+```
+Este comando colocará uma nova constante `EnsureTokenIsValid` dentro do diretório `src/http/middleware` do seu aplicativo. Neste middleware, só permitiremos acesso à rota se o token fornecido corresponder a um valor especificado. Caso contrário, redirecionaremos os usuários de volta para o URI inicial:
+
+```php
+use Lithe\Contracts\Http\Request;
+use Lithe\Contracts\Http\Response;
+
+define('EnsureTokenIsValid', function (Request $req, Response $res, $next) {
+    $body = $req->body;
+
+    if ($body->token !== 'my-secret-token') {
+        return $res->redirect('home');
+    }
+
+    return $next();
+});
+```
+Como você pode ver, se o `token` fornecido não corresponder ao nosso token secreto, o middleware retornará um redirecionamento HTTP para o cliente; caso contrário, a solicitação será passada adiante na aplicação. Para passar a solicitação mais profundamente na aplicação (permitindo que o middleware "passe"), você deve chamar o retorno de chamada `$next`.
+
+É melhor imaginar o middleware como uma série de "camadas" que as solicitações HTTP devem atravessar antes de chegarem à sua aplicação. Cada camada pode examinar a solicitação e até rejeitá-la completamente.
+
+---
+
+## Carregando Middleware
+
+Para carregar a função de middleware, chame o metódo `use()` da classe `\Lithe\App`, especificando a função de middleware. Por exemplo, o código a seguir carrega a  função `myLogger` de middleware antes da rota para o caminho raiz (`/`).
+
+```php {8}
+$app = new \Lithe\App;
+
+$myLogger = function ($req, $res, $next) {
+    echo 'LOGGED';
+    $next();
+};
+
+$app->use($myLogger);
+
+$app->get('/', function ($req, $res, $next) {
+    $res->send('Hello World!');
+});
+
+$app->listen(); 
+```
+
+Sempre que o aplicativo recebe uma requisição, ele imprime a mensagem "LOGGED".
+
+A ordem de carregamento do middleware é importante: as funções de middleware que são carregadas primeiro também são executadas primeiro.
+
+A função de middleware `myLogger` simplesmente imprime uma mensagem e, em seguida, passa a requisição para a próxima função de middleware na pilha chamando a função `$next()`.
+
+---
+
+## Usando Middleware
+
+Uma aplicação Lithe pode usar os seguintes tipos de middleware:
+
+- [Middleware de nível de aplicação](#middleware-de-nvel-de-aplicao)
+- [Middleware de nível de roteador](#middleware-de-nvel-de-roteador)
+- [Middleware de terceiros](#middleware-de-terceiros)
+
+### Middleware de nível de aplicação
+
+Vincule middleware de nível de aplicação a uma instância do objeto de aplicativo usando os metódos `use()` e `METHOD()`, onde `METHOD` é o método HTTP da requisição que a função de middleware trata (como GET, PUT ou POST) em minúsculas.
+
+Este exemplo mostra uma função de middleware sem caminho de montagem. A função é executada toda vez que o aplicativo recebe uma requisição.
+```php
+$app = new \Lithe\App;
+
+$app->use(function ($req, $res, $next) {
+    echo 'Hello World!';
+    $next();
+});
+```
+No exemplo abaixo mostra um middleware que trata requisição GET no caminho `/user/:id`.
+
+```php
+$app->get('/user/:id', function ($req, $res, $next) {
+    // Se o ID do usuário for '0', passa para o próximo middleware
+    if ($req->params->id === '0') {
+        return $next();
+    } 
+
+    // Caso contrário, envia uma resposta específica
+    $res->send('ID não é 0');
+}, function ($req, $res) {
+    // Envia uma resposta quando o ID for '0'
+    $res->send('regular');
+});
+```
+### Middleware de nível de roteador
+Middleware de nível de roteador funciona da mesma forma que middleware de nível de aplicação, exceto que é vinculado a uma instância de `\Lithe\Http\Router`.
+```php
+$router = new \Lithe\Http\Router;
+```
+Carregue middleware de nível de roteador usando as funções `use` e `METHOD`.
+
+O código de exemplo a seguir mostra um sistema de middleware usando middleware de nível de roteador:
+
+```php
+$router = new \Lithe\Http\Router();
+
+// Middleware de nível de roteador para todas as rotas do roteador
+$router->use(function ($req, $res, $next) {
+    echo 'Time: ', Date('H:i:s'), '<br>';
+    $next();
+});
+
+$router->get('/user/:id', function ($req, $res, $next) {
+    // Verifica se o ID do usuário é '0'; se for, redireciona para /
+    if ($req->params->id === '0') {
+        $res->redirect('/');
+    }
+    // Caso contrário, passa o controle para o próximo middleware na pilha
+    $next()
+}, function ($req, $res, $next) {
+  echo $req->params->id;
+  $res->render('special');
+});
+
+// Monta o roteador na aplicação
+$app->use('/api', $router);
+
+$app->listen(); 
+```
+
+### Middleware de terceiros
+Use middleware de terceiros para adicionar funcionalidades aos aplicativos Lithe.
+
+Instale o módulo PHP necessário para a funcionalidade desejada e então carregue-o no seu aplicativo no nível da aplicação ou no nível do roteador.
+
+O exemplo a seguir ilustra o carregamento do middleware de sessão, a função `\Lithe\Middleware\Session\session`.
+
+```php {5,6,7}
+use function Lithe\Middleware\Session\session;
+
+$app = new \Lithe\App;
+
+$app->use(session([
+    'secure' => true
+]));
+
+$app->listen(); 
+```
+
+Para uma lista parcial de funções de middleware de terceiros comumente usadas com o Lithe, consulte: [Middleware de Terceiros](/resources/middleware).
+
+## Middleware configurável
+
+Se você precisa que seu middleware seja configurável, exporte uma função que aceite uma array de opções ou outros parâmetros, e então retorne a implementação do middleware com base nos parâmetros de entrada.
+
+```php:my-middleware.php 
+<?php
+return function ($options) {
+    return function ($req, $res, $next) use ($options) {
+        // Implementação do middleware com base na array de opções
+        
+        // Chama o próximo middleware
+        $next();
+    };
+};
+```
+Agora, o middleware pode ser usado como mostrado abaixo.
+
+```php
+$mw = require(__DIR__ .'/my-middleware.php');
+
+$app->use($mw(['option1' => '1', 'option2' => '2']));
+```

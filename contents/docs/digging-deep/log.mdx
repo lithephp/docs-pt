@@ -1,0 +1,70 @@
+---
+title: Log
+description: O Log no Lithe oferece uma maneira eficiente e confiável de registrar mensagens, garantindo que eventos importantes e erros sejam capturados e armazenados de forma adequada para facilitar a depuração e a resolução de problemas no sistema.
+---
+
+## Registrando Mensagens de Log
+
+O Lithe cria automaticamente o diretório `storage/logs` para armazenar os logs. Certifique-se de que seu aplicativo tenha permissões para criar e escrever arquivos neste diretório.
+
+### Mensagens Informativas
+
+Para registrar mensagens informativas, utilize o método `info`:
+
+```php
+use Lithe\Support\Log;
+
+$app->get('/hello/:name', function ($req, $res) {
+    Log::info('Rota /hello chamada com nome: ' . $req->params->name);
+    $res->send('Hello, ' . $req->params->name);
+});
+```
+
+Mensagens informativas ajudam a monitorar o funcionamento normal do sistema e eventos esperados.
+
+### Mensagens de Aviso
+
+Para registrar mensagens de aviso, use o método `warning`:
+
+```php
+use Lithe\Support\Log;
+
+$app->get('/warning-route', function ($req, $res) {
+    Log::warning('Acesso à rota /warning-route detectado.');
+    $res->send('Aviso registrado.');
+});
+```
+
+Avisos sinalizam condições que não são erros, mas que merecem atenção.
+
+### Mensagens de Erro
+
+Para registrar mensagens de erro, aplique o método `error`:
+
+```php
+use Lithe\Support\Log;
+
+$app->get('/', function ($req, $res) {
+    try {
+        // Código que pode causar um erro
+        throw new Exception('Erro intencional para exemplo.');
+    } catch (Exception $e) {
+        Log::error('Erro na rota /: ' . $e->getMessage());
+        $res->send('Erro registrado.');
+    }
+});
+```
+
+Mensagens de erro são essenciais para identificar e corrigir problemas críticos no sistema.
+
+---
+
+## Armazenamento dos Logs
+
+Além dos logs que você escreve manualmente, o Lithe também registra logs automaticamente quando algo falha em sua aplicação. Os logs são armazenados em arquivos específicos no diretório `storage/logs`:
+
+- **`error.log`**: Mensagens de erro críticas.
+- **`warning.log`**: Mensagens de aviso.
+- **`info.log`**: Mensagens informativas.
+
+Esses arquivos ajudam a acompanhar o que está acontecendo no sistema e facilitam a depuração e o monitoramento.

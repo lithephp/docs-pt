@@ -1,0 +1,93 @@
+---
+title: Controllers
+description: "Em vez de definir toda a lógica de tratamento de requisições como funções de callback nas rotas, você pode preferir organizar esse comportamento usando classes 'controller'. Controllers podem agrupar a lógica de tratamento de requisições relacionadas em uma única classe."
+---
+
+## Escrevendo Controllers
+
+### Controladores Básicos
+
+Para gerar rapidamente um novo controlador, você pode executar o comando Line `make:controller`. Por padrão, todos os controladores da sua aplicação gerados pelo comando são armazenados no diretório `src/http/controllers`:
+
+```bash
+php line make:controller UserController
+```
+
+Um controller pode ter qualquer número de métodos públicos que irão responder às requisições HTTP recebidas:
+
+```php
+namespace App\Http\Controllers;
+
+use App\Models\User;
+
+class UserController
+{
+    /**
+     * Mostra o perfil de um usuário específico.
+     */
+    public static function show($req, $res)
+    {
+        $params = $req->params;
+        $id = $params->id;
+        
+        return $res->view('user.profile', [
+            'user' => User::findOrFail($id)
+        ]);
+    }
+}
+```
+
+Depois de ter escrito uma classe de controlador e seu método, você pode definir uma rota para o método do controlador da seguinte forma:
+
+```php
+use App\Http\Controllers\UserController;
+ 
+$app->get('/user/:id', [UserController::class, 'show']);
+```
+
+Quando uma solicitação recebida corresponde à URI de rota especificada, o método `show` da classe `App\Http\Controllers\UserController` será invocado e os parâmetros de rota serão passados para o método.
+
+## Middlewares em Controllers
+
+Middlewares também podem ser definidos diretamente nos controllers para aplicar lógica de pré-processamento ou pós-processamento em todas as rotas ou em um grupo específico de rotas. Isso permite centralizar a lógica de middleware diretamente na estrutura do controller.
+
+```php
+namespace App\Http\Controllers;
+
+class UserController
+{
+    // ... Outros metódos
+
+    /**
+     * Middleware para verificar a autenticação.
+     */
+    public static function loggedIn($req, $res, $next)
+    {
+        $authenticated = false; // Sua lógica de autenticação
+
+        if (!$authenticated) {
+            $res->redirect('/login');
+        }
+
+        $next();
+    }
+}
+```
+
+Neste exemplo, o método `loggedIn` age como middleware para verificar a autenticação antes de qualquer rota ser executada. Isso garante que apenas usuários autenticados possam acessar as rotas que usam esse middleware.
+
+Depois de ter escrito seu middleware, você pode aplicá-lo em uma rota da seguinte forma:
+
+```php
+use App\Http\Controllers\UserController;
+
+$loggedIn = [UserController::class, 'loggedIn'];
+ 
+$app->get('/user/:id', $loggedIn, [UserController::class, 'show']);
+```
+
+Isso garante que o middleware loggedIn seja executado antes do método show ser chamado para qualquer requisição na rota `/user/:id`.
+
+---
+
+Os controllers no Lithe proporcionam uma maneira organizada e eficiente de gerenciar o tratamento de requisições HTTP. Ao centralizar a lógica relacionada aos seus recursos, você ganha em reutilização de código e facilita a manutenção do seu aplicativo.

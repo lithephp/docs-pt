@@ -1,0 +1,115 @@
+---
+title: Validação
+description: O Lithe oferece diversas maneiras de validar os dados recebidos pela sua aplicação. Vamos explorar diferentes métodos disponíveis para garantir que seus dados estejam corretos antes de processá-los.
+---
+
+## Validação Rápida
+
+O Lithe inclui uma variedade de regras de validação prontas para serem usadas nos seus dados.
+
+Para entender melhor como funciona a validação no Lithe, vamos ver um exemplo completo de como validar um formulário e mostrar erros ao usuário. Este guia prático vai ajudar você a validar os dados das suas requisições de forma eficaz com o Lithe.
+
+### Definindo as Rotas
+
+```php
+use App\Http\Controllers\PostController;
+
+$app = new \Lithe\App;
+
+$app->route('/post/create')
+    ->get([PostController::class, 'create'])
+    ->post([PostController::class, 'store']);
+
+$app->listen(); 
+```
+
+A rota GET exibe um formulário para o usuário criar uma nova postagem no blog, enquanto a rota POST salva a postagem no banco de dados.
+
+### Criando o Controller
+
+```php
+namespace App\Http\Controllers;
+
+use Lithe\Contracts\Http\Request;
+use Lithe\Contracts\Http\Response;
+
+class PostController
+{
+    /**
+     * Mostra o formulário para criar uma nova postagem no blog.
+     */
+    public static function create(Request $req, Response $res)
+    {
+        return $res->view('post.create');
+    }
+
+    /**
+     * Armazena uma nova postagem no blog.
+     */
+    public static function store(Request $req, Response $res)
+    {
+        // Validate and store the blog post...
+    }
+}
+```
+
+### Escrevendo a Lógica de Validação
+
+Agora vamos preencher o método `store` com a lógica necessária para validar a nova postagem do blog. Utilizaremos o método `validate` disponível no objeto da requisição HTTP. Este método requer 1 parâmetro: `$rules`, que define as regras de validação para os campos específicos.
+
+O método `validate` retorna um objeto com dois métodos: `passed`, que retorna um valor booleano indicando se todos os dados estão corretos conforme as regras definidas, e `errors`, que é um array listando os campos que falharam na validação, juntamente com seus respectivos códigos de erro.
+
+Para entender melhor como usar o método `validate`, veja o exemplo no método `store`:
+
+```php
+/**
+ * Armazena uma nova postagem no blog.
+ */
+public static function store(Request $req, Response $res)
+{
+    $validate = $req->validate([
+        'title' => 'required|max:255',
+        'body' => 'required',
+    ]);
+
+    if (!$validate->passed()) {
+        $errors = $validate->errors();
+        
+        foreach ($errors as $field => $code) {
+            switch ($code) {
+                case 1001:
+                    // Tratar erro de campo obrigatório
+                    break;
+                case 1010:
+                    // Tratar erro de tamanho máximo para 'title'
+                    break;
+                // Adicionar mais casos conforme necessário
+            }
+        }
+    }
+
+    // Continuar com o armazenamento da postagem se a validação passar...
+
+    return $res->redirect('/posts');
+}
+```
+
+---
+
+## Regras de Validação Disponíveis com Respectivos Erros
+
+Aqui está uma lista de todas as regras de validação disponíveis e seus respectivos códigos de erro:
+
+- **required** (código de erro: 1001): O campo é obrigatório.
+- **email** (código de erro: 1002): O campo deve ser um e-mail válido.
+- **url** (código de erro: 1003): O campo deve ser uma URL válida.
+- **ip** (código de erro: 1004): O campo deve ser um endereço IP válido.
+- **number** (código de erro: 1005): O campo deve ser um número.
+- **integer** (código de erro: 1006): O campo deve ser um número inteiro.
+- **boolean** (código de erro: 1007): O campo deve ser verdadeiro (`true`) ou falso (`false`).
+- **regex:pattern** (código de erro: 1008): O campo deve corresponder ao padrão especificado pela expressão regular `pattern`.
+- **min:length** (código de erro: 1009): O campo deve ter pelo menos `length` caracteres.
+- **max:length** (código de erro: 1010): O campo não pode exceder `length` caracteres.
+- **range:min,max** (código de erro: 1011): O campo deve estar dentro do intervalo de `min` a `max`.
+- **dateFormat:format** (código de erro: 1012): O campo deve estar no formato de data especificado por `format`.
+- **alphanumeric** (código de erro: 1013): O campo deve ser alfanumérico (apenas letras e números).

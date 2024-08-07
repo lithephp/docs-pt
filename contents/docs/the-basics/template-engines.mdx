@@ -1,0 +1,193 @@
+---
+title: Motores de template  
+description: O Lithe oferece flexibilidade ao permitir que você escolha entre diversos motores de template, como PHP puro, Blade e Twig. Além dos motores padrão, você pode configurar outros para otimizar a criação e a renderização de interfaces dinâmicas.
+---
+
+## Configuração do Lithe
+
+Para que o Lithe possa renderizar arquivos de modelo, você precisa configurar algumas opções no seu aplicativo. Siga os passos abaixo:
+
+### 1. Diretório de Templates
+
+Defina o diretório onde os arquivos de modelo estão localizados. 
+
+```php
+$app->set('views', __DIR__ . '/views');
+```
+
+Por padrão, o Lithe utiliza o diretório `src/views` na raiz da aplicação para armazenar os arquivos de modelo.
+
+### 2. Motor de Template
+
+Configure o mecanismo de template a ser usado pelo Lithe.
+
+```php
+$app->set('view engine', 'blade');
+```
+
+O Lithe é compatível com vários motores de template populares, como Blade, Twig e PHP puro. Por padrão, o Lithe utiliza PHP puro.
+
+### 3. Instalação do Pacote
+
+Após configurar o motor de template, instale o pacote Composer correspondente ao mecanismo escolhido para garantir que tudo funcione corretamente.
+
+---
+
+## Usando os Motores de Template
+
+### Usando PHP Puro
+
+Para usar PHP puro como motor de template:
+
+**Passo 1:** Defina o motor de template
+
+```php
+$app->set('view engine', 'default');
+```
+
+**Passo 2:** Crie um arquivo de template PHP
+
+No diretório `src/views`, crie `index.php` com o conteúdo:
+
+```html
+<html>
+    <body>
+        <h1>Hello, <?= $name ?></h1>
+    </body>
+</html>
+```
+
+### Usando Blade
+
+Para usar Blade:
+
+**Passo 1:** Instale o pacote via Composer
+
+```bash
+composer require jenssegers/blade
+```
+
+**Passo 2:** Defina o motor de template
+
+```php
+$app->set('view engine', 'blade');
+```
+
+**Passo 3:** Crie um arquivo de template Blade
+
+No diretório `src/views`, crie `index.blade.php` com o conteúdo:
+
+```html
+<html>
+    <body>
+        <h1>Hello, {{ $name }}</h1>
+    </body>
+</html>
+```
+
+### Usando Twig
+
+Para usar Twig:
+
+**Passo 1:** Instale o pacote via Composer
+
+```bash
+composer require twig/twig
+```
+
+**Passo 2:** Defina o motor de template
+
+```php
+$app->set('view engine', 'twig');
+```
+
+**Passo 3:** Crie um arquivo de template Twig
+
+No diretório `src/views`, crie `index.twig` com o conteúdo:
+
+```html
+<html>
+    <body>
+        <h1>Hello, {{ name }}</h1>
+    </body>
+</html>
+```
+
+### Renderizando Templates
+
+Independentemente do motor de template, use a mesma abordagem para renderizar templates:
+
+```php
+$app->get('/', function ($req, $res) {
+  $res->view('index', ['name' => 'William']);
+});
+```
+
+Para aprender mais sobre <a href="https://laravel.com/docs/blade" target="_blank">Blade</a> e <a href="https://twig.symfony.com/doc" target="_blank">Twig</a>, consulte a documentação oficial.
+
+## Motores de Template Personalizados
+
+> Nota: Esta seção contém tópicos avançados. Caso não queira aprender sobre isso agora, sinta-se à vontade para pular esta seção.
+
+Use o método `engine` da classe `Lithe\App` para configurar um motor ou criar seu próprio motor de template. 
+
+```php
+$app->engine($name, $callback);
+```
+
+Onde:
+- `$name`: Nome do motor de template.
+- `$callback`: Função de configuração do motor de template (aceita os seguintes itens como parâmetros: a localização do arquivo, a array de opções, e o caminho das views).
+
+O código a seguir é um exemplo de implementação de um motor de template muito simples chamado `lithe.view`.
+
+```php
+// Definição do motor de template "lithe.view"
+$app->engine('lithe.view', function ($file, $options, $views) {
+    // Leitura do conteúdo do arquivo de template
+    $content = file_get_contents($views . '/' . $file . '.lithe.view');
+
+    // Substituição das variáveis
+    foreach ($options as $key => $value) {
+        $content = str_replace('{{ ' . $key . ' }}', $value, $content);
+    }
+
+    // Retorno do conteúdo renderizado
+    echo $content;
+});
+
+// Configuração do motor de template
+$app->set('view engine', 'lithe.view');
+```
+
+Seu aplicativo agora será capaz de renderizar arquivos `.lithe.view`. Crie um arquivo chamado `index.lithe.view` no diretório de views com o seguinte conteúdo:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+</head>
+<body>
+    <h1>{{ message }}</h1>
+    <p>Este é um arquivo .lithe.view sendo renderizado!</p>
+</body>
+</html>
+```
+
+Então, crie a seguinte rota em seu aplicativo:
+
+```php
+$app->get('/', function ($req, $res) {
+    $res->view('index', [
+        'title' => 'Meu motor de template', 
+        'message' => 'Hello World'
+    ]);
+});
+```
+
+Quando você fizer uma requisição para a página inicial, o arquivo `index.lithe.view` será renderizado como HTML.
+
+---

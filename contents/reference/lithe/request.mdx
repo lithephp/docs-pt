@@ -1,0 +1,194 @@
+---
+title: Request
+description: O objeto `Request` do Lithe fornece uma maneira orientada a objetos de interagir com a atual requisição HTTP sendo manipulada pela sua aplicação, além de recuperar os inputs, cookies e arquivos que foram submetidos com a requisição.
+---
+
+## Propriedades
+
+### `params`
+  - **Descrição:** Parâmetros da requisição, como dados de formulário ou parâmetros de URL.
+  - **Tipo:** `object`
+    ```php
+    $app->get('/hello/:name', function($req, $res) {
+        $params = $req->params;
+        // Exemplo: $params pode conter dados como ['name' => 'John']
+    });
+    ```
+
+### `method`
+  - **Descrição:** Método HTTP da requisição (por exemplo, 'GET', 'POST').
+  - **Tipo:** `string`
+    ```php
+    $app->get('/hello', function($req, $res) {
+        $method = $req->method; // Exemplo: $method pode ser 'GET'
+    });
+    ```
+
+### `headers`
+  - **Descrição:** Cabeçalhos da requisição.
+  - **Tipo:** `array`
+    ```php
+    $app->get('/hello', function($req, $res) {
+        $headers = $req->headers;
+    });
+    ```
+
+### `ip`
+  - **Descrição:** Endereço IP do cliente que fez a requisição.
+  - **Tipo:** `string`
+    ```php
+    $app->get('/hello', function($req, $res) {
+        $ip = $req->ip;
+        // Exemplo: $ip pode ser '192.168.1.1'
+    });
+    ```
+
+### `query`
+  - **Descrição:** Dados da string de consulta da URL.
+  - **Tipo:** `object`
+    ```php
+    $app->get('/hello', function($req, $res) {
+        $query = $req->query;
+        // Exemplo: $query pode conter ['search' => 'Lithe']
+    });
+    ```
+
+### `url`
+  - **Descrição:** URL da requisição.
+  - **Tipo:** `string`
+    ```php
+    $app->get('/hello', function($req, $res) {
+        $url = $req->url;
+        // Exemplo: $url pode ser '/hello'
+    });
+    ```
+
+### `body`
+  - **Descrição:** Dados do corpo da requisição.
+  - **Tipo:** `object|array|mixed`
+    ```php
+    $app->post('/submit', function($req, $res) {
+        $body = $req->body;
+        // Exemplo: $body pode conter ['name' => 'John']
+    });
+    ```
+
+### `files`
+  - **Descrição:** Arquivos enviados na requisição (se aplicável).
+  - **Tipo:** `object|array|array[]`
+    ```php
+    $app->post('/upload', function($req, $res) {
+        $files = $req->files;
+        // Exemplo: $files pode conter informações sobre arquivos carregados
+    });
+    ```
+
+### `cookies`
+  - **Descrição:** Cookies enviados com a requisição.
+  - **Tipo:** `object`
+    ```php
+    $app->get('/hello', function($req, $res) {
+        $cookies = $req->cookies;
+        // Exemplo: $cookies pode conter ['session_id' => 'abc123']
+    });
+    ```
+
+## Métodos
+
+### `__get(string $name)`
+- **Descrição:** Método mágico para acessar valores das propriedades dinamicamente.
+- **Parâmetros:**
+  - `name` - Nome da propriedade.
+- **Retorno:** Valor da propriedade ou `null` se não existir.
+
+### `__set(string $name, $value)`
+- **Descrição:** Método mágico para definir valores das propriedades dinamicamente.
+- **Parâmetros:**
+  - `name` - Nome da propriedade.
+  - `value` - Valor a ser definido.
+
+### `getHost()`
+- **Descrição:** Obtém o host do servidor (incluindo o esquema http/https).
+- **Retorno:** `string` - URL do host.
+  ```php
+  $app->get('/hello', function($req, $res) {
+      $host = $req->getHost();
+      // Exemplo: $host pode ser 'https://example.com'
+  });
+  ```
+
+### `cookie(string $name, $default = null)`
+- **Descrição:** Obtém o valor de um cookie específico.
+- **Parâmetros:**
+  - `name` - Nome do cookie.
+  - `default` - Valor padrão se o cookie não existir.
+- **Retorno:** Valor do cookie ou valor padrão.
+  ```php
+  $app->get('/hello', function($req, $res) {
+      $sessionId = $req->cookie('session_id', 'default_session');
+      // Exemplo: $sessionId pode ser 'abc123' ou 'default_session'
+  });
+  ```
+
+### `header(string $name, mixed $default = null): mixed`
+- **Descrição:** Obtém o valor de um cabeçalho específico da requisição.
+- **Parâmetros:**
+  - `name` - Nome do cabeçalho.
+  - `default` - Valor padrão se o cabeçalho não existir.
+- **Retorno:** Valor do cabeçalho ou valor padrão.
+  ```php
+  $app->get('/hello', function($req, $res) {
+      $contentType = $req->header('Content-Type', 'text/plain');
+      // Exemplo: $contentType pode ser 'application/json' ou 'text/plain'
+  });
+  ```
+
+### `isAjax()`
+- **Descrição:** Verifica se a requisição é uma requisição AJAX.
+- **Retorno:** `bool` - `true` se for uma requisição AJAX, `false` caso contrário.
+  ```php
+  $app->get('/hello', function($req, $res) {
+      if ($req->isAjax()) {
+          // Executa código específico para requisições AJAX
+      }
+  });
+  ```
+
+### `query(string $key = null, $default = null)`
+- **Descrição:** Obtém o valor de um parâmetro de consulta específico.
+- **Parâmetros:**
+  - `key` - Nome do parâmetro.
+  - `default` - Valor padrão se o parâmetro não existir.
+- **Retorno:** Valor do parâmetro ou valor padrão.
+  ```php
+  $app->get('/search', function($req, $res) {
+      $searchTerm = $req->query('search', 'default');
+      // Exemplo: $searchTerm pode ser 'Lithe' ou 'default'
+  });
+  ```
+
+### `file(string $name = null)`
+- **Descrição:** Obtém informações sobre um arquivo enviado.
+- **Parâmetros:**
+  - `name` - Nome do input do arquivo.
+- **Retorno:** Informações do arquivo ou `null` se não houver arquivo.
+  ```php
+  $app->post('/upload', function($req, $res) {
+      $file = $req->file('uploaded_file');
+      // Exemplo: $file pode conter informações sobre o arquivo enviado
+  });
+  ```
+
+### `filter(string $key, string $filterType, $default = null)`
+- **Descrição:** Filtra um valor baseado no tipo de filtro especificado.
+- **Parâmetros:**
+  - `key` - Chave que contém o valor a ser filtrado.
+  - `filterType` - Tipo de filtro a ser aplicado.
+  - `default` - Valor padrão se o filtro falhar ou o valor não estiver definido.
+- **Retorno:** Valor filtrado ou valor padrão.
+  ```php
+  $app->post('/submit', function($req, $res) {
+      $email = $req->filter('email', 'email', 'default@example.com');
+      // $email pode ser um e-mail válido ou 'default@example.com'
+  });
+  ```

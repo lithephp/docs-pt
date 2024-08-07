@@ -1,0 +1,211 @@
+---
+title: Migrações
+description: "Migrações são como controle de versão para o seu banco de dados. Elas permitem que sua equipe defina e compartilhe a estrutura do banco de dados da aplicação. Se você já precisou pedir a um colega para adicionar manualmente uma coluna ao seu banco de dados local depois de atualizar suas alterações do controle de versão, você já enfrentou o problema que as migrações de banco de dados resolvem."
+---
+
+## Gerando Migrações
+
+Você pode usar o comando Line `make:migration` para gerar uma migração de banco de dados. A nova migração será colocada no diretório `src/database/migrations` do seu projeto. Cada nome de arquivo de migração contém um timestamp que permite ao Lithe determinar a ordem das migrações.
+
+```bash
+php line make:migration NomeDaMigracao --template=NomeDoTemplate
+```
+**Onde:**
+- `NomeDaMigracao`: Nome da migração a ser criada.
+- `--template=NomeDoTemplate`: Opcional. Define o template a ser usado para gerar a migração. Caso não especificado, será usado o template definido na variável de ambiente `DB_CONNECTION_METHOD`.
+
+### Templates de Migração
+
+Os templates de migração determinam como os arquivos de migração são gerados, adaptados para diferentes ORMs ou abordagens de banco de dados. O Lithe suporta os seguintes templates:
+
+- **eloquent**: Template para migrações utilizando o ORM Eloquent.
+- **mysqli**: Template para migrações utilizando o MySQLi.
+- **default**: Template padrão para migrações customizadas ou genéricas.
+
+Para implementar migrações no Lithe usando diferentes templates como Eloquent ou MySQLi, é importante entender como cada um deles funciona e como criar os arquivos de migração correspondentes.
+
+### Migração com Eloquent
+
+O Eloquent é um ORM popular dentro do ecossistema PHP, amplamente utilizado para interagir com bancos de dados relacionais de forma simplificada. Aqui está como você poderia criar uma migração para a tabela `users`:
+
+1. **Criando a Migração**
+
+Execute o seguinte comando para criar uma migração usando o template Eloquent:
+
+```bash
+php line make:migration CreateUsersTable --template=eloquent
+```
+
+Isso criará um arquivo de migração dentro do diretório `src/database/migrations/`. Por exemplo, `YYYY_MM_DD_HHMMSS_CreateUsersTable.php`.
+
+2. **Exemplo de Arquivo de Migração (Eloquent)**
+
+```php
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Capsule\Manager as Capsule;
+
+return new class
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up(): void
+    {
+        Capsule::schema()->create('users', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down(): void
+    {
+        Capsule::schema()->dropIfExists('users');
+    }
+};
+```
+
+### Migração com MySQLi
+
+Para utilizar o MySQLi diretamente, sem um ORM específico como Eloquent, você precisa gerenciar manualmente as migrações no nível do SQL. Aqui está um exemplo básico para criar a tabela `users`:
+
+1. **Criando a Migração**
+
+Execute o comando para criar uma migração:
+
+```bash
+php line make:migration CreateUsersTable --template=mysqli
+```
+
+Isso criará um arquivo de migração dentro do diretório `src/database/migrations/`. Por exemplo, `YYYY_MM_DD_HHMMSS_CreateUsersTable.php`.
+
+2. **Exemplo de Arquivo de Migração (MySQLi)**
+
+```php
+return new class
+{
+    /**
+     * Run the migrations.
+     *
+     * @param mysqli $db
+     * @return void
+     */
+    public function up(mysqli $db): void
+    {
+        $query = "
+            CREATE TABLE IF NOT EXISTS users (
+                id INT(11) AUTO_INCREMENT PRIMARY KEY,
+                name VARCHAR(255) NOT NULL,
+                email VARCHAR(255) UNIQUE NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            )
+        ";
+
+        $db->query($query);
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @param mysqli $db
+     * @return void
+     */
+    public function down(mysqli $db): void
+    {
+        $query = "DROP TABLE IF EXISTS users";
+        $db->query($query);
+    }
+};
+
+```
+
+### Migração com o Template Padrão
+
+Se você estiver utilizando um ORM que não possui um template específico ou qualquer outra abordagem de banco de dados, o Lithe fornece um template padrão de migrações. Este template é projetado para ser flexível, recebendo a conexão com o banco de dados como argumento.
+
+#### Exemplo de Arquivo de Migração (Template Padrão)
+
+```php
+<?php 
+
+return new class
+{
+    /**
+     * Run the migrations.
+     *
+     * @param mixed $connection A configuração da conexão com o banco de dados.
+     * @return void
+     */
+    public function up(): void
+    {
+        // Lógica de migração
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @param mixed $connection A configuração da conexão com o banco de dados.
+     * @return void
+     */
+    public function down(): void
+    {
+        // Lógica de reversão
+    }
+};
+```
+---
+
+
+## Executando Migrações
+
+Após criar os arquivos de migração conforme os exemplos acima, é necessário executá-los para aplicar as alterações no banco de dados.
+
+Para executar todas as suas migrações pendentes, utilize o comando:
+
+```bash
+php line migrate
+```
+
+#### Revertendo Migrações
+
+Para reverter a última operação de migração, você pode usar o comando `rollback` do Line. Este comando reverte a última 'batch' de migrações, que pode incluir vários arquivos de migração.
+
+```bash
+php line migrate:rollback
+```
+
+Você pode reverter uma "batch" específica de migrações fornecendo a opção `batch` para o comando rollback, onde a opção `batch` corresponde a um valor de "batch" dentro da tabela de migrações do seu aplicativo. Por exemplo, o seguinte comando irá reverter todas as migrações na "batch" três:
+
+```bash
+php line migrate:rollback --batch=3
+```
+
+Isso irá reverter todas as migrações que foram agrupadas na terceira "batch".
+
+
+Ao usar o comando `migrate:reset` todas as migrações do seu aplicativo serão revertidas:
+
+```bash
+php line migrate:reset
+```
+
+##### **Reverter e Migrar Usando um Único Comando**
+
+O comando `migrate:refresh` reverterá todas as suas migrações e, em seguida, executará o comando `migrate`. Este comando recria efetivamente todo o seu banco de dados:
+
+```bash
+php line migrate:refresh
+```
+
+---
+
+Gerenciar migrações de banco de dados é fundamental para manter a integridade e evolução das estruturas de dados ao longo do ciclo de vida de uma aplicação. Utilizando as migrações no Lithe, você ganha controle total sobre essas alterações, facilitando o desenvolvimento e a manutenção do seu projeto.

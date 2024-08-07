@@ -1,0 +1,76 @@
+---
+title: Criptografia
+description: "O Lithe oferece um módulo de segurança chamado Crypt que fornece métodos para criptografar e descriptografar dados usando o algoritmo AES-256-CBC. AES (Advanced Encryption Standard) é amplamente reconhecido por sua segurança e eficiência na proteção de dados sensíveis."
+---
+
+## Configuração
+
+Para utilizar o módulo de criptografia `Crypt` no Lithe, você deve primeiro definir a variável de ambiente `APP_KEY` no seu arquivo `.env`. O valor dessa variável deve ser uma chave criptograficamente segura. Você pode gerar essa chave utilizando o comando `php line key:generate`, que irá criar uma chave segura para a sua aplicação. A variável `APP_KEY` é essencial para a criptografia e deve ser definida durante a instalação do Lithe ou configurada manualmente.
+
+> **Atenção:** Alterar a chave de criptografia (`APP_KEY`) invalida todas as criptografias anteriores. Dados criptografados com uma chave não poderão ser descriptografados se a chave for alterada.
+
+---
+
+## Usando o Crypt
+
+O módulo `Crypt` do Lithe fornece métodos para criptografar e descriptografar dados. Ambos os métodos utilizam o algoritmo de criptografia AES-256-CBC.
+
+### Criptografando um Valor
+
+Para criptografar dados, use o método `encrypt` do módulo `Crypt`. O valor criptografado é retornado em formato base64.
+
+```php
+use Lithe\Support\Security\Crypt;
+use Lithe\Contracts\Http\Request;
+use Lithe\Contracts\Http\Response;
+
+$app = new \Lithe\App;
+
+$app->post('/conta/criar', function (Request $req, Response $res) {
+    // Criptografando o campo 'name' do corpo da requisição
+    $encryptedName = Crypt::encrypt($req->input('name'));
+
+    // ...
+
+    // Retornando a resposta
+    return $res->send("Dados criptografados com sucesso!");
+});
+
+$app->listen();
+```
+
+### Descriptografando um Valor
+
+Para descriptografar dados, utilize o método `decrypt` do módulo `Crypt`. O valor descriptografado é retornado como uma string.
+
+```php
+use Lithe\Support\Security\Crypt;
+
+$decrypted = Crypt::decrypt($encryptedValue);
+```
+
+**Possíveis Retornos:**
+
+1. **Sucesso na Descriptografia:** Se a descriptografia for bem-sucedida, o método `decrypt` retorna os dados descriptografados como uma string.
+2. **Falha na Descriptografia:** Se a descriptografia falhar, o método lançará uma exceção do tipo `CryptException`. Isso pode ocorrer devido a uma chave incorreta, IV inválido, dados corrompidos, ou outros problemas relacionados à criptografia.
+
+Para tratar falhas na descriptografia, envolva a chamada ao método `decrypt` em um bloco `try-catch` para capturar e lidar com exceções.
+
+```php
+use Lithe\Support\Security\Crypt;
+use Lithe\Contracts\Encryption\CryptException;
+
+try {
+    $decrypted = Crypt::decrypt($encryptedValue);
+} catch (CryptException $e) {
+    // Trate a exceção aqui
+    echo 'Erro ao descriptografar os dados: ' . $e->getMessage();
+}
+```
+
+---
+
+## Notas Adicionais
+
+- **Validação da Chave:** Certifique-se de que a variável `APP_KEY` é uma string base64 válida com 32 bytes após a decodificação.
+- **Manutenção da Chave:** Mantenha a chave `APP_KEY` segura e evite mudanças frequentes para garantir que os dados criptografados possam ser corretamente descriptografados.

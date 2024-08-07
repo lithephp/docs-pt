@@ -1,0 +1,52 @@
+---
+title: CORS
+description: O middleware de CORS (Cross-Origin Resource Sharing) no Lithe configura os cabeçalhos CORS para permitir ou restringir o acesso a recursos de diferentes origens.
+---
+
+## Usando o Middleware CORS
+
+O middleware CORS no Lithe é responsável por configurar os cabeçalhos de Cross-Origin Resource Sharing, permitindo ou restringindo o acesso aos recursos da sua aplicação a partir de origens diferentes. Para configurar o middleware em sua aplicação, adicione-o com o método `use()`:
+
+```php
+use Lithe\Middleware\Configuration\cors;
+
+$app->use(cors());
+```
+
+### Configuração do Middleware CORS
+
+O middleware CORS pode ser configurado com os seguintes parâmetros:
+
+- **origins**: Origem(ns) permitida(s) para acessar seus recursos. Pode ser uma string ou um array de strings. O padrão é `'*'` (qualquer origem).
+- **methods**: Métodos HTTP permitidos. O padrão é `'GET, POST, OPTIONS'`.
+- **headers**: Cabeçalhos permitidos. Pode ser uma string ou um array de strings. O padrão é `'Origin, X-Requested-With, Content-Type, Accept'`.
+- **credentials**: Indica se credenciais (como cookies ou cabeçalhos de autorização) são permitidos. O padrão é `true`.
+- **maxAge**: Tempo em segundos para cache dos resultados de uma requisição de preflight. O padrão é `null`.
+
+Exemplo de configuração:
+
+```php
+$app->use(cors([
+    'origins' => ['https://example.com', 'https://another.com'],
+    'methods' => 'GET, POST, PUT, DELETE, OPTIONS',
+    'headers' => ['Content-Type', 'Authorization'],
+    'credentials' => true,
+    'maxAge' => 86400,
+]));
+```
+
+### Comportamento do Middleware
+
+- **Configuração de Origens Permitidas**: O middleware define o cabeçalho `Access-Control-Allow-Origin` com as origens permitidas.
+- **Configuração de Métodos Permitidos**: Define o cabeçalho `Access-Control-Allow-Methods` com os métodos HTTP permitidos.
+- **Configuração de Cabeçalhos Permitidos**: Define o cabeçalho `Access-Control-Allow-Headers` com os cabeçalhos permitidos.
+- **Configuração de Credenciais**: Define o cabeçalho `Access-Control-Allow-Credentials` para permitir credenciais, se configurado como `true`.
+- **Configuração de Tempo de Cache**: Define o cabeçalho `Access-Control-Max-Age` para especificar o tempo de cache para a requisição de preflight.
+- **Tratamento de Requisições OPTIONS**: O middleware lida com requisições OPTIONS (preflight) retornando um status 200 OK e finaliza a resposta.
+
+
+## Considerações
+
+- **Origens Específicas**: Se você especificar origens concretas, apenas essas origens terão permissão para acessar seus recursos.
+- **Métodos HTTP e Cabeçalhos**: Configure os métodos e cabeçalhos de acordo com as necessidades da sua aplicação para garantir a segurança e compatibilidade.
+- **Preflight Requests**: O middleware garante que requisições OPTIONS sejam tratadas corretamente para suportar preflight requests.

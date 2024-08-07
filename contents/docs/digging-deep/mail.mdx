@@ -1,0 +1,145 @@
+---
+title: Mail
+description: A classe `Mail` do Lithe facilita o envio de e-mails. Com uma configuração simples, você pode enviar e-mails em texto ou HTML, adicionar anexos e configurar diversos aspectos do envio.
+---
+
+## Configuração do Ambiente
+
+Antes de usar a classe `Mail`, configure as variáveis de ambiente no arquivo `.env` da raiz do seu projeto para definir as configurações do servidor de e-mail:
+
+```
+MAIL_HOST=smtp.example.com
+MAIL_PORT=587
+MAIL_USERNAME=your_username
+MAIL_PASSWORD=your_password
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=no-reply@example.com
+MAIL_FROM_NAME=YourAppName
+```
+
+**Onde:**
+
+- **`MAIL_HOST`**: Endereço do servidor SMTP.
+- **`MAIL_PORT`**: Porta do servidor SMTP.
+- **`MAIL_USERNAME`**: Nome de usuário para autenticação no servidor SMTP.
+- **`MAIL_PASSWORD`**: Senha para autenticação no servidor SMTP.
+- **`MAIL_ENCRYPTION`**: Método de criptografia para a conexão SMTP (`tls` ou `ssl`).
+- **`MAIL_FROM_ADDRESS`**: Endereço de e-mail do remetente.
+- **`MAIL_FROM_NAME`**: Nome do remetente.
+
+Essas configurações são necessárias para que a classe `Mail` possa se conectar ao servidor SMTP e enviar e-mails com as configurações apropriadas.
+
+---
+
+## Usando o `Mail`
+
+### Configurando o E-mail
+
+Para começar a usar a classe `Mail`, você deve definir o destinatário do e-mail e, se desejar, incluir o nome do destinatário. Isso pode ser feito com o método estático `to`:
+
+```php
+use Lithe\Support\Mail;
+
+$mail = Mail::to('recipient@example.com', 'Recipient Name');
+```
+
+O método `to` define o destinatário do e-mail. O primeiro parâmetro é o endereço de e-mail do destinatário e o segundo parâmetro é o nome do destinatário, que é opcional.
+
+### Adicionando Destinatários CC e BCC
+
+Você pode adicionar destinatários em cópia (CC) e cópia oculta (BCC) aos e-mails:
+
+- **CC (Cópia Carbono)**
+
+  ```php
+  $mail->cc('cc@example.com', 'CC Name');
+  ```
+
+  O método `cc` adiciona um destinatário em cópia (CC). Isso significa que o destinatário listado no CC receberá uma cópia do e-mail.
+
+- **BCC (Cópia Oculta)**
+
+  ```php
+  $mail->bcc('bcc@example.com', 'BCC Name');
+  ```
+
+  O método `bcc` adiciona um destinatário em cópia oculta (BCC). Os destinatários BCC não são visíveis para outros destinatários e receberão uma cópia do e-mail.
+
+### Definindo o Assunto
+
+Depois de configurar o destinatário, defina o assunto do e-mail usando o método `subject`:
+
+```php
+$mail->subject('Assunto do E-mail');
+```
+
+O método `subject` define o assunto do e-mail. Este é o título que aparecerá na linha de assunto do e-mail.
+
+### Definindo o Corpo do E-mail
+
+Você pode escolher entre enviar o corpo do e-mail como texto simples ou HTML. Utilize o método `text` para texto simples e `html` para HTML:
+
+- **Texto Simples**
+
+  ```php
+  $mail->text('Este é o corpo do e-mail em texto simples.');
+  ```
+
+  O método `text` define o corpo do e-mail em formato de texto simples. Ideal para e-mails sem formatação especial.
+
+- **HTML**
+
+  ```php
+  $mail->html('<p>Este é o corpo do e-mail em <strong>HTML</strong>.</p>');
+  ```
+
+  O método `html` define o corpo do e-mail em formato HTML, permitindo a inclusão de formatação e estilos.
+
+### Adicionando Anexos
+
+Caso queira adicionar anexos ao e-mail, utilize o método `attach`. Informe o caminho para o arquivo e o nome do anexo:
+
+```php
+$mail->attach('/caminho/para/arquivo.pdf', 'Nome do Arquivo.pdf');
+```
+
+O método `attach` permite adicionar um ou mais arquivos como anexos ao e-mail. O primeiro parâmetro é o caminho para o arquivo e o segundo é o nome do arquivo anexado.
+
+### Adicionando Cabeçalhos Personalizados
+
+Para adicionar cabeçalhos personalizados ao e-mail, utilize o método `addHeader`:
+
+```php
+$mail->addHeader('X-Custom-Header', 'HeaderValue');
+```
+
+O método `addHeader` adiciona cabeçalhos personalizados ao e-mail. Cabeçalhos personalizados podem ser usados para incluir informações adicionais ou configurações especiais no e-mail.
+
+### Configurando o Endereço de Resposta
+
+Se desejar configurar um endereço de e-mail para respostas, use o método `replyTo`:
+
+```php
+$mail->replyTo('replyto@example.com', 'Reply To Name');
+```
+
+O método `replyTo` define um endereço de e-mail para onde as respostas ao e-mail serão enviadas. O primeiro parâmetro é o endereço de resposta e o segundo é o nome associado a ele.
+
+### Enviando o E-mail
+
+Finalmente, para enviar o e-mail, utilize o método `send`. O método retorna um valor booleano indicando se o envio foi bem-sucedido:
+
+```php
+$enviado = $mail->send();
+```
+
+O método `send` envia o e-mail configurado e retorna `true` se o envio for bem-sucedido ou `false` se houver falha.
+
+---
+
+## Resolução de Problemas
+
+Se você enfrentar problemas ao enviar e-mails:
+
+- **Verifique as Configurações**: Certifique-se de que as variáveis de ambiente estão corretamente configuradas e o servidor SMTP está acessível.
+- **Checar Logs**: Caso ocorra uma falha, a classe `Mail` registrará o erro, que pode ser visualizado nos logs do sistema.

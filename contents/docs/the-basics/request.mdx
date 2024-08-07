@@ -1,0 +1,301 @@
+---
+title: Requisições HTTP
+description: "O objeto `Request` do Lithe fornece uma maneira orientada a objetos de interagir com a atual requisição HTTP sendo manipulada pela sua aplicação, além de recuperar os inputs, cookies e arquivos que foram submetidos com a requisição."
+---
+
+## Interagindo com a Requisição HTTP
+
+### Acessando a Requisição
+
+Para interagir com a requisição HTTP atual no Lithe, você deve acessá-la através do primeiro parâmetro nos seus manipuladores de rota. O Lithe automaticamente passa a instância da requisição para este parâmetro, permitindo acesso aos dados da requisição.
+
+```php
+$app->get('/', function ($req) {
+    $name = $req->input('name');
+
+    // ...
+});
+```
+
+Você também pode especificar a interface `Lithe\Contracts\Http\Request` como tipo no fechamento de uma rota.
+
+```php
+use Lithe\Contracts\Http\Request;
+
+$app->get('/', function (Request $req) {
+    // ...
+});
+```
+
+### Caminho e Método da Requisição
+
+A instância `Request` fornece uma variedade de métodos para examinar a requisição HTTP recebida.
+
+#### Obtendo o Caminho da Requisição
+
+A propriedade `url` retorna as informações do caminho da requisição. Assim, se a requisição recebida estiver direcionada para http://example.com/foo/bar, a propriedade `url` retornará foo/bar:
+
+```php
+$uri = $req->url;
+```
+
+#### Analisando o Caminho da Requisição
+
+O método `is` permite verificar se o caminho da requisição recebida corresponde a um padrão específico. Você pode utilizar o caractere * como um curinga ao utilizar este método:
+
+```php
+if ($req->is('admin/*')) {
+    // ...
+}
+```
+
+#### Obtendo o Método da Requisição
+O método `method` retornará o verbo HTTP da requisição. Você pode usar o método `isMethod` para verificar se o verbo HTTP corresponde a uma determinada string:
+
+```php
+$method = $req->method;
+ 
+if ($req->isMethod('post')) {
+    // ...
+}
+```
+
+### Cabeçalhos da Requisição
+
+Você pode recuperar um cabeçalho da requisição utilizando o método `header` da instância `Request`. Se o cabeçalho não estiver presente na requisição, será retornado null.
+
+```php
+$value = $req->header('X-Header-Name');
+```
+
+### Endereço IP da Requisição
+A propriedade `ip` pode ser utilizada para recuperar o endereço IP do cliente que fez a requisição para sua aplicação:
+
+```php
+$ipAddress = $req->ip;
+```
+
+---
+
+## Entrada
+
+### Recuperando Entradas
+
+#### Recuperando Todos os Dados de Entrada
+
+Você pode recuperar todos os dados de entrada da requisição recebida usando a propriedade `body` ou o método `body`. Essas abordagens são úteis independentemente se a requisição é de um formulário HTML, uma requisição XHR (XMLHttpRequest) ou contém dados no formato JSON.
+
+**Usando a Propriedade `body`**
+
+```php
+$body = $req->body;
+
+$name = $body->name;
+```
+
+**Usando o Método `body`**
+
+O método `body` fornece uma maneira flexível de recuperar dados da requisição. Você pode especificar quais partes do corpo da requisição deseja recuperar, e também excluir chaves indesejadas. Se nenhum parâmetro for fornecido, o método retorna todos os dados do corpo.
+
+```php
+// Recupera todos os dados do corpo
+$body = $req->body();
+
+// Recupera apenas os dados especificados
+$body = $req->body(['name', 'email']);
+
+// Recupera todos os dados, excluindo os especificados
+$body = $req->body(null, ['password']);
+```
+
+O método `body` aceita dois parâmetros opcionais:
+- `$keys`: Um array de chaves para recuperar apenas partes específicas do corpo.
+- `$exclude`: Um array de chaves para excluir partes específicas do corpo.
+
+Se o corpo da requisição for um objeto, ele será convertido em um array para filtragem e, em seguida, retornado como um objeto novamente.
+
+
+#### Recuperando um Valor de Entrada
+Usando alguns métodos simples, você pode acessar todas as entradas de usuário da sua instância `Request` sem se preocupar com qual verbo HTTP foi usado para a requisição. Independentemente do verbo HTTP utilizado, o método `input` pode ser usado para recuperar entradas de usuário:
+
+```php
+$name = $req->input('name');
+```
+
+Você pode passar um valor padrão como segundo argumento para o método `input`. Esse valor será retornado se o valor de entrada solicitado não estiver presente na requisição:
+
+```php
+$name = $req->input('name', 'William');
+```
+
+Entendi, vou ajustar o guia do `query` para seguir o mesmo formato do guia de `cookies`. Aqui está a versão atualizada:
+
+
+#### Recuperando String de Consulta
+
+Enquanto o método `input` e a propriedade `body` recuperam valores de todo o payload da requisição, incluindo a string de consulta, a propriedade `query` retorna todos os parâmetros da string de consulta, e o método `query` permite acessar um parâmetro específico da string de consulta.
+
+Para acessar todos os parâmetros da string de consulta, você pode usar a propriedade `query`:
+
+```php
+$queryParams = $req->query;
+```
+
+Aqui, `$queryParams` será um objeto contendo todos os parâmetros da string de consulta.
+
+**Acessando um Parâmetro Específico**
+
+Para recuperar o valor de um parâmetro específico da string de consulta, você pode usar o método `query`:
+
+```php
+$page = $req->query('page');
+```
+
+Se o parâmetro `'page'` não estiver presente, o valor retornado será `null` por padrão. Você pode fornecer um valor padrão para retornar caso o parâmetro não exista:
+
+```php
+$page = $req->query('page', 1);
+```
+
+Neste exemplo, se o parâmetro `'page'` não estiver presente, será retornado `1` como valor padrão.
+
+
+---
+
+### Presença de Entrada
+
+Você pode usar o método `has` para determinar se um valor está presente na requisição. O método `has` retorna `true` se o valor estiver presente na requisição:
+
+```php
+if ($req->has('name')) {
+    // ...
+}
+```
+
+Quando fornecido um array, o método `has` determinará se todos os valores especificados estão presentes:
+
+```php
+if ($req->has(['name', 'email'])) {
+    // ...
+}
+```
+
+Vamos corrigir e expandir a explicação para incluir como definir valores padrão e como usar o filtro com expressões regulares. Aqui está a versão aprimorada:
+
+---
+
+
+### Filtrando Entradas
+
+O método `filter` permite filtrar um valor com base em um tipo especificado, garantindo que os dados sejam válidos e seguros. Os tipos de filtro suportados incluem: `string`, `email`, `int`, `float`, `url`, `ip`, `bool`, `alnum`, `html`, `name`, `date`, `datetime`, `regex`, `username`, `password`, `phone`, `creditcard`, `json`, e `uuid`.
+
+#### Filtrando um valor
+
+Para filtrar um valor, você pode usar o método `filter`:
+
+```php
+$email = $req->filter('email', 'email');
+```
+
+Aqui, o valor associado à chave 'email' é filtrado como um endereço de e-mail. Se o valor não for válido, o método retornará `null`.
+
+#### Definindo um Valor Padrão
+
+É possível definir um valor padrão para ser retornado se o valor filtrado não for válido:
+
+```php
+$age = $req->filter('age', 'int', 18);
+```
+
+Neste exemplo, o valor associado à chave 'age' é filtrado como um inteiro. Se o valor não for um inteiro válido, o método retornará `18` como valor padrão.
+
+#### Usando Expressões Regulares
+
+Para aplicar um filtro com expressões regulares, passe o padrão como um argumento adicional:
+
+```php
+$username = $req->filter('username', 'regex', 'william', '/^[a-zA-Z0-9_]+$/');
+```
+
+Neste caso, o valor associado à chave 'username' é filtrado com a expressão regular fornecida. Se o valor não corresponder ao padrão, o método retornará `'william'` como valor padrão.
+
+O método `filter` retorna o valor filtrado se for válido ou o valor padrão especificado (ou `null` se nenhum valor padrão for definido). Isso ajuda a garantir a segurança e integridade dos dados em sua aplicação.
+
+---
+
+## Cookies
+
+### Recuperando Cookies
+
+Para acessar um cookie específico na requisição, você pode usar o método `cookie`:
+
+```php
+$cookieValue = $req->cookie('name', 'defaultValue');
+```
+
+Aqui, o valor do cookie com o nome `'name'` é retornado. Se o cookie não estiver presente, será retornado `'defaultValue'`.
+
+### Verificando a Existência de um Cookie
+
+Para verificar se um cookie específico está presente, você pode usar a propriedade `cookies`:
+
+```php
+if ($req->cookies->exists('name')) {
+    // O cookie está presente
+}
+```
+
+### Usando a Propriedade `cookies`
+
+Você também pode acessar todos os cookies da requisição usando a propriedade `cookies`:
+
+```php
+$allCookies = $req->cookies;
+```
+
+Aqui, `$allCookies` será um objeto contendo todos os cookies presentes na requisição.
+
+---
+
+
+## Verificações de Requisição
+
+### Verificando se a Requisição é AJAX
+
+Você pode verificar se a requisição é uma requisição AJAX utilizando o método `isAjax`. Esse método é útil para diferenciar entre requisições padrão e aquelas feitas com JavaScript, que geralmente não necessitam de uma resposta completa de HTML.
+
+```php
+if ($req->isAjax()) {
+    // Código a ser executado em caso de requisição AJAX
+}
+```
+
+### Verificando se a Requisição é JSON
+
+Para verificar se a requisição espera uma resposta JSON, utilize o método `wantsJson`. Isso é útil em APIs e endpoints que podem servir tanto requisições AJAX quanto requisições padrão.
+
+```php
+if ($req->wantsJson()) {
+    // Código a ser executado em caso de requisição esperando JSON
+}
+```
+
+### Verificando se a Requisição é Segura (HTTPS)
+
+Para verificar se a requisição foi feita via HTTPS, use o método `secure`. Requisições seguras são importantes para proteger dados sensíveis durante a transmissão.
+
+```php
+if ($req->secure()) {
+    // Código a ser executado em caso de requisição segura (HTTPS)
+}
+```
+
+### Obtendo o Protocolo da Requisição
+
+Você pode obter o protocolo da requisição (HTTP ou HTTPS) utilizando o método `protocol`. Isso é útil para gerar URLs completas ou tomar decisões baseadas no protocolo utilizado.
+
+```php
+$protocol = $req->protocol();
+```
+
+A variável `$protocol` conterá o valor `http` ou `https`, dependendo do protocolo usado na requisição.

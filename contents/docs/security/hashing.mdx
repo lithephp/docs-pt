@@ -1,0 +1,65 @@
+---
+title: Hashing
+description: "O Lithe oferece um módulo de segurança chamado Hash com métodos para criar e verificar hashes de dados sensíveis usando o algoritmo Bcrypt. O Bcrypt é amplamente reconhecido por sua segurança e eficiência na proteção de senhas e outros dados sensíveis."
+---
+
+## Usando o Hash
+
+### Criando um Hash
+
+Você pode criar um hash a partir de uma string usando o método `make` fornecido pelo módulo de segurança do Lithe `Hash`. Todos os hashes são gerados usando o algoritmo Bcrypt.
+
+```php {11}
+use Lithe\Contracts\Http\Request;
+use Lithe\Contracts\Http\Response;
+use Lithe\Support\Security\Hash;
+
+$app = new \Lithe\App;
+
+$app->post('/usuario/registrar', function (Request $req, Response $res) {
+    $body = $req->body;
+
+    // Criando um hash para o campo 'password' do corpo da requisição
+    $hashedPassword = Hash::make($body->password);
+
+    // ...
+
+    // Retornando a resposta
+    return $res->send("Usuário registrado com sucesso!");
+});
+
+$app->listen();
+```
+
+### Verificando um Hash
+
+Você pode verificar se uma string corresponde a um hash usando o método `check` fornecido pelo módulo de segurança do Lithe `Hash`.
+
+```php {3}
+use Lithe\Support\Security\Hash;
+
+$valid = Hash::check($plainPassword, $hashedPassword);
+```
+Se a string corresponder ao hash fornecido, o método retorna `true`. Caso contrário, retorna `false`.
+
+### Rehashing de um Valor
+
+Você pode verificar se um hash precisa ser rehash e, em caso afirmativo, criar um novo hash com um custo diferente usando o método `needsRehash` fornecido pelo módulo de segurança do Lithe `Hash`.
+
+```php {3}
+use Lithe\Support\Security\Hash;
+
+$needsRehash = Hash::needsRehash($hashedPassword, ['cost' => 12]);
+```
+Se o hash precisar ser rehash, o método retorna `true`. Caso contrário, retorna `false`.
+
+Para lidar com o rehash de maneira apropriada, é recomendado verificar se o hash precisa ser rehash e, se necessário, criar um novo hash e atualizar a armazenagem do hash.
+
+```php
+use Lithe\Support\Security\Hash;
+
+if (Hash::needsRehash($hashedPassword, ['cost' => 12])) {
+    $newHashedPassword = Hash::make($plainPassword, ['cost' => 12]);
+    // Atualize o hash armazenado no banco de dados
+}
+```

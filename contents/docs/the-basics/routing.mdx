@@ -1,0 +1,288 @@
+---
+title: "Roteamento"
+description: "No Lithe, você pode definir rotas para controlar como seu aplicativo responde às solicitações dos clientes usando URIs (caminhos) e métodos HTTP como GET, POST, entre outros. o Lithe oferece flexibilidade e simplicidade para definir e organizar suas rotas. Personalize o comportamento do seu aplicativo facilmente, conectando rotas a funções ou controladores específicos para manipular requisições de forma eficiente."
+---
+
+## Definindo rotas
+
+No Lithe, você define como seu aplicativo responde a solicitações dos clientes para endpoints específicos usando URIs (caminhos) e métodos HTTP como GET, POST, entre outros. Métodos como `$app->get()` são usados para lidar com solicitações GET, `$app->post()` para POST, e `$app->use()` para aplicar middleware, que são funções de callback para manipulação adicional das requisições.
+
+Esses métodos especificam funções de callback, também chamadas de "manipuladores", que são acionadas quando o aplicativo recebe uma solicitação para a rota e método HTTP definidos. Cada rota no Lithe pode ter uma ou mais funções de manipulador, que são executadas quando a rota é correspondida. É importante utilizar `$next()` para passar o controle para a próxima função de callback, especialmente quando há várias funções definidas.
+
+Para definir rotas no Lithe, utilizamos a estrutura:
+
+```php
+$app->METHOD($PATH, $HANDLER);
+```
+
+Onde: 
+    - `$app` é uma instância da classe `Lithe\App`.
+    - `METHOD` é o método HTTP (em letras minúsculas) como `get`, `post`, etc.
+    - `$PATH` é o caminho na URL que dispara a função.
+    - `$HANDLER` é a função executada quando a rota é correspondida.
+
+Veja abaixo um exemplo simples de rota no Lithe:
+
+```php {3,4,5}
+$app = new \Lithe\App;
+
+$app->get('/', function ($req, $res) {
+    return $res->send('Hello World!');
+});
+
+$app->listen(); 
+```
+
+Neste exemplo, definimos uma rota que responde com "Hello World!" quando uma solicitação GET é feita para a página inicial
+
+---
+
+## Métodos de Rota
+
+Um método de rota é derivado de um dos métodos HTTP e é anexado a uma instância da classe `App` do Lithe.
+
+O código a seguir é um exemplo de rotas que são definidas na raiz do aplicativo.
+
+```php
+// Definindo uma rota GET
+$app->get('/', function ($req, $res) {
+    return $res->send('Hello World!');
+});
+
+// Definindo uma rota POST
+$app->post('/', function ($req, $res) {
+    return $res->send('Got a POST request');
+});
+
+// Definindo uma rota PUT
+$app->put('/user', function ($req, $res) {
+    return $res->send('Got a PUT request at /user');
+});
+
+// Definindo uma rota DELETE
+$app->delete('/user', function ($req, $res) {
+    return $res->send('Got a DELETE request at /user');
+});
+```
+
+Neste exemplo, definimos rotas para os métodos HTTP GET, POST, PUT e DELETE. Cada rota possui um caminho específico (`$PATH`) e um manipulador (`$HANDLER`), que é uma função que recebe uma solicitação (`Request`) e uma resposta (`Response`).
+
+### Métodos de Rota disponíveis
+
+O Lithe permite que você registre rotas que respondem a qualquer verbo HTTP
+
+```php
+$app->get($path, $handler);
+$app->post($path, $handler);
+$app->put($path, $handler);
+$app->delete($path, $handler);
+$app->patch($path, $handler);
+$app->options($path, $handler);
+$app->head($path, $handler);
+```
+
+Às vezes, você pode precisar registrar uma rota que responda a múltiplos verbos HTTP. Você pode fazer isso usando o método `match`. Ou, você pode até registrar uma rota que responda a todos os verbos HTTP usando o método `any`:
+
+```php
+$app->match(['get', 'post'], '/', function ($req, $res) {
+    // ...
+});
+ 
+$app->any('/', function ($req, $res) {
+    // ...
+});
+```
+---
+
+## Definindo Parâmetros nas rotas
+
+Os parâmetros de rota são partes da URL que têm nomes específicos e são usadas para capturar valores. Esses valores capturados são colocados na propriedade `params` de uma instância da classe `Request`, onde cada nome de parâmetro de rota se torna uma chave com seu respectivo valor.
+```
+Route path: /users/:userId/books/:bookId
+Request URL: http://localhost:8000/users/34/books/8989
+$req->params: { "userId": "34", "bookId": "8989" }
+```
+
+### Parâmetro Simples
+Para definir rotas com parâmetros de rota, basta especificar os parâmetros de rota no caminho da rota, conforme mostrado abaixo.
+
+```php
+$app->get('/users/:userId/books/:bookId', function ($req, $res) {
+    $res->send($req->params);
+});
+```
+
+> O nome dos parâmetros de rota deve ser composto por “caracteres de palavra” ([A-Za-z0-9_]).
+
+### Parâmetros Tipados
+
+#### Definição de Parâmetros Tipados
+
+Você pode definir parâmetros tipados para garantir que os valores atendam a critérios específicos.
+
+```php
+$app->get('/user/:id=int', function ($req, $res) {
+    $res->send($req->params);
+});
+```
+
+No exemplo acima, o parâmetro `id` deve ser um número inteiro (`int`). Se a solicitação recebida não corresponder às restrições do padrão da rota, uma resposta HTTP 404 será retornada. 
+
+Os tipos de dados dos parâmetros são convertidos automaticamente nos bastidores, garantindo que o valor do parâmetro seja do tipo especificado.
+
+#### Uso do Operador `|` para Tipos Opcionais
+
+Você também pode usar o operador `|` para definir tipos opcionais nos parâmetros de rota, permitindo diferentes tipos ou formatos.
+
+```php
+$app->get('/user/:identifier=int|username', function ($req, $res) {
+    $res->send($req->params);
+});
+```
+
+No exemplo acima, `:identifier` pode ser um número inteiro (`int`) ou um username que corresponde a (`[a-zA-Z0-9_]{3,16}`).
+
+
+#### Parâmetros com Expressões Regulares
+
+Para ter mais controle sobre a string exata que pode ser correspondida por um parâmetro de rota, você pode usar expressões regulares com o tipo genérico `regex`.
+
+```php
+$app->get('/user/:name=regex<[a-z]+>', function ($req, $res) {
+    $res->send($req->params);
+});
+```
+
+Neste exemplo, o parâmetro `name` deve atender à expressão regular `[a-z]+`, que corresponde a uma sequência de letras minúsculas.
+
+Essa abordagem permite maior flexibilidade e controle na definição de rotas, garantindo que os parâmetros atendam a critérios específicos.
+
+#### Tipos de parâmetros
+
+Aqui está a equivalência dos tipos de parâmetros listados com as expressões regulares correspondentes:
+
+- **int**: `[0-9]+` (um ou mais dígitos numéricos)
+- **string**: `[^/]+` (um ou mais caracteres que não sejam barra `/`)
+- **uuid**: `[a-f\d]{8}(-[a-f\d]{4}){4}[a-f\d]{8}` (UUID no formato padrão)
+- **date**: `\d{4}\-\d{1,2}\-\d{1,2}` (data no formato YYYY-MM-DD)
+- **email**: `[^\s@]+@[^\s@]+\.[^\s@]+` (endereço de email válido)
+- **bool**: `(false|true|0|1)` (valores booleanos: false, true, 0 ou 1)
+- **float**: `[-+]?[0-9]*\.?[0-9]+` (número de ponto flutuante)
+- **slug**: `[a-z0-9]+(?:-[a-z0-9]+)*` (slug válido, usado em URLs)
+- **username**: `[a-zA-Z0-9_]{3,16}` (username com letras, números e `_`, entre 3 e 16 caracteres)
+- **tel**: `\+?[\d\-\(\)]+` (número de telefone, opcionalmente começando com `+` e contendo dígitos, hífens e parênteses)
+- **alphanumeric**: `[a-zA-Z0-9]+` (cadeia alfanumérica, letras e números)
+- **regex\<Pattern\>**: Qualquer expressão regular válida que você queira aplicar como filtro para o parâmetro. Por exemplo, `regex<(true|false)>` para aceitar apenas `true` ou `false`
+
+Essas expressões regulares são usadas para validar e capturar os parâmetros nas rotas, garantindo que eles correspondam aos critérios esperados. Se um parâmetro não corresponder ao padrão especificado para seu tipo, pode resultar em erro 404.
+
+--- 
+
+## Manipuladores de Rota
+Você pode fornecer múltiplas funções de callback que se comportam como middlewares para lidar com uma requisição. A única exceção é que esses callbacks podem invocar `$next()` para chamar os callbacks de rota restantes. Você pode usar esse mecanismo para impor pré-condições em uma rota e, em seguida, passar o controle para rotas subsequentes se não houver motivo para continuar com a rota atual.
+
+Os manipuladores de rota podem estar na forma de uma função, uma callable array ou combinações de ambos, conforme mostrado nos exemplos a seguir.
+
+Uma única função de callback pode lidar com uma rota. Por exemplo:
+
+```php
+$app->get('/example/a', function ($req, $res) {
+  $res->send('Hello from A!');
+})
+```
+
+Mais de uma função de callback pode lidar com uma rota (certifique-se de especificar `$next` como terceiro parâmetro e chamar ele para invocar a próxima função no <a href="https://pt.wikipedia.org/wiki/Canaliza%C3%A7%C3%A3o_(software)" target="_blank">pipeline</a>
+ de middleware ou controlador). Por exemplo:
+
+```php
+$app->get('/example/b', function ($req, $res, $next) {
+  error_log('A resposta será enviada pela próxima função ...');
+  $next();
+}, function ($req, $res) {
+  $res->send('Hello from B!');
+})
+```
+Uma callable array pode lidar com uma rota. Por exemplo:
+```php
+class UserController
+{
+    public static function index ($req, $res) {
+        return $res->view('users.index');
+    }
+}
+
+$app->get('/user', [UserController::class, 'index']);
+```
+
+A combinação de funções independentes e callable array pode lidar com uma rota. Por exemplo:
+```php
+$app->get('/user', function ($req, $res, $next) {
+  error_log('A resposta será enviada pela próxima função ...');
+  $next();
+}, [UserController::class, 'index']);
+```
+
+---
+
+## Manipuladores de Rota Encadeáveis
+
+Você também pode criar manipuladores de rota encadeáveis para um caminho de rota usando o metódo `route`. Como o caminho é especificado em um único local, criar rotas modulares é útil para reduzir redundâncias e erros de digitação. Para mais informações sobre rotas, consulte a [documentação da classe `\Lithe\Http\Router`](/reference/lithe/router).
+
+Aqui está um exemplo de manipuladores de rota encadeados que são definidos usando o metódo `route`.
+```php
+$app->route('/livro')
+->get(function ($req, $res) {
+    $res->send('Obter um livro aleatório');
+  })
+  ->post(function ($req, $res) {
+    $res->send('Adicionar um livro');
+  })
+  ->put(function ($req, $res) {
+    $res->send('Atualizar o livro');
+  });
+```
+
+---
+
+## A classe `Lithe\Http\Router`
+Use a classe `Router` do Lithe para criar manipuladores de rota modulares e montáveis. Uma instância de `Router` é um sistema completo de middleware e roteamento; por esse motivo, ela é frequentemente referida como uma "mini-aplicação".
+
+O exemplo a seguir cria um roteador como um módulo, carrega uma função de middleware nele, define algumas rotas e monta o módulo do roteador em um caminho na aplicação principal.
+
+Crie um arquivo de roteador chamado `birds.php` no diretório da aplicação (`src`), com o seguinte conteúdo:
+
+```php:src/birds.php showLineNumbers
+<?php 
+
+$router = new \Lithe\Http\Router;
+
+// Middleware específico para este roteador
+$timeLog = function ($req, $res, $next) {
+    echo 'Time: ' . date('Y-m-d');
+    $next();
+};
+
+$router->use($timeLog);
+
+// Define a rota da página inicial
+$router->get('/', function ($req, $res) {
+    $res->send('Página inicial dos pássaros');
+});
+
+// Define a rota sobre
+$router->get('/about', function ($req, $res) {
+    $res->send('Sobre os pássaros');
+});
+
+return $router;
+```
+Então, carregue o módulo do roteador na aplicação:
+```php:src/App.php
+$birds = require(__DIR__ .'/birds.php');
+
+// ...
+
+$app->use('/birds', $birds);
+```
+
+A aplicação agora será capaz de lidar com solicitações para `/birds` e `/birds/about`, bem como chamar a função de middleware `$timeLog`, que é específica para a rota.

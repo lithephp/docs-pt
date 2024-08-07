@@ -1,0 +1,65 @@
+---
+title: Instalação do Lithe
+description: Aprenda como instalar o Lithe em seu ambiente de desenvolvimento utilizando o Composer.
+---
+
+## Pré-requisitos
+
+Antes de iniciar, verifique se você possui o Composer instalado em sua máquina. Caso não tenha, você pode baixá-lo e instalá-lo a partir do <a href="https://getcomposer.org/" target="_blank">site oficial do Composer</a>.
+
+---
+
+## Instalação via Composer
+
+Para criar um novo projeto Lithe, execute o seguinte comando no terminal:
+
+```bash
+composer create-project lithecore/lithe example-app
+```
+
+Isso criará um novo diretório `example-app` e instalará o Lithe junto com todas as dependências necessárias.
+
+---
+
+## Configuração do Ambiente
+
+Após a instalação, navegue até o diretório do projeto:
+
+```bash
+cd example-app
+```
+
+### Configuração do Servidor Web
+
+Para executar seu aplicativo Lithe, você pode usar o servidor web embutido do PHP. Inicie o servidor com o seguinte comando:
+
+```bash
+php line serve
+```
+
+Agora, seu aplicativo estará acessível em `http://localhost:8000`.
+ 
+---
+
+## Estrutura do Projeto
+
+O projeto Lithe gerado pelo Composer seguirá uma estrutura organizada que facilita o desenvolvimento e a manutenção da aplicação. Aqui está uma visão geral da estrutura típica de diretórios:
+
+- **`src/`**: Contém o código-fonte principal da aplicação.
+  - **`views/`**: Diretório para armazenar os arquivos de templates utilizados pelo motor de visualização.
+  - **`App.php`**: Arquivo principal onde a aplicação é configurada e inicializada.
+  - **`models/`**: Modelos que representam a estrutura de dados da aplicação.
+  - **`database/`**: Contém as migrações de banco de dados e configurações relacionadas.
+  - **`http/`**: Funcionalidades relacionadas à camada HTTP da aplicação.
+    - **`controllers/`**: Controladores que respondem às requisições HTTP e interagem com os modelos.
+    - **`middlewares/`**: Funções de middleware que interceptam e manipulam as requisições HTTP.
+- **`public/`**: Ponto de entrada para o servidor web.
+  - **`index.php`**: Arquivo inicial que direciona todas as requisições HTTP para a aplicação.
+
+Esta estrutura separa claramente as responsabilidades da aplicação, facilitando a organização e a expansão do projeto conforme ele cresce. Cada diretório possui um propósito específico, garantindo uma arquitetura limpa e modular para o desenvolvimento eficiente.
+
+---
+
+## Próximos Passos
+
+Após a instalação, você pode começar a desenvolver sua aplicação utilizando o Lithe. Explore a documentação para aprender mais sobre roteamento, middleware, controllers, uso de banco de dados e muito mais.

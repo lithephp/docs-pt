@@ -1,0 +1,95 @@
+---
+title: Modelos
+description: "Os modelos no Lithe representam a camada de acesso aos dados da aplicação. Eles encapsulam a lógica de negócios e a interação com o banco de dados, oferecendo uma abstração para realizar consultas e manipulações nos dados."
+---
+
+## Criando Modelos
+
+No Lithe, modelos são criados utilizando o comando Line `make:model`. Este comando cria um arquivo de modelo dentro do diretório `src/models/`.
+
+```bash
+php line make:model NomeDoModelo --template=eloquent
+```
+
+**Onde:**
+- `NomeDoModelo`: Nome do modelo a ser criado.
+- `--template=Template`: Opcional. Define o template a ser usado para gerar o modelo. Caso não especificado, será usado o template definido na variável de ambiente `DB_CONNECTION_METHOD`.
+
+### Templates de Modelo
+
+O Lithe suporta diferentes templates para modelos, adaptados para diferentes ORMs ou abordagens de banco de dados:
+
+- **eloquent**: Template para modelos utilizando o ORM Eloquent.
+- **plain**: Template padrão para modelos customizados ou genéricos.
+
+### Arquivo de Modelo (Eloquent)
+
+Ao criar um modelo usando o template Eloquent, você pode seguir este exemplo básico para um modelo de usuário:
+
+```php
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class User extends Model
+{
+    protected $table = 'users';
+
+    protected $fillable = [
+        'name', 'email',
+    ];
+
+    // Your model logic goes here
+}
+```
+
+### Arquivo de Modelo (Padrão)
+
+Para modelos sem um ORM específico, você pode utilizar o template padrão e implementar a lógica do modelo conforme necessário:
+
+```php
+namespace App\Models;
+
+class User
+{
+    public $id;
+    public $name;
+    public $email;
+
+    // Your model logic goes here
+}
+```
+
+---
+
+## Utilização Automática de Modelos
+
+No Lithe, os modelos localizados em `src/models` são automaticamente disponibilizados para uso em toda a aplicação, sem a necessidade de importação explícita nos seus arquivos.
+
+Suponha que você tenha um modelo Eloquent `User` definido em `src/models/User.php`. Você pode utilizá-lo diretamente em suas rotas sem necessidade de qualquer inclusão manual:
+
+```php
+use App\Models\User;
+
+$app->get('/users/:id=int', function ($req, $res) {
+    $params = $req->params;
+    $id = $params->id;
+
+    // Exemplo de uso do modelo User com Eloquent
+    $user = User::find($id);
+
+    if (!$user) {
+        return $res->status(404)
+            ->json(['error' => 'Usuário não encontrado']);
+    }
+
+    // Retorna os dados do usuário como JSON, por exemplo
+    return $res->json($user);
+});
+```
+
+Dessa forma, os modelos são carregados dinamicamente e estão prontos para serem utilizados em suas rotas, proporcionando uma integração simplificada e eficiente com o banco de dados.
+
+---
+
+Os modelos no Lithe são essenciais para a organização e interação com os dados da aplicação, oferecendo flexibilidade e abstração para trabalhar com diferentes ORMs ou lógicas de banco de dados.
