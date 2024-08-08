@@ -4,7 +4,7 @@ Bem-vindo ao site oficial da documentação do framework Lithe. Lithe é um fram
 
 ## Primeiros Passos
 
-Para começar com o Lithe, visite nosso [Guia de Introdução](https://pt.lithecore.vercel.app/docs/pt/getting-started/introduction), onde você encontrará tudo o que precisa para configurar sua primeira aplicação Lithe.
+Para começar com o Lithe, visite nosso [Guia de Introdução](https://pt-lithecore.vercel.app/docs/get-started/introduction), onde você encontrará tudo o que precisa para configurar sua primeira aplicação Lithe.
 
 ## Licença
 
