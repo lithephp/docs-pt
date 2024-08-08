@@ -16,7 +16,7 @@ export default function Footer() {
           O código fonte está disponível no{" "}
           <Link
             className="px-1 underline underline-offset-2"
-            href="https://github.com/lithecore/framework"
+            href="https://github.com/lithecore"
             target="_blank"
           >
             GitHub
