@@ -8,7 +8,7 @@ export default function Footer() {
         Construído por{" "}
           <Link
             className="px-1 underline underline-offset-2"
-            href="https://instagram.com/williamhumbwavali"
+            href="https://instagram.com/redeedite"
             target="_blank"
           >
             William Humbwavali
