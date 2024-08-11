@@ -1,11 +1,21 @@
 ---
-title: Sessão
-description: O middleware de sessão no Lithe gerencia a configuração e o controle das sessões de usuário.
+title: Sessão  
+description: O middleware de sessão no Lithe gerencia a configuração e o controle das sessões de usuário.  
 ---
+
+## Instalação
+
+Para instalar o middleware de sessão para o Lithe, use o comando de instalação do módulo Line:
+
+```bash
+php line module:install lithe-session
+```
+
+Este comando baixará e instalará o middleware de sessão em seu projeto.
 
 ## Usando o Middleware de Sessão
 
-O Lithe possui um middleware de sessão para gerenciar as sessões dos usuários e suas variáveis. Para configurar o middleware em sua aplicação, adicione-o com o método `use()`:
+O Lithe inclui um middleware de sessão para gerenciar sessões de usuário e suas variáveis. Para configurar o middleware em sua aplicação, adicione-o usando o método `use()`:
 
 ```php
 use Lithe\Middleware\Session\session;
@@ -13,17 +23,17 @@ use Lithe\Middleware\Session\session;
 $app->use(session());
 ```
 
-Isso garante que a sessão seja corretamente iniciada e configurada para todas as requisições.
+Isso garante que a sessão seja iniciada e configurada corretamente para todas as requisições.
 
 ### Configurando o Middleware de Sessão
 
 O middleware de sessão pode ser configurado com os seguintes parâmetros:
 
-- **lifetime**: Define o tempo de vida da sessão em segundos. O padrão é 2592000 segundos (30 dias).
-- **domain**: Define o domínio para o qual o cookie da sessão é válido. O padrão é `null`.
-- **secure**: Indica se o cookie da sessão deve ser enviado apenas por conexões seguras (HTTPS). O padrão é `false`.
-- **httponly**: Indica se o cookie da sessão deve ser acessível apenas através de requisições HTTP. O padrão é `true`.
-- **samesite**: Define o atributo SameSite do cookie da sessão. Pode ser `'Lax'`, `'Strict'`, ou `'None'`. O padrão é `'Lax'`.
+- **lifetime**: Define a duração da sessão em segundos. O padrão é 2592000 segundos (30 dias).
+- **domain**: Define o domínio para o qual o cookie de sessão é válido. O padrão é `null`.
+- **secure**: Indica se o cookie de sessão deve ser enviado apenas por conexões seguras (HTTPS). O padrão é `false`.
+- **httponly**: Indica se o cookie de sessão deve ser acessível apenas através de requisições HTTP. O padrão é `true`.
+- **samesite**: Define o atributo SameSite do cookie de sessão. Pode ser `'Lax'`, `'Strict'`, ou `'None'`. O padrão é `'Lax'`.
 - **path**: Define o caminho onde os arquivos de sessão serão armazenados. O padrão é `'storage/framework/session'`.
 
 Exemplo de configuração:
@@ -53,7 +63,7 @@ Após a configuração, você pode acessar e manipular variáveis de sessão atr
 
 - **get(string $name, mixed $default = null): mixed**
 
-  Obtém o valor de uma variável de sessão. Retorna o valor padrão se a variável não estiver definida.
+  Recupera o valor de uma variável de sessão. Retorna o valor padrão se a variável não estiver definida.
 
   ```php
   $user = $req->session->get('user');
@@ -85,7 +95,7 @@ Após a configuração, você pode acessar e manipular variáveis de sessão atr
 
 - **regenerate(bool $deleteOldSession = true): bool**
 
-  Regenera o ID da sessão. Se `$deleteOldSession` for `true`, a antiga sessão será deletada.
+  Regenera o ID da sessão. Se `$deleteOldSession` for `true`, a sessão antiga será deletada.
 
   ```php
   $req->session->regenerate();
@@ -93,7 +103,7 @@ Após a configuração, você pode acessar e manipular variáveis de sessão atr
 
 - **getId(): string|false**
 
-  Obtém o ID da sessão atual.
+  Recupera o ID da sessão atual.
 
   ```php
   $sessionId = $req->session->getId();
@@ -109,7 +119,7 @@ Após a configuração, você pode acessar e manipular variáveis de sessão atr
 
 - **all(): array**
 
-  Obtém todas as variáveis de sessão.
+  Recupera todas as variáveis de sessão.
 
   ```php
   $allSessionData = $req->session->all();
@@ -123,7 +133,7 @@ Após a configuração, você pode acessar e manipular variáveis de sessão atr
   $hasUser = $req->session->has('user');
   ```
 
-### Considerações
+## Considerações
 
-- **Criação do Diretório de Sessão**: O middleware garante que o diretório para armazenamento das sessões exista. Se não existir, ele será criado.
-- **Tratamento de Erros**: Caso ocorra um erro durante a configuração ou o início da sessão, o middleware irá registrá-lo e continuar a execução.
+- **Criando o Diretório de Sessão**: O middleware garante que o diretório para armazenar sessões exista. Se não existir, ele será criado.
+- **Tratamento de Erros**: Se ocorrer um erro durante a configuração ou inicialização da sessão, o middleware o registrará e continuará a execução.
