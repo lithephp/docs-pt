@@ -1,21 +1,11 @@
 ---
 title: CSRF  
-description: O middleware CSRF (Cross-Site Request Forgery) no Lithe protege sua aplicação contra ataques que tentam realizar ações em nome do usuário sem sua autorização.  
+description: O middleware CSRF (Cross-Site Request Forgery) no Lithe protege sua aplicação contra ataques que tentam realizar ações em nome do usuário sem a sua autorização.  
 ---
-
-## Instalação
-
-Para instalar o middleware CSRF para o Lithe, use o comando de instalação do módulo Lithe Line:
-
-```bash
-php line module:install csrf
-```
-
-Este comando baixará e instalará o middleware CSRF em seu projeto.
 
 ## Usando o Middleware CSRF
 
-O middleware CSRF no Lithe é projetado para proteger sua aplicação contra ataques de falsificação de solicitação entre sites. Para configurá-lo, adicione-o à sua aplicação usando o método `use()` em uma instância da aplicação Lithe e forneça um array de configurações:
+O middleware CSRF no Lithe é projetado para proteger sua aplicação contra ataques de falsificação de requisições entre sites (CSRF). Para configurá-lo, adicione-o à sua aplicação usando o método `use()` em uma instância do aplicativo Lithe e forneça um array de configurações:
 
 ```php
 use Lithe\Middleware\Security\csrf;
@@ -25,7 +15,7 @@ $app->use(csrf([
 ]));
 ```
 
-Isso garante que todas as solicitações que alteram o estado da aplicação (como POST, PUT, DELETE) contenham um token CSRF válido, conforme configurado.
+Isso garante que todas as requisições que alteram o estado da aplicação (como POST, PUT, DELETE) contenham um token CSRF válido, conforme configurado.
 
 ### Configurações do Middleware
 
@@ -33,9 +23,11 @@ O middleware CSRF pode ser configurado com os seguintes parâmetros em um array:
 
 - **name** (string): O nome do token CSRF. O padrão é `_token`.
 - **expire** (int): O tempo de expiração do token em segundos. O padrão é 600 segundos.
-- **checkBody** (bool): Indica se o token deve ser verificado no corpo da solicitação. O padrão é `false`.
-- **bodyMethods** (array): Métodos HTTP para os quais a validação do token deve ser aplicada se a configuração `checkBody` estiver ativada. O padrão é `['POST']`.
-- **regenerate** (bool): Indica se o token deve ser regenerado a cada solicitação. O padrão é `false`.
+- **checkBody** (bool): Indica se o token deve ser verificado no corpo da requisição. O padrão é `false`.
+- **bodyMethods** (array): Métodos HTTP para os quais a validação do token deve ser aplicada se a configuração `checkBody` estiver habilitada. O padrão é `['POST']`.
+- **regenerate** (bool): Indica se o token deve ser regenerado a cada requisição. O padrão é `false`.
+
+Exemplo de configuração:
 
 ```php
 $app->use(csrf([
@@ -52,7 +44,7 @@ $app->use(csrf([
 O middleware CSRF gera um token único para cada sessão. Você pode gerar e obter o token usando os seguintes métodos:
 
 - **generateToken(bool $force = false): string**  
-  Gera um novo token CSRF e o armazena na sessão. Se `$force` for `true`, um novo token será gerado mesmo que um já exista.
+  Gera um novo token CSRF e o armazena na sessão. Se `$force` for `true`, um novo token será gerado mesmo que já exista um.
 
   ```php
   $token = $req->csrf->generateToken();
@@ -75,10 +67,10 @@ echo $req->csrf->getTokenField();
 
 ### Verificando Tokens CSRF
 
-O middleware verifica automaticamente o token em solicitações POST e outros métodos especificados em `bodyMethods` quando a opção `checkBody` está ativada. Se o token for inválido ou estiver ausente, uma exceção HTTP 419 será lançada. Se `checkBody` estiver desativado, você pode usar os seguintes métodos para verificar a validade do token:
+O middleware verifica automaticamente o token em requisições POST e outros métodos especificados em `bodyMethods` quando a opção `checkBody` está habilitada. Se o token for inválido ou estiver ausente, uma exceção HTTP 419 será lançada. Se `checkBody` estiver desativado, você pode usar os seguintes métodos para verificar a validade do token:
 
 - **verifyToken(string $token, bool $checkBody = false): bool**  
-  Verifica se o token CSRF fornecido é válido. Se `$checkBody` for `true`, verifica o token no corpo da solicitação; caso contrário, verifica na sessão.
+  Verifica se o token CSRF fornecido é válido. Se `$checkBody` for `true`, ele verifica o token no corpo da requisição; caso contrário, verifica na sessão.
 
   ```php
   $isValid = $req->csrf->verifyToken($token);
@@ -87,7 +79,7 @@ O middleware verifica automaticamente o token em solicitações POST e outros m�
 ### Funções de Manipulação de Token
 
 - **invalidate(): void**  
-  Destrói o token CSRF e sua variável de sessão associada, invalidando-o.
+  Destroi o token CSRF e sua variável de sessão associada, invalidando-o.
 
   ```php
   $req->csrf->invalidate();
@@ -102,8 +94,8 @@ O middleware verifica automaticamente o token em solicitações POST e outros m�
 
 ## Considerações
 
-- **Segurança**: Certifique-se de que o token CSRF esteja incluído em todos os formulários que enviam dados modificáveis e em requisições AJAX para prevenir ataques CSRF. A validação e inclusão adequada do token são essenciais para uma proteção adequada.
-- **Expiração do Token**: Configure o tempo de expiração do token cuidadosamente para equilibrar segurança e usabilidade. Tokens expirados são regenerados para evitar problemas de autenticação.
-- **Verificação do Corpo**: Se `checkBody` estiver ativado, o token será verificado tanto nos cabeçalhos quanto no corpo da solicitação. Isso é útil para APIs que recebem tokens via POST, PUT ou DELETE, mas pode adicionar sobrecarga adicional.
-- **Regeneração do Token**: Quando `regenerate` está ativado, um novo token é gerado a cada solicitação. Isso pode aumentar a segurança, mas deve ser usado com cautela para não impactar a experiência do usuário.
-- **Tratamento de Erros**: Esteja preparado para lidar com exceções HTTP 419 lançadas quando o token CSRF for inválido ou estiver ausente. Isso pode incluir redirecionar para uma página de erro ou exibir uma mensagem apropriada para o usuário. Para mais informações sobre o tratamento de exceções HTTP, consulte a [documentação sobre Exceções HTTP](/docs/digging-deep/http-exceptions).
+- **Segurança**: Certifique-se de que o token CSRF esteja incluído em todos os formulários que enviam dados modificáveis e em requisições AJAX para prevenir ataques CSRF. A validação e inclusão adequada do token são essenciais para proteção adequada.
+- **Expiração do Token**: Configure o tempo de expiração do token com cuidado para equilibrar segurança e usabilidade. Tokens expirados são regenerados para evitar problemas de autenticação.
+- **Verificação no Corpo**: Se `checkBody` estiver habilitado, o token será verificado tanto nos cabeçalhos quanto no corpo da requisição. Isso é útil para APIs que recebem tokens via POST, PUT ou DELETE, mas pode adicionar uma sobrecarga extra.
+- **Regeneração do Token**: Quando `regenerate` está habilitado, um novo token é gerado a cada requisição. Isso pode aumentar a segurança, mas deve ser usado com cautela para não impactar a experiência do usuário.
+- **Tratamento de Erros**: Esteja preparado para lidar com exceções HTTP 419 lançadas quando o token CSRF é inválido ou ausente. Isso pode incluir redirecionar para uma página de erro ou exibir uma mensagem apropriada para o usuário. Para mais informações sobre o tratamento de exceções HTTP, consulte a [documentação de Exceções HTTP](/docs/digging-deep/http-exceptions).
