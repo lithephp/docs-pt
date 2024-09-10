@@ -1,0 +1,72 @@
+---
+title: Lithe\Console\Line
+description: A classe `Line` gerencia e executa comandos de console no Lithe, integrando-se com o Symfony Console. Ela permite registrar, criar e executar comandos personalizados de maneira eficiente.
+---
+
+## Métodos
+
+### `use(array $commands)`
+
+- **Descrição:** Registra múltiplos comandos para a aplicação de console.
+
+- **Parâmetros:**
+
+    - **`$commands`**: Um array de instâncias de comandos (`SymfonyCommand`). Cada item deve ser uma instância válida de `SymfonyCommand`.
+
+- **Exceções:**
+
+    - **`InvalidArgumentException`**: Se algum item no array não for uma instância de `SymfonyCommand`.
+
+```php
+Line::use([
+    $ServeCommand,
+    $migrateCommand
+]);
+```
+
+### `listen(array $args = [])`
+
+- **Descrição:** Executa a aplicação de console com base nos argumentos fornecidos.
+
+- **Parâmetros:**
+
+    - **`$args`** (opcional): Argumentos da linha de comando que serão processados pela aplicação de console.
+
+- **Retorna:** Um código de status (`int`), onde `0` significa sucesso e `1` indica uma falha.
+
+```php
+$status = Line::listen($argv);
+```
+
+### `create(string $name, string $description, callable $handler, array $arguments = [], array $options = [])`
+
+- **Descrição:** Cria um comando de console personalizado.
+
+- **Parâmetros:**
+
+    - **`$name`**: O nome do comando.
+    - **`$description`**: A descrição do comando.
+    - **`$handler`**: Função de callback executada quando o comando é chamado.
+    - **`$arguments`** (opcional): Argumentos para o comando.
+    - **`$options`** (opcional): Opções para o comando.
+
+- **Retorna:** Um objeto do tipo `SymfonyCommand`.
+
+```php
+$command = Line::create(
+    'make:migration',
+    'Create a new migration file',
+    function(InputInterface $input, OutputInterface $output) {
+        $output->writeln('Migration created!');
+        return 0;
+    }
+);
+```
+
+### `initialize()`
+
+- **Descrição:** Inicializa a instância estática de `SymfonyApplication` para garantir que a aplicação esteja pronta para adicionar e executar comandos. Este método é chamado automaticamente se a aplicação ainda não estiver inicializada.
+
+```php
+Line::initialize();
+```

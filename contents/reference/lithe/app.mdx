@@ -1,5 +1,5 @@
 ---
-title: App  
+title: Lithe\App  
 description: A classe `Lithe\App` é o ponto de entrada principal para a aplicação no Lithe. Ela gerencia o ciclo de vida da aplicação, configurações de middleware, rotas e responde a requisições HTTP.
 ---
 
@@ -44,61 +44,61 @@ $app->listen();
     - **`$path`** - Caminho da rota.
     - **`$handler`** - Manipuladores (callbacks) para a rota.
   - **Métodos Disponíveis:** GET, POST, PUT, DELETE, HEAD, PATCH
-    ```php
-    $app->get('/welcome', function($req, $res) {
-        $res->send('Bem-vindo!');
-    });
+```php
+$app->get('/welcome', function($req, $res) {
+    $res->send('Bem-vindo!');
+});
 
-    $app->post('/submit', function($req, $res) {
-        $res->send('Formulário Enviado');
-    });
-    ```
+$app->post('/submit', function($req, $res) {
+    $res->send('Formulário Enviado');
+});
+```
 
 ### `use(string|callable|Router|array ...$middleware): void`
   - **Descrição:** Adiciona um middleware à aplicação. Pode ser uma função de callback, uma string para um caminho de middleware, um objeto `Router`, ou um array de middlewares.
   - **Parâmetros:**
     - **`$middleware`** - Middleware ou roteador a ser adicionado.
-    ```php
-    $app->use('/api', function($req, $res, $next) {
-        // Lógica do middleware
-        $next();
-    });
-    ```
+```php
+$app->use('/api', function($req, $res, $next) {
+    // Lógica do middleware
+    $next();
+});
+```
 
 ### `set(string $key, mixed $value): void`**
   - **Descrição:** Define uma configuração global para a aplicação.
   - **Parâmetros:**
     - **`$key`** - Chave da configuração.
     - **`$value`** - Valor da configuração.
-    ```php
-    $app->set('view engine', 'blade');
-    ```
+```php
+$app->set('view engine', 'blade');
+```
 
 ### `httpException(int $status, callable $handler): void`
   - **Descrição:** Define um manipulador específico para exceções HTTP com base no código de status.
   - **Parâmetros:**
     - **`$status`** - Código de status HTTP para o qual o manipulador será definido.
     - **`$handler`** - Manipulador para tratar a exceção HTTP.
-    ```php
-    $app->httpException(404, function($req, $res) {
-        $res->status(404)->send('Página Não Encontrada');
-    });
-    ```
+```php
+$app->httpException(404, function($req, $res) {
+    $res->status(404)->send('Página Não Encontrada');
+});
+```
 
 ### `listen(): void`
   - **Descrição:** Permite que a aplicação ouça e responda às solicitações HTTP.
-    ```php
+```php
     $app->listen();
-    ```
+```
 
 ### `route(string $path): object`
   - **Descrição:** Cria um objeto para definir rotas com um prefixo específico.
   - **Parâmetros:**
     - **`$path`** - Prefixo da rota.
   - **Retorno:** Um objeto anônimo para definir rotas com o prefixo fornecido.
-    ```php
-    $app->route('/api')
-        ->get(function($req, $res) {
-            $res->send('Lista de Usuários');
-        });
-    ```
+```php
+$app->route('/api')
+    ->get(function($req, $res) {
+          $res->send('Lista de Usuários');
+    });
+```

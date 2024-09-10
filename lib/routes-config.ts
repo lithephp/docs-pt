@@ -127,6 +127,14 @@ export const REFERENCE_ROUTES: Array<RouteInterface> = [
         href: "/app",
       },
       {
+        title: "Line",
+        href: "/line",
+      },
+      {
+        title: "Manager",
+        href: "/manager",
+      },
+      {
         title: "Request",
         href: "/request",
       },
@@ -141,7 +149,6 @@ export const REFERENCE_ROUTES: Array<RouteInterface> = [
     ],
   },
 ];
-
 
 
 export const FLATTEND_ROUTES = flattendRoutes(ROUTES);
