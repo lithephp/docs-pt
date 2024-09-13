@@ -16,7 +16,7 @@ use App\Models\User;
 $app = new \Lithe\App;
 
 $app->get('/users/:id', function ($req, $res) {
-    $id = $req->params->id;
+    $id = $req->param('id');
     $user = User::find($id);
     
     if (!$user) {
