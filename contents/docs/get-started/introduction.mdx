@@ -12,10 +12,6 @@ A palavra "lithe", em inglês, evoca **flexibilidade e agilidade**, capturando a
 Veja como é simples criar uma rota que busca um usuário pelo ID:
 
 ```php
-use App\Models\User;
-use function Lithe\Orbs\view;
-use function Lithe\Orbs\Http\Router\get;
-
 get('/users/:id', function ($req, $res) {
     $id = $req->param('id');
     $user = User::find($id);
