@@ -17,10 +17,10 @@ $app->get('/', function ($req) {
 });
 ```
 
-Você também pode especificar a interface `Lithe\Contracts\Http\Request` como tipo no fechamento de uma rota.
+Você também pode especificar a interface `Lithe\Http\Request` como tipo no fechamento de uma rota.
 
 ```php
-use Lithe\Contracts\Http\Request;
+use Lithe\Http\Request;
 
 $app->get('/', function (Request $req) {
     // ...
@@ -53,7 +53,7 @@ if ($req->is('admin/*')) {
 O método `method` retornará o verbo HTTP da requisição. Você pode usar o método `isMethod` para verificar se o verbo HTTP corresponde a uma determinada string:
 
 ```php
-$method = $req->method;
+$method = $req->method();
  
 if ($req->isMethod('post')) {
     // ...
