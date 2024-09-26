@@ -5,54 +5,54 @@ description: Bem-vindo ao Lithe, um framework PHP que oferece simplicidade, flex
 
 ## O que é Lithe?
 
-Lithe (pronuncia-se "lait") é um framework PHP que se destaca pela sua simplicidade, flexibilidade e eficiência. Inspirado no Express.js, Lithe foi projetado para capacitar desenvolvedores a construir aplicações web de maneira ágil e eficaz. A palavra "lithe" em inglês significa flexível e ágil, refletindo as características essenciais do nosso framework.
+**Lithe** (pronuncia-se "lait") é mais do que um framework PHP; é a chave para **desbloquear sua criatividade** no desenvolvimento web! Com um foco inabalável em **simplicidade, flexibilidade e eficiência**, Lithe se inspira no icônico Express.js para empoderar desenvolvedores na criação de aplicações web de forma **ágil e eficaz**.
 
-Eis um exemplo minimalista:
+A palavra "lithe", em inglês, evoca **flexibilidade e agilidade**, capturando a essência do que queremos oferecer. Com Lithe, você não apenas constrói soluções rápidas e robustas, mas também se adapta facilmente às demandas em constante mudança dos seus projetos.
+
+Veja como é simples criar uma rota que busca um usuário pelo ID:
 
 ```php
-<?php
 use App\Models\User;
+use function Lithe\Orbs\view;
+use function Lithe\Orbs\Http\Router\get;
 
-$app = new \Lithe\App;
-
-$app->get('/users/:id', function ($req, $res) {
+get('/users/:id', function ($req, $res) {
     $id = $req->param('id');
     $user = User::find($id);
     
     if (!$user) {
-        $res->status(404)->json([
+        return $res->status(404)->json([
             'erro' => 'Usuário não encontrado'
         ]);
     } 
 
-    $res->render('profile', compact('user'));
+    return view('profile', compact('user'));
 });
-
-$app->listen(); 
 ```
-Este exemplo demonstra um aplicativo Lithe com uma rota para buscar e exibir um usuário com base no ID fornecido (`GET /users/:id`). Se o usuário não for encontrado, retorna um erro 404; caso contrário, exibe a visualização do perfil do usuário.
+
+Neste exemplo, ao acessar a rota `/users/:id`, Lithe busca o usuário correspondente e exibe seu perfil. Se o usuário não for encontrado, um erro 404 é retornado, demonstrando a robustez do framework.
 
 ---
 
 ## Roteamento Simples e Flexível
 
-No Lithe, definir rotas é muito simples. Você pode usar métodos como `get()`, `post()`, entre outros, para criar rotas que respondem a diferentes tipos de solicitações HTTP:
+**Com Lithe, definir rotas é tão fácil quanto respirar!** Utilize funções como `get()`, `post()`, entre outras, para criar rotas que respondem a diferentes tipos de solicitações HTTP de forma intuitiva e expressiva:
 
 ```php
-$app->get('/hello/:name', function ($req, $res) {
-    $res->send('Hello, ' . $req->params->name);
+get('/hello/:name', function ($req, $res) {
+    $res->send('Hello, ' . $req->param('name'));
 });
 ```
 
-Descubra como o [roteamento no Lithe](/docs/the-basics/routing) pode simplificar seu desenvolvimento e oferecer controle total sobre as rotas da sua aplicação.
+Descubra como o [roteamento no Lithe](/docs/the-basics/routing) pode **simplificar seu desenvolvimento** e oferecer controle total sobre as rotas da sua aplicação.
 
 ---
 
 ## Middleware Poderoso
 
-No Lithe, os middlewares são sua linha de defesa, permitindo inspecionar, filtrar e manipular requisições HTTP antes de chegarem às rotas finais. Imagine adicionar funcionalidades como autenticação e logging de maneira modular e reutilizável!
+**Imagine ter uma linha de defesa robusta em suas aplicações!** No Lithe, os middlewares permitem que você inspecione, filtre e manipule requisições HTTP antes de chegarem às suas rotas finais. Isso significa que você pode adicionar funcionalidades como autenticação e logging de maneira **modular e reutilizável**.
 
-Veja como é fácil definir e utilizar um middleware:
+Aqui está como é fácil definir e utilizar um middleware:
 
 ```php
 // Middleware para verificar se o token é válido
@@ -60,38 +60,27 @@ $EnsureTokenIsValid = function ($req, $res, $next) {
     $token = $req->params->token;
 
     if ($token !== 'my-secret-token') {
-        $res->send('Token inválido.');
+        return $res->send('Token inválido.');
     }
 
     $next();
 };
 
 // Rota protegida utilizando o middleware
-$app->get('/protected/:token', $EnsureTokenIsValid, function ($req, $res) {
+get('/protected/:token', $EnsureTokenIsValid, function ($req, $res) {
     $res->send('Conteúdo protegido acessado com sucesso!');
 });
 ```
 
-Aprenda mais sobre como os [middlewares no Lithe](/docs/the-basics/middleware) podem transformar a forma como você desenvolve e mantém suas aplicações.
-
----
-
-## Escolha do Motor de Visualização
-
-O Lithe oferece flexibilidade ao permitir que você escolha entre diversos motores de template, como PHP puro, Blade e Twig. Além dos motores padrão, você pode configurar outros para otimizar a criação e a renderização de interfaces dinâmicas.
-```php
-$app->set('view engine', 'blade');
-```
-
-Explore as possibilidades dos [motores de visualização](/docs/the-basics/template-engines) e descubra como integrá-los ao seu projeto de maneira eficiente.
+Aprenda mais sobre como os [middlewares no Lithe](/docs/the-basics/middleware) podem **transformar a forma como você desenvolve** e mantém suas aplicações.
 
 ---
 
 ## Integração com Bancos de Dados
 
-Conectar-se a bancos de dados é simples com o Lithe. O framework suporta ORMs populares como Eloquent e drivers nativos do PHP, como MySQLi e PDO. Configure suas conexões no arquivo `.env` e gerencie migrações de esquema facilmente.
+**Conecte-se aos seus dados de forma descomplicada!** O Lithe suporta ORMs populares como Eloquent e drivers nativos do PHP, como MySQLi e PDO. Configure suas conexões no arquivo `.env` e gerencie migrações de esquema com facilidade.
 
-```
+```dotenv
 DB_CONNECTION_METHOD=eloquent
 DB_CONNECTION=mysql
 DB_HOST=localhost
@@ -107,15 +96,19 @@ Descubra mais sobre a [integração de bancos de dados no Lithe](/docs/database/
 
 ## Migrações de Banco de Dados
 
-Mantenha a consistência e integridade dos dados em suas aplicações com migrações automatizadas. Com o Lithe, você pode criar e aplicar migrações de forma rápida e fácil, utilizando qualquer ORM ou interface de drivers de banco de dados.
+**Mantenha a consistência e integridade dos dados em suas aplicações com migrações automatizadas!** Com o Lithe, criar e aplicar migrações é rápido e fácil, utilizando qualquer ORM ou interface de drivers de banco de dados.
 
 ```bash
 php line make:migration CreateUsersTable --template=eloquent
 php line migrate
 ```
 
-Saiba mais sobre [migrações no Lithe](/docs/database/migrations) e aproveite ao máximo essa funcionalidade para desenvolver aplicações robustas e escaláveis.
+Saiba mais sobre [migrações no Lithe](/docs/database/migrations) e aproveite ao máximo essa funcionalidade para desenvolver aplicações **robustas e escaláveis**.
 
 ---
 
-Com o Lithe, você tem em mãos um framework que combina poder e simplicidade, ideal para projetos de todos os tamanhos e complexidades. Explore a documentação completa para aprender mais e começar a construir suas aplicações PHP de maneira eficiente e estruturada. Prepare-se para revolucionar o seu desenvolvimento com o Lithe!
+### Pronto para Revolucionar Seu Desenvolvimento?
+
+Com o Lithe, você tem em mãos um framework que combina **poder e simplicidade**, ideal para projetos de todos os tamanhos e complexidades. Explore a documentação completa e comece a construir suas aplicações PHP de maneira **eficiente e estruturada**. 
+
+**Prepare-se para transformar a sua forma de desenvolver com o Lithe!**
