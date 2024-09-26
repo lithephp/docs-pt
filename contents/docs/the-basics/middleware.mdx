@@ -57,13 +57,13 @@ php line make:middleware EnsureTokenIsValid
 Este comando colocará uma nova constante `EnsureTokenIsValid` dentro do diretório `src/http/middleware` do seu aplicativo. Neste middleware, só permitiremos acesso à rota se o token fornecido corresponder a um valor especificado. Caso contrário, redirecionaremos os usuários de volta para o URI inicial:
 
 ```php
-use Lithe\Contracts\Http\Request;
-use Lithe\Contracts\Http\Response;
+use Lithe\Http\Request;
+use Lithe\Http\Response;
 
 define('EnsureTokenIsValid', function (Request $req, Response $res, $next) {
-    $body = $req->body;
+    $token = $req->input('token');
 
-    if ($body->token !== 'my-secret-token') {
+    if ($token !== 'my-secret-token') {
         return $res->redirect('home');
     }
 
@@ -78,10 +78,10 @@ Como você pode ver, se o `token` fornecido não corresponder ao nosso token sec
 
 ## Carregando Middleware
 
-Para carregar a função de middleware, chame o metódo `use()` da classe `\Lithe\App`, especificando a função de middleware. Por exemplo, o código a seguir carrega a  função `myLogger` de middleware antes da rota para o caminho raiz (`/`).
+Para carregar uma função de middleware, você pode chamar o método `use()` da classe `\Lithe\App` ou utilizar seu atalho, a função `\Lithe\Orbs\Http\Router\apply`, especificando a função de middleware desejada. Por exemplo, o código a seguir carrega a função de middleware `myLogger` antes de executar a rota para o caminho raiz (`/`):
 
-```php {8}
-$app = new \Lithe\App;
+```php {10}
+$app = \Lithe\App::mount();
 
 $myLogger = function ($req, $res, $next) {
     echo 'LOGGED';
@@ -93,8 +93,6 @@ $app->use($myLogger);
 $app->get('/', function ($req, $res, $next) {
     $res->send('Hello World!');
 });
-
-$app->listen(); 
 ```
 
 Sempre que o aplicativo recebe uma requisição, ele imprime a mensagem "LOGGED".
@@ -119,7 +117,7 @@ Vincule middleware de nível de aplicação a uma instância do objeto de aplica
 
 Este exemplo mostra uma função de middleware sem caminho de montagem. A função é executada toda vez que o aplicativo recebe uma requisição.
 ```php
-$app = new \Lithe\App;
+$app = \Lithe\App::mount();
 
 $app->use(function ($req, $res, $next) {
     echo 'Hello World!';
@@ -174,8 +172,6 @@ $router->get('/user/:id', function ($req, $res, $next) {
 
 // Monta o roteador na aplicação
 $app->use('/api', $router);
-
-$app->listen(); 
 ```
 
 ### Middleware de terceiros
@@ -188,13 +184,11 @@ O exemplo a seguir ilustra o carregamento do middleware de sessão, a função `
 ```php {5,6,7}
 use function Lithe\Middleware\Session\session;
 
-$app = new \Lithe\App;
+$app = \Lithe\App::mount();
 
 $app->use(session([
     'secure' => true
 ]));
-
-$app->listen(); 
 ```
 
 Para uma lista parcial de funções de middleware de terceiros comumente usadas com o Lithe, consulte: [Middleware de Terceiros](/resources/middleware).
