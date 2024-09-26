@@ -5,7 +5,7 @@ description: "Os modelos no Lithe representam a camada de acesso aos dados da ap
 
 ## Criando Modelos
 
-No Lithe, modelos são criados utilizando o comando Line `make:model`. Este comando cria um arquivo de modelo dentro do diretório `src/models/`.
+No Lithe, modelos são criados utilizando o comando Line `make:model`. Este comando cria um arquivo de modelo dentro do diretório `models/`.
 
 ```bash
 php line make:model NomeDoModelo --template=eloquent
@@ -64,9 +64,9 @@ class User
 
 ## Utilização Automática de Modelos
 
-No Lithe, os modelos localizados em `src/models` são automaticamente disponibilizados para uso em toda a aplicação, sem a necessidade de importação explícita nos seus arquivos.
+No Lithe, os modelos localizados em `smodels` são automaticamente disponibilizados para uso em toda a aplicação, sem a necessidade de importação explícita nos seus arquivos.
 
-Suponha que você tenha um modelo Eloquent `User` definido em `src/models/User.php`. Você pode utilizá-lo diretamente em suas rotas sem necessidade de qualquer inclusão manual:
+Suponha que você tenha um modelo Eloquent `User` definido em `models/User.php`. Você pode utilizá-lo diretamente em suas rotas sem necessidade de qualquer inclusão manual:
 
 ```php
 use App\Models\User;
