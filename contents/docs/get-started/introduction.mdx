@@ -53,7 +53,7 @@ Aqui está como é fácil definir e utilizar um middleware:
 ```php
 // Middleware para verificar se o token é válido
 $EnsureTokenIsValid = function ($req, $res, $next) {
-    $token = $req->params->token;
+    $token = $req->param('token');
 
     if ($token !== 'my-secret-token') {
         return $res->send('Token inválido.');
