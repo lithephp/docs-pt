@@ -12,8 +12,8 @@ Para armazenar dados em cache, use o método `put`. Este método recebe uma chav
 ```php
 use Lithe\Support\Cache;
 
-$app->post('/store-data', function ($req, $res) {
-    $data = $req->body->data;
+post('/store-data', function ($req, $res) {
+    $data = $req->input('data');
     $cacheKey = 'data_key';
     $expiry = 3600; // Tempo de expiração em segundos (1 hora)
     $serializationFormat = 'json'; // Formato de serialização
@@ -31,7 +31,7 @@ Para recuperar dados do cache, use o método `get`. Ele recebe a chave que ident
 ```php
 use Lithe\Support\Cache;
 
-$app->get('/get-data', function ($req, $res) {
+get('/get-data', function ($req, $res) {
     $cacheKey = 'data_key';
     $data = Cache::get($cacheKey);
 
@@ -50,7 +50,7 @@ Para remover um item do cache, use o método `invalidate`. Ele recebe a chave qu
 ```php
 use Lithe\Support\Cache;
 
-$app->post('/invalidate-cache', function ($req, $res) {
+post('/invalidate-cache', function ($req, $res) {
     $cacheKey = 'data_key';
 
     Cache::invalidate($cacheKey);
@@ -66,7 +66,7 @@ Para tentar recuperar dados do cache ou executar uma função de callback se os 
 ```php
 use Lithe\Support\Cache;
 
-$app->get('/settings', function ($req, $res) {
+get('/settings', function ($req, $res) {
     $settings = Cache::remember('app_settings', function() {
         // Simula recuperação de configurações
         return ['theme' => 'dark', 'language' => 'en'];
