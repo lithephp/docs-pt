@@ -21,12 +21,11 @@ Para criptografar dados, use o método `encrypt` do módulo `Crypt`. O valor cri
 
 ```php
 use Lithe\Support\Security\Crypt;
-use Lithe\Contracts\Http\Request;
-use Lithe\Contracts\Http\Response;
+use Lithe\Http\Request;
+use Lithe\Http\Response;
+use function Lithe\Orbs\Http\Router\{get, post};
 
-$app = new \Lithe\App;
-
-$app->post('/conta/criar', function (Request $req, Response $res) {
+post('/conta/criar', function (Request $req, Response $res) {
     // Criptografando o campo 'name' do corpo da requisição
     $encryptedName = Crypt::encrypt($req->input('name'));
 
@@ -35,8 +34,6 @@ $app->post('/conta/criar', function (Request $req, Response $res) {
     // Retornando a resposta
     return $res->send("Dados criptografados com sucesso!");
 });
-
-$app->listen();
 ```
 
 ### Descriptografando um Valor
@@ -58,7 +55,7 @@ Para tratar falhas na descriptografia, envolva a chamada ao método `decrypt` em
 
 ```php
 use Lithe\Support\Security\Crypt;
-use Lithe\Contracts\Encryption\CryptException;
+use Lithe\Exceptions\Encryption\CryptException;
 
 try {
     $decrypted = Crypt::decrypt($encryptedValue);
