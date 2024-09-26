@@ -5,10 +5,7 @@ description: "No Lithe, você pode definir rotas para controlar como seu aplicat
 
 ## Definindo rotas
 
-No Lithe, você define como seu aplicativo responde a solicitações dos clientes para endpoints específicos usando URIs (caminhos) e métodos HTTP como GET, POST, entre outros. Métodos como `$app->get()` são usados para lidar com solicitações GET, `$app->post()` para POST, e `$app->use()` para aplicar middleware, que são funções de callback para manipulação adicional das requisições.
-
-Esses métodos especificam funções de callback, também chamadas de "manipuladores", que são acionadas quando o aplicativo recebe uma solicitação para a rota e método HTTP definidos. Cada rota no Lithe pode ter uma ou mais funções de manipulador, que são executadas quando a rota é correspondida. É importante utilizar `$next()` para passar o controle para a próxima função de callback, especialmente quando há várias funções definidas.
-
+No Lithe, você define como o aplicativo responde a solicitações para endpoints usando URIs e métodos HTTP como GET e POST. Métodos como `get()`, `post()` e `use()` são usados para lidar com essas requisições e aplicar middlewares. Cada rota pode ter uma ou mais funções de callback (manipuladores), que são executadas quando a rota é correspondida. Para passar o controle entre funções, é necessário utilizar o `$next()`, permitindo que múltiplos manipuladores sejam usados em sequência.
 Para definir rotas no Lithe, utilizamos a estrutura:
 
 ```php
@@ -24,7 +21,7 @@ Onde:
 Veja abaixo um exemplo simples de rota no Lithe:
 
 ```php {3,4,5}
-$app = new \Lithe\App;
+$app = \Lithe\App::mount();
 
 $app->get('/', function ($req, $res) {
     return $res->send('Hello World!');
@@ -244,14 +241,39 @@ $app->route('/livro')
 
 ---
 
+Claro! Aqui está uma versão expandida para a seção **Atalhos na Definição de Rotas**, incluindo mais explicações e exemplos para dar mais contexto:
+
+---
+
+## Atalhos na Definição de Rotas
+
+No Lithe, você pode simplificar a definição de rotas utilizando a sintaxe funcional. Essa abordagem permite que você crie rotas de forma mais concisa e expressiva, tornando seu código mais legível e fácil de manter.
+
+A sintaxe funcional utiliza funções pré-definidas que você pode importar para definir suas rotas. Aqui está um exemplo básico:
+
+```php
+use function Lithe\Orbs\Http\Router\{get, post, route};
+
+get($path, $handler);
+post($path, $handler);
+
+route($path)
+    ->get($handler);
+```
+
+Os atalhos na definição de rotas no Lithe oferecem uma maneira poderosa de estruturar sua aplicação de forma mais eficiente. Ao utilizar essa sintaxe funcional, você torna seu código mais organizado e fácil de navegar, permitindo que se concentre na lógica de negócios em vez da estrutura da aplicação.
+
 ## A classe `Lithe\Http\Router`
+
 Use a classe `Router` do Lithe para criar manipuladores de rota modulares e montáveis. Uma instância de `Router` é um sistema completo de middleware e roteamento; por esse motivo, ela é frequentemente referida como uma "mini-aplicação".
 
 O exemplo a seguir cria um roteador como um módulo, carrega uma função de middleware nele, define algumas rotas e monta o módulo do roteador em um caminho na aplicação principal.
 
-Crie um arquivo de roteador chamado `birds.php` no diretório da aplicação (`src`), com o seguinte conteúdo:
+### Sintaxe clássica
 
-```php:src/birds.php showLineNumbers
+Crie um arquivo de roteador chamado `birds.php` no diretório da aplicação, com o seguinte conteúdo:
+
+```php:birds.php showLineNumbers
 <?php 
 
 $router = new \Lithe\Http\Router;
@@ -276,13 +298,57 @@ $router->get('/about', function ($req, $res) {
 
 return $router;
 ```
+
 Então, carregue o módulo do roteador na aplicação:
-```php:src/App.php
+
+```php:App.php
 $birds = require(__DIR__ .'/birds.php');
 
 // ...
 
 $app->use('/birds', $birds);
 ```
+
+### Sintaxe funcional
+
+Crie um arquivo de roteador chamado `birds.php` no diretório da aplicação, com o seguinte conteúdo:
+
+```php:birds.php showLineNumbers
+<?php
+use function Lithe\Orbs\Http\Router\{get, apply};
+
+// Middleware específico para este roteador
+$timeLog = function ($req, $res, $next) {
+    echo 'Time: ' . date('Y-m-d');
+    $next();
+};
+
+apply($timeLog);
+
+// Define a rota da página inicial
+get('/', function ($req, $res) {
+    $res->send('Página inicial dos pássaros');
+});
+
+// Define a rota sobre
+get('/about', function ($req, $res) {
+    $res->send('Sobre os pássaros');
+});
+```
+
+Então, carregue o módulo do roteador na aplicação:
+
+```php:App.php
+use function Lithe\Orbs\Http\Router\{router, apply};
+// ...
+
+$birds = router(__DIR__ .'/birds');
+
+// ...
+
+apply('/birds', $birds);
+```
+
+Com a sintaxe funcional, cada arquivo é tratado como uma instância separada do roteador ao utilizar a função `router`. Isso significa que as funções como `get` e `post` são específicas para aquele arquivo, permitindo que você organize suas rotas de maneira modular e intuitiva. É uma maneira incrível de estruturar seu código, não acha?
 
 A aplicação agora será capaz de lidar com solicitações para `/birds` e `/birds/about`, bem como chamar a função de middleware `$timeLog`, que é específica para a rota.
