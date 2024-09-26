@@ -14,13 +14,11 @@ Para entender melhor como funciona a validação no Lithe, vamos ver um exemplo 
 ```php
 use App\Http\Controllers\PostController;
 
-$app = new \Lithe\App;
+$app = \Lithe\App::mount();
 
 $app->route('/post/create')
     ->get([PostController::class, 'create'])
     ->post([PostController::class, 'store']);
-
-$app->listen(); 
 ```
 
 A rota GET exibe um formulário para o usuário criar uma nova postagem no blog, enquanto a rota POST salva a postagem no banco de dados.
@@ -30,8 +28,8 @@ A rota GET exibe um formulário para o usuário criar uma nova postagem no blog,
 ```php
 namespace App\Http\Controllers;
 
-use Lithe\Contracts\Http\Request;
-use Lithe\Contracts\Http\Response;
+use Lithe\Http\Request;
+use Lithe\Http\Response;
 
 class PostController
 {
