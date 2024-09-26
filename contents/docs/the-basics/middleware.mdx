@@ -54,7 +54,7 @@ Você também pode criar um novo middleware usando o comando Line `make:middlewa
 ```bash
 php line make:middleware EnsureTokenIsValid
 ```
-Este comando colocará uma nova constante `EnsureTokenIsValid` dentro do diretório `src/http/middleware` do seu aplicativo. Neste middleware, só permitiremos acesso à rota se o token fornecido corresponder a um valor especificado. Caso contrário, redirecionaremos os usuários de volta para o URI inicial:
+Este comando colocará uma nova constante `EnsureTokenIsValid` dentro do diretório `http/middleware` do seu aplicativo. Neste middleware, só permitiremos acesso à rota se o token fornecido corresponder a um valor especificado. Caso contrário, redirecionaremos os usuários de volta para o URI inicial:
 
 ```php
 use Lithe\Http\Request;
