@@ -5,7 +5,7 @@ description: "Migrações são como controle de versão para o seu banco de dado
 
 ## Gerando Migrações
 
-Você pode usar o comando Line `make:migration` para gerar uma migração de banco de dados. A nova migração será colocada no diretório `src/database/migrations` do seu projeto. Cada nome de arquivo de migração contém um timestamp que permite ao Lithe determinar a ordem das migrações.
+Você pode usar o comando Line `make:migration` para gerar uma migração de banco de dados. A nova migração será colocada no diretório `database/migrations` do seu projeto. Cada nome de arquivo de migração contém um timestamp que permite ao Lithe determinar a ordem das migrações.
 
 ```bash
 php line make:migration NomeDaMigracao --template=NomeDoTemplate
