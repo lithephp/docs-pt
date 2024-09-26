@@ -129,7 +129,7 @@ No exemplo abaixo mostra um middleware que trata requisição GET no caminho `/u
 ```php
 $app->get('/user/:id', function ($req, $res, $next) {
     // Se o ID do usuário for '0', passa para o próximo middleware
-    if ($req->params->id === '0') {
+    if ($req->param('id') === '0') {
         return $next();
     } 
 
@@ -160,13 +160,13 @@ $router->use(function ($req, $res, $next) {
 
 $router->get('/user/:id', function ($req, $res, $next) {
     // Verifica se o ID do usuário é '0'; se for, redireciona para /
-    if ($req->params->id === '0') {
+    if ($req->param('id') === '0') {
         $res->redirect('/');
     }
     // Caso contrário, passa o controle para o próximo middleware na pilha
     $next()
 }, function ($req, $res, $next) {
-  echo $req->params->id;
+  echo $req->param('id');
   $res->render('special');
 });
 
