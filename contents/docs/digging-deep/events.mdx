@@ -1,0 +1,60 @@
+---
+title: Eventos
+description: Eventos são um conceito fundamental em muitas aplicações, permitindo que diferentes partes do sistema se comuniquem de forma eficiente e desacoplada. No contexto do Lithe, eventos permitem que você reaja a ações específicas que ocorrem em sua aplicação, como o registro de um usuário ou a conclusão de um processamento.
+---
+
+## Registrando Manipuladores de Eventos
+
+Para que a sua aplicação reaja a eventos específicos, utilize o método `on` para registrar um manipulador. Este método aceita dois parâmetros: o nome do evento que você deseja escutar e uma função de manipulador que será chamada sempre que o evento for emitido.
+
+```php
+$app->on('user.registered', function($user) {
+    echo "Usuário registrado: " . $user->name;
+});
+```
+
+Neste exemplo, toda vez que um usuário for registrado, a função fornecida como manipulador será executada, exibindo o nome do usuário. Isso permite que você adicione facilmente comportamentos adicionais sempre que esse evento ocorrer, como enviar um e-mail de boas-vindas ou registrar informações no log.
+
+---
+
+## Removendo Manipuladores de Eventos
+
+Às vezes, você pode querer desativar a resposta a um evento, por exemplo, quando um manipulador não é mais necessário. Para isso, utilize o método `off` da classe `Lithe\App` ou a função de atalho `Lithe\Orbs\App\off`. Este método também aceita dois parâmetros: o nome do evento e o manipulador que você deseja remover.
+
+```php
+$app->off('user.registered', $handler);
+```
+
+Aqui, `$handler` refere-se à função que você havia registrado anteriormente. Usar `off` ajuda a evitar chamadas desnecessárias a manipuladores que não são mais relevantes, mantendo sua aplicação limpa e eficiente.
+
+---
+
+## Emitindo Eventos
+
+Quando você quiser notificar a sua aplicação de que algo aconteceu (como o registro de um usuário), utilize o método `emit`. Esse método também pertence à classe `Lithe\App` ou pode ser chamado através da função de atalho `Lithe\Orbs\App\emit`. Ele aceita o nome do evento e quaisquer argumentos adicionais que você deseja passar para os manipuladores registrados.
+
+```php
+$app->emit('user.registered', $newUser);
+```
+
+Nesse caso, o evento `user.registered` é disparado, e o objeto `$newUser` é passado para os manipuladores registrados. Isso permite que os manipuladores acessem informações relevantes sobre o evento que ocorreu.
+
+---
+
+### Atalhos em `Lithe\Orbs\App`
+
+Os atalhos fornecem uma maneira conveniente de acessar os métodos de eventos diretamente, sem a necessidade de instanciar a classe `Lithe\App`. Você pode usar as seguintes funções para facilitar o uso de eventos:
+
+```php
+use function Lithe\Orbs\App\{on, off, emit};
+
+on('event.name', $handler);
+off('event.name', $handler);
+emit('event.name', $arg1, $arg2);
+```
+
+Isso simplifica o processo de registro, remoção e emissão de eventos, tornando o código mais direto e legível.
+
+---
+
+Gerenciar eventos em Lithe permite uma comunicação eficiente entre componentes da sua aplicação, tornando-a mais dinâmica e modular. Utilizando os métodos `on`, `off` e `emit`, você pode registrar manipuladores de forma eficaz e disparar eventos conforme necessário. Essa abordagem não apenas melhora a organização do código, mas também facilita a manutenção e a expansão futura da sua aplicação.
