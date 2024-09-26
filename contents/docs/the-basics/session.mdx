@@ -23,64 +23,71 @@ Após a configuração do middleware, você pode acessar e manipular variáveis 
 
 ### Definindo Variáveis de Sessão
 
-Para definir variáveis de sessão, utilize o método `put()`:
+Para definir variáveis de sessão dentro de uma rota, utilize o método `put()`:
 
 ```php
-$req->session->put('user_name', 'John Doe');
+$app->get('/set-session', function ($req, $res) {
+    $req->session->put('user_name', 'John Doe');
+    return $res->send('Variável de sessão "user_name" definida!');
+});
 ```
 
 Ou você pode definir variáveis diretamente usando métodos mágicos:
 
 ```php
-$req->session->user_name = 'John Doe';
+$app->get('/set-session', function ($req, $res) {
+    $req->session->user_name = 'John Doe';
+    return $res->send('Variável de sessão "user_name" definida!');
+});
 ```
 
 ### Obtendo Variáveis de Sessão
 
-Para obter o valor de uma variável de sessão, use o método `get()`:
+Para obter o valor de uma variável de sessão, use o método `get()` dentro de uma rota:
 
 ```php
-$userName = $req->session->get('user_name');
+$app->get('/get-session', function ($req, $res) {
+    $userName = $req->session->get('user_name', 'Guest');
+    return $res->send('Usuário: ' . $userName);
+});
 ```
 
 Ou você pode obter variáveis diretamente com métodos mágicos:
 
 ```php
-$userName = $req->session->user_name;
-```
-
-#### Valores Padrão
-
-Para garantir que uma variável de sessão tenha um valor padrão caso não esteja definida, passe o valor padrão como segundo argumento para o método `get()`:
-
-```php
-$userName = $req->session->get('user_name', 'Guest');
-```
-
-Ou use o operador de coalescência nula (`??`) com métodos mágicos:
-
-```php
-$userName = $req->session->user_name ?? 'Guest';
+$app->get('/get-session', function ($req, $res) {
+    $userName = $req->session->user_name ?? 'Guest';
+    return $res->send('Usuário: ' . $userName);
+});
 ```
 
 ### Removendo Variáveis de Sessão
 
-Para remover uma variável específica, use o método `forget()`:
+Para remover uma variável específica, use o método `forget()` dentro de uma rota:
 
 ```php
-$req->session->forget('user_id');
+$app->get('/remove-session', function ($req, $res) {
+    $req->session->forget('user_id');
+    return $res->send('Variável de sessão "user_id" removida!');
+});
 ```
 
-Para remover múltiplas variáveis ao mesmo tempo, passe um array com os nomes das variáveis:
+Para remover múltiplas variáveis ao mesmo tempo:
 
 ```php
-$req->session->forget(['user_name', 'last_login']);
+$app->get('/remove-multiple-sessions', function ($req, $res) {
+    $req->session->forget(['user_name', 'last_login']);
+    return $res->send('Variáveis de sessão removidas!');
+});
 ```
 
-Para destruir completamente a sessão e remover todas as variáveis, use o método `destroy()`:
+Para destruir completamente a sessão e remover todas as variáveis:
 
 ```php
-$req->session->destroy();
+$app->get('/destroy-session', function ($req, $res) {
+    $req->session->destroy();
+    return $res->send('Sessão destruída!');
+});
 ```
 
 ### Verificando a Existência de Variáveis de Sessão
@@ -92,6 +99,7 @@ $app->get('/check-session', function ($req, $res) {
     if ($req->session->has('user_id')) {
         return $res->send('Variável "user_id" existe na sessão.');
     }
+    return $res->send('Variável "user_id" não existe na sessão.');
 });
 ```
 
@@ -102,6 +110,7 @@ $app->get('/check-multiple-sessions', function ($req, $res) {
     if ($req->session->has(['user_name', 'last_login'])) {
         return $res->send('Todas as variáveis de sessão existem.');
     }
+    return $res->send('Nem todas as variáveis de sessão existem.');
 });
 ```
 
