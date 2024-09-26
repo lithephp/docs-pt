@@ -80,7 +80,7 @@ Como você pode ver, se o `token` fornecido não corresponder ao nosso token sec
 
 Para carregar uma função de middleware, você pode chamar o método `use()` da classe `\Lithe\App` ou utilizar seu atalho, a função `\Lithe\Orbs\Http\Router\apply`, especificando a função de middleware desejada. Por exemplo, o código a seguir carrega a função de middleware `myLogger` antes de executar a rota para o caminho raiz (`/`):
 
-```php {10}
+```php {8}
 $app = \Lithe\App::mount();
 
 $myLogger = function ($req, $res, $next) {
