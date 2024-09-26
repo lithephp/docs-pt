@@ -15,10 +15,10 @@ $app->get('/', function ($req, $res) {
 });
 ```
 
-Você também pode especificar a interface `Lithe\Contracts\Http\Response` como tipo no fechamento de uma rota.
+Você também pode especificar a interface `Lithe\Http\Response` como tipo no fechamento de uma rota.
 
 ```php
-use Lithe\Contracts\Http\Response;
+use Lithe\Http\Response;
 
 $app->get('/', function ($req, Response $res) {
     $res->send('Olá mundo!');
