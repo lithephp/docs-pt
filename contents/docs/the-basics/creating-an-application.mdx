@@ -1,30 +1,44 @@
 ---
 title: Criando uma Aplicação
-description: Aprenda a criar sua primeira aplicação com o Lithe.
+description: "O Lithe permite que você crie aplicações de maneira simples e versátil, oferecendo dois estilos de escrita: clássico e funcional. Você pode optar por um dos dois ou até mesmo combinar ambos, sem perder a eficiência!"
 ---
 
-## Instanciando a Aplicação
+## Forma Clássica: Instanciando a Aplicação
 
-Para começar a desenvolver com o Lithe, crie uma nova instância da classe `Lithe\App` no arquivo `src/App.php` e defina uma rota:
+Para começar com o estilo clássico, basta montar a aplicação com o método `mount` da classe `Lithe\App` e definir suas rotas. 
 
 ```php
-$app = new \Lithe\App;
+$app = \Lithe\App::mount();
 
 $app->get('/', function ($req, $res) {
     $res->send('Hello World!');
 });
 ```
 
-A classe `App` é a principal interface para configurar e gerenciar sua aplicação Lithe. Ela centraliza a configuração e a gestão da aplicação, facilitando a criação e organização de sua aplicação web de maneira eficiente.
+A classe `App` é o coração da sua aplicação Lithe. Ela gerencia toda a lógica da aplicação, facilitando a criação de rotas, manipulação de requisições e respostas de forma organizada.
+
+## Forma Funcional: Praticidade e Agilidade
+
+Se você prefere uma abordagem mais minimalista, pode optar pela sintaxe funcional sem a necessidade de instanciar diretamente a classe:
+
+```php
+use function Lithe\Orbs\Http\Router\get;
+
+get('/', function ($req, $res) {
+    $res->send('Hello World!');
+});
+```
+
+Esse método é rápido, eficiente e permite que você escreva código de forma ainda mais concisa.
 
 ---
 
-## Rodando a Aplicação
+## Executando a Aplicação
 
-Para que sua aplicação funcione, é necessário chamar o método `listen`:
+Agora que você já escreveu sua primeira rota, o próximo passo é rodar a aplicação. Se estiver usando a forma clássica, chame o método `listen` para que o Lithe comece a escutar as requisições:
 
-```php {7}
-$app = new \Lithe\App;
+```php
+$app = \Lithe\App::mount();
 
 $app->get('/', function ($req, $res) {
     $res->send('Hello World!');
@@ -33,33 +47,37 @@ $app->get('/', function ($req, $res) {
 $app->listen(); 
 ```
 
-O método `listen` é responsável por iniciar a aplicação e escutar as solicitações recebidas. Após configurar todas as rotas e registrar os recursos necessários, chamar `listen` faz com que a aplicação comece a processar e responder às requisições dos clientes.
+Com o **Lithe 2**, esse método é automaticamente invocado.
 
 ---
 
 ## Servindo a Aplicação
 
-### Usando o Servidor Embutido
+### Usando o Servidor PHP Embutido
 
-Para testar sua aplicação localmente, você precisa ter o PHP instalado no seu sistema. Com o PHP instalado, execute o servidor embutido usando o seguinte comando:
+Testar sua aplicação localmente é fácil! Com o PHP instalado, você pode iniciar o servidor embutido executando o seguinte comando:
 
 ```bash
 php line serve
 ```
 
-Isso iniciará o servidor na porta padrão `8000`. Se desejar especificar uma porta diferente, você pode usar o parâmetro opcional `PORT`. Por exemplo, para iniciar o servidor na porta `9000`, use:
+Isso iniciará o servidor na porta `8000`. Para mudar a porta, basta passar o valor desejado como argumento:
 
 ```bash
 php line serve 9000
 ```
 
-Acesse `http://localhost:9000/` no seu navegador para visualizar sua aplicação funcionando.
+Abra seu navegador e acesse `http://localhost:9000/` para ver sua aplicação em ação!
 
-### Usando o Apache ou Outro Servidor Web
+### Usando Servidores Web como Apache
 
-Se preferir usar o Apache ou outro servidor web, o diretório `public` é ponto de entrada. Dependendo da configuração do seu servidor, você pode acessar sua aplicação através de URLs como:
+Se preferir rodar sua aplicação em um servidor web como o Apache, o ponto de entrada será o diretório `public`. Ajuste as configurações de URL conforme seu ambiente:
 
-- **Ambiente de Desenvolvimento Local (Exemplo):** `http://localhost/seu-projeto/public/`
-- **Ambiente de Produção (Exemplo):** `http://seu-dominio.com/`
+- **Ambiente Local:** `http://localhost/seu-projeto/public/`
+- **Produção:** `http://seu-dominio.com/`
 
-Certifique-se de ajustar o caminho de acesso com base na configuração específica do seu ambiente e servidor web.
+Certifique-se de que o servidor esteja apontando para o diretório correto e pronto! Sua aplicação estará disponível para o mundo.
+
+---
+
+Com o Lithe, a simplicidade e a flexibilidade estão ao seu alcance, proporcionando uma experiência de desenvolvimento ágil, seja em projetos pequenos ou grandes. Comece agora e construa algo incrível!
