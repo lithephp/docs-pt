@@ -84,6 +84,10 @@ export const ROUTES: Array<RouteInterface> = [
         title: "Mail",
         href: "/mail",
       },
+      {
+        title: "Orbs",
+        href: "/orbs",
+      },
     ],
   },
   {
