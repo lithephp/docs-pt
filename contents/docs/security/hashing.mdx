@@ -9,26 +9,21 @@ description: "O Lithe oferece um módulo de segurança chamado Hash com métodos
 
 Você pode criar um hash a partir de uma string usando o método `make` fornecido pelo módulo de segurança do Lithe `Hash`. Todos os hashes são gerados usando o algoritmo Bcrypt.
 
-```php {11}
-use Lithe\Contracts\Http\Request;
-use Lithe\Contracts\Http\Response;
+```php {8}
+use Lithe\Http\Request;
+use Lithe\Http\Response;
 use Lithe\Support\Security\Hash;
+use function Lithe\Orbs\Http\Router\{get, post, route};
 
-$app = new \Lithe\App;
-
-$app->post('/usuario/registrar', function (Request $req, Response $res) {
-    $body = $req->body;
-
+post('/usuario/registrar', function (Request $req, Response $res) {
     // Criando um hash para o campo 'password' do corpo da requisição
-    $hashedPassword = Hash::make($body->password);
+    $hashedPassword = Hash::make($req->input('input'));
 
     // ...
 
     // Retornando a resposta
     return $res->send("Usuário registrado com sucesso!");
 });
-
-$app->listen();
 ```
 
 ### Verificando um Hash
