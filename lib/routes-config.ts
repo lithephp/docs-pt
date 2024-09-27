@@ -134,6 +134,7 @@ export const REFERENCE_ROUTES: Array<RouteInterface> = [
         title: "App",
         href: "/app",
       },
+    ],
   },
   {
     title: "Lithe@1.x",
@@ -166,6 +167,7 @@ export const REFERENCE_ROUTES: Array<RouteInterface> = [
     ],
   },
 ];
+
 
 
 export const FLATTEND_ROUTES = flattendRoutes(ROUTES);
