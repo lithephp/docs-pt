@@ -59,7 +59,7 @@ $EnsureTokenIsValid = function ($req, $res, $next) {
         return $res->send('Token inválido.');
     }
 
-    $next();
+    return $next();
 };
 
 // Rota protegida utilizando o middleware
