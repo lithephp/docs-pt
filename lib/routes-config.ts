@@ -169,7 +169,6 @@ export const REFERENCE_ROUTES: Array<RouteInterface> = [
 
 
 export const FLATTEND_ROUTES = flattendRoutes(ROUTES);
-
 export const FLATTEND_REFERENCE_ROUTES = flattendRoutes(REFERENCE_ROUTES);
 
 function flattendRoutes(routes: Array<RouteInterface>) {
