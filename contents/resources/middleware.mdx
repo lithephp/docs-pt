@@ -5,14 +5,15 @@ description: O Lithe oferece uma variedade de middlewares que simplificam e acel
 
 ## Middlewares do Lithe
 
-O Lithe disponibiliza diversos middlewares que podem ser integrados ao seu projeto para melhorar sua funcionalidade. Esses middlewares vêm inclusos por padrão e podem ser usados conforme necessário. Abaixo está uma lista de alguns middlewares comumente utilizados:
+O Lithe disponibiliza diversos middlewares que podem ser integrados ao seu projeto para melhorar sua funcionalidade. Esses middlewares são fornecidos por padrão e também podem ser instalados como pacotes adicionais, conforme a necessidade. Abaixo está uma lista de alguns middlewares comumente utilizados:
 
 | Middleware | Descrição |
 |------------|-------------|
-| [Session](/resources/middleware/session) | Gerencia sessões de usuário, permitindo armazenar e recuperar informações persistentes entre requisições, como dados de login e preferências. |
-| [Flash](/resources/middleware/flash) | Armazena mensagens temporárias para serem exibidas na próxima requisição, útil para mostrar notificações e feedback de ações do usuário, como envio de formulários ou alterações de dados. |
-| [Csrf](/resources/middleware/csrf) | Protege contra ataques CSRF (Cross-Site Request Forgery) garantindo que todas as requisições sejam originadas de usuários autenticados e autorizados, prevenindo ações indesejadas em nome de outros usuários. |
 | [Cors](/resources/middleware/cors) | Habilita CORS (Cross-Origin Resource Sharing), permitindo que sua aplicação aceite requisições de diferentes origens e domínios, essencial para integrar com APIs externas e comunicação entre diferentes serviços web. |
+| [Csrf](/resources/middleware/csrf) | Protege contra ataques CSRF (Cross-Site Request Forgery), garantindo que todas as requisições sejam originadas de usuários autenticados e autorizados, prevenindo ações indesejadas em nome de outros usuários. |
+| [Flash](/resources/middleware/flash) | Armazena mensagens temporárias para serem exibidas na próxima requisição, útil para mostrar notificações e feedback de ações do usuário, como envio de formulários ou alterações de dados. |
+| [JWT Auth](https://github.com/lithephp/jwt-auth) | Implementa autenticação baseada em JSON Web Tokens (JWT), permitindo a autenticação segura de usuários em aplicações Lithe. Esse middleware pode ser instalado via Composer e oferece uma maneira eficiente de gerenciar a autenticação de APIs. |
+| [Session](/resources/middleware/session) | Gerencia sessões de usuário, permitindo armazenar e recuperar informações persistentes entre requisições, como dados de login e preferências. |
 
 ## Middlewares da Comunidade
 
