@@ -1,76 +1,66 @@
 ---
-title: JWT Auth  
-description: Um middleware poderoso de autenticação baseado em JWT, adequado para sistemas de nível empresarial.  
+title: JWT  
+description: O middleware JWT (JSON Web Token) no Lithe permite a autenticação segura de usuários e a proteção de rotas específicas na sua aplicação.  
 ---
 
-## Instalando o Middleware de Autenticação JWT
+## Instalando o Middleware JWT
 
-Para usar a autenticação JWT no Lithe, você precisará instalar o pacote `lithephp/jwt-auth`. Você pode instalá-lo usando o Composer:
+Para usar o middleware JWT no seu projeto Lithe, você precisa instalar o pacote `lithephp/jwt-auth`. Isso pode ser feito facilmente via Composer. Execute o seguinte comando no terminal:
 
 ```bash
 composer require lithephp/jwt-auth
 ```
 
-## Usando o Middleware de Autenticação JWT
+Após a instalação, você estará pronto para configurar e usar o middleware JWT na sua aplicação.
 
-Após a instalação, você pode configurar o middleware de autenticação JWT em sua aplicação. Adicione-o usando o método `use()` da classe `\Lithe\App` ou use seu atalho, a função `\Lithe\Orbs\Http\Router\apply`:
+## Usando o Middleware JWT
+
+O middleware JWT no Lithe é projetado para permitir a autenticação de usuários por meio de tokens JWT. Para configurá-lo, defina-o em sua aplicação usando uma instância do middleware e forneça o segredo e as opções de configuração:
 
 ```php
 use Lithe\Middleware\Auth\JWT;
 
-$app->use(JWT('sua_chave_secreta'));
-```
-
-Isso garante que a autenticação baseada em JWT seja aplicada a todas as requisições.
-
-### Configurando o Middleware de Autenticação JWT
-
-O middleware de autenticação JWT pode ser configurado com os seguintes parâmetros:
-
-- **alg**: O algoritmo de codificação utilizado (padrão: `HS256`).
-- **authHeader**: O cabeçalho onde o token JWT será enviado (padrão: `Authorization`).
-- **tokenPrefix**: O prefixo do token no cabeçalho (padrão: `Bearer`).
-- **leeway**: Tolerância de relógio em segundos (padrão: `60`).
-- **renew**: Permitir renovação de token (padrão: `false`).
-- **renewThreshold**: Tempo em segundos antes da expiração do token que permite a renovação (padrão: `300`).
-
-Exemplo de configuração:
-
-```php
-$app->use(JWT('sua_chave_secreta', [
-    'alg' => 'HS256',
-    'renew' => true,
-    'renewThreshold' => 300,
+define('loggedIn', JWT('seu-segredo', [
+    'alg' => 'HS256',                    // Algoritmo padrão
+    'authHeader' => 'Authorization',     // Cabeçalho onde o token JWT será enviado
+    'tokenPrefix' => 'Bearer',           // Prefixo do token no cabeçalho
+    'leeway' => 60,                      // Tolerância de tempo
+    'renew' => false,                    // Permitir renovação do token
+    'renewThreshold' => 300,             // Renovar o token se faltar 5 minutos para expirar
 ]));
 ```
 
-### Gerando Tokens JWT
+### Protegendo Rotas com Middleware JWT
 
-Para gerar um token JWT para um usuário específico, use o método `generateToken` do middleware durante a autenticação:
+Para proteger uma rota específica usando o middleware JWT, adicione `loggedIn` como um parâmetro na definição da rota:
 
 ```php
-post('/login', function ($req, $res) {
-    // Lógica de autenticação do usuário (não mostrada aqui)
-    $user = (object)['id' => 1, 'name' => 'William']; // Exemplo de usuário autenticado
-    $token = $req->jwtAuth->generateToken($user); // Geração do token
-    return $res->send(['token' => $token]);
+$app->get('/conta/', loggedIn, function ($req, $res) {
+    $res->send('Conteúdo protegido acessado com sucesso!');
 });
 ```
 
-### Protegendo Rotas com JWT
+### Gerando e Verificando Tokens JWT
 
-Uma vez que o middleware está configurado, você pode proteger suas rotas da seguinte forma:
+O middleware JWT oferece métodos para gerar e verificar tokens:
 
-```php
-get('/protected', function ($req, $res) {
-    // Acessa informações do usuário a partir do token decodificado
-    $user = $req->user;
-    return $res->send("Bem-vindo, {$user->name}!");
-});
-```
+- **generateToken($user, $idKey = 'id', array $additionalClaims = []): string**  
+  Gera um token JWT para um usuário específico. Você pode especificar a chave de ID do usuário e adicionar reivindicações adicionais ao payload.
 
-### Considerações Finais
+  ```php
+  $token = $req->jwt->generateToken($user);
+  ```
 
-- **Expiração do Token**: O token JWT deve ser renovado antes da expiração, se a renovação estiver habilitada.
-- **Segurança**: Use uma chave secreta forte e mantenha-a segura.
-- **Tratamento de Erros**: O middleware registra erros de autenticação e continua a execução da aplicação, permitindo um tratamento adequado.
+### Renovando Tokens JWT
+
+Se a opção `renew` estiver habilitada e o token estiver próximo da expiração, o middleware cuidará da renovação automaticamente ao verificar se o token está prestes a expirar. O novo token será incluído no cabeçalho da resposta se a renovação for necessária.
+
+### Tratamento de Erros
+
+Esteja preparado para lidar com exceções lançadas quando o token JWT for inválido ou estiver ausente. O middleware lançará um `HttpException` com o código 401 se o token não for fornecido ou for inválido.
+
+## Considerações
+
+- **Segurança**: O uso de tokens JWT aumenta a segurança ao permitir autenticação sem a necessidade de armazenar informações sensíveis no servidor. Assegure-se de manter seu segredo seguro.
+- **Expiração de Tokens**: Configure um tempo de expiração adequado para seus tokens. Tokens expirados não serão aceitos, então tenha um plano de renovação em mente para uma boa experiência do usuário.
+- **Tratamento de Erros**: Esteja preparado para lidar com exceções lançadas quando o token JWT for inválido ou estiver ausente. Isso pode incluir redirecionar para uma página de erro ou exibir uma mensagem apropriada para o usuário. Consulte a [documentação de Exceções HTTP](/docs/digging-deep/http-exceptions) para mais detalhes.
