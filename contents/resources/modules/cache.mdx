@@ -1,0 +1,80 @@
+---
+title: Cache
+description: O módulo `Cache` no Lithe oferece uma maneira eficiente de armazenar e recuperar dados frequentemente acessados, melhorando o desempenho do aplicativo ao evitar operações repetidas em dados que não mudam frequentemente.
+---
+
+## Instalação
+
+Para instalar o pacote `lithemod/cache`, execute:
+
+```bash
+composer require lithemod/cache
+```
+
+O código-fonte está disponível em [github.com/lithemod/cache](http://github.com/lithemod/cache).
+
+## Armazenando e Recuperando Dados em Cache
+
+### Armazenando Dados em Cache
+
+Use o método `add` para armazenar dados. Este método recebe uma chave, os dados, o tempo de expiração em segundos (padrão é 3600 segundos) e o formato de serialização (opcional).
+
+```php
+use Lithe\Support\Cache;
+
+$app->post('/store-data', function ($req, $res) {
+    $data = $req->input('data');
+    $cacheKey = 'data_key';
+
+    Cache::add($cacheKey, $data);
+
+    $res->send('Dados armazenados em cache.');
+});
+```
+
+### Recuperando Dados em Cache
+
+Use o método `get` para recuperar dados. Ele retorna os dados armazenados ou `null` se não encontrados.
+
+```php
+use Lithe\Support\Cache;
+
+$app->get('/get-data', function ($req, $res) {
+    $cacheKey = 'data_key';
+    $data = Cache::get($cacheKey) ?? 'Dados não encontrados no cache.';
+
+    $res->json(['data' => $data]);
+});
+```
+
+### Invalidando Itens em Cache
+
+Use o método `invalidate` para remover um item do cache.
+
+```php
+use Lithe\Support\Cache;
+
+$app->post('/invalidate-cache', function ($req, $res) {
+    $cacheKey = 'data_key';
+
+    Cache::invalidate($cacheKey);
+
+    $res->send('Cache invalidado.');
+});
+```
+
+### Recuperando Dados ou Executando um Callback
+
+Use o método `remember` para tentar recuperar dados do cache ou executar uma função de callback se não forem encontrados.
+
+```php
+use Lithe\Support\Cache;
+
+$app->get('/settings', function ($req, $res) {
+    $settings = Cache::remember('app_settings', function() {
+        return ['theme' => 'dark', 'language' => 'en'];
+    });
+
+    $res->json($settings);
+});
+```

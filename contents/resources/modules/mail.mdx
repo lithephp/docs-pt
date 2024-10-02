@@ -1,0 +1,139 @@
+---
+title: Mail
+description: O módulo `Mail` do Lithe facilita o envio de e-mails. Com uma configuração simples, você pode enviar e-mails em texto ou HTML, adicionar anexos e personalizar várias opções.
+---
+
+## Instalação
+
+Para instalar o pacote `lithemod/mail`, abra o terminal e execute:
+
+```bash
+composer require lithemod/mail
+```
+
+O código-fonte está disponível em [github.com/lithemod/mail](https://github.com/lithemod/mail).
+
+## Configuração do Ambiente
+
+Para que o envio de e-mails funcione corretamente, você precisa configurar as variáveis de ambiente no arquivo `.env` na raiz do seu projeto. Adicione as seguintes linhas:
+
+```
+MAIL_HOST=smtp.example.com
+MAIL_PORT=587
+MAIL_USERNAME=seu_usuario
+MAIL_PASSWORD=sua_senha
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=no-reply@example.com
+MAIL_FROM_NAME=NomeDaSuaAplicacao
+```
+
+### Descrição das Variáveis
+
+- **`MAIL_HOST`**: O endereço do servidor SMTP (exemplo: `smtp.gmail.com`).
+- **`MAIL_PORT`**: A porta do servidor SMTP (587 para TLS, 465 para SSL).
+- **`MAIL_USERNAME`**: Seu nome de usuário para autenticação no servidor.
+- **`MAIL_PASSWORD`**: Sua senha para autenticação.
+- **`MAIL_ENCRYPTION`**: O método de criptografia, que pode ser `tls` ou `ssl`.
+- **`MAIL_FROM_ADDRESS`**: O endereço de e-mail do remetente.
+- **`MAIL_FROM_NAME`**: O nome que aparecerá como remetente.
+
+---
+
+## Usando o `Mail`
+
+### 1. Enviando um E-mail Simples em Texto
+
+Para enviar um e-mail simples, você pode usar o seguinte código:
+
+```php
+$app->get('/enviar-email', function ($req, $res) {
+    $enviado = Mail::to('destinatario@dominio.com', 'Nome do Destinatário')
+        ->subject('Assunto do E-mail')
+        ->text('Corpo do e-mail em texto simples')
+        ->send();
+
+    if ($enviado) {
+        $res->send('E-mail enviado com sucesso!');
+    } else {
+        $res->send('Falha ao enviar o e-mail.');
+    }
+});
+```
+
+### 2. Enviando um E-mail em HTML
+
+Para enviar um e-mail com formatação em HTML:
+
+```php
+$mail = Mail::to('destinatario@dominio.com', 'Nome do Destinatário')
+    ->subject('Assunto do E-mail')
+    ->html('<h1>Corpo do e-mail em HTML</h1>')
+    ->send();
+```
+
+### 3. Adicionando Destinatários CC e BCC
+
+Você pode adicionar pessoas em cópia (CC) ou cópia oculta (BCC) assim:
+
+#### Adicionando CC
+
+```php
+$mail = Mail::to('destinatario@dominio.com', 'Nome do Destinatário')
+    ->cc('cc@exemplo.com', 'Nome do CC')
+    ->subject('Assunto do E-mail')
+    ->text('Corpo do e-mail em texto simples')
+    ->send();
+```
+
+#### Adicionando BCC
+
+```php
+$mail = Mail::to('destinatario@dominio.com', 'Nome do Destinatário')
+    ->bcc('bcc@exemplo.com', 'Nome do BCC')
+    ->subject('Assunto do E-mail')
+    ->text('Corpo do e-mail em texto simples')
+    ->send();
+```
+
+### 4. Definindo o Endereço de Resposta
+
+Se você quiser que as respostas sejam enviadas para um endereço específico, use:
+
+```php
+$mail = Mail::to('destinatario@dominio.com', 'Nome do Destinatário')
+    ->replyTo('replyto@exemplo.com', 'Nome da Resposta')
+    ->subject('Assunto do E-mail')
+    ->text('Corpo do e-mail em texto simples')
+    ->send();
+```
+
+### 5. Anexando Arquivos
+
+Para adicionar um arquivo ao e-mail, faça assim:
+
+```php
+$mail = Mail::to('destinatario@dominio.com', 'Nome do Destinatário')
+    ->subject('Assunto do E-mail')
+    ->text('Corpo do e-mail em texto simples')
+    ->attach('/caminho/para/arquivo.txt', 'NomePersonalizado.txt')
+    ->send();
+```
+
+### 6. Adicionando Cabeçalhos Personalizados
+
+Para adicionar informações extras ao e-mail, use cabeçalhos personalizados:
+
+```php
+$mail = Mail::to('destinatario@dominio.com', 'Nome do Destinatário')
+    ->subject('Assunto do E-mail')
+    ->text('Corpo do e-mail em texto simples')
+    ->addHeader('X-Custom-Header', 'ValorDoCabeçalho')
+    ->send();
+```
+
+---
+
+## Resolução de Problemas
+
+- **Verifique as Configurações**: Confirme se as variáveis de ambiente estão corretas e se o servidor SMTP está acessível.
+- **Verifique os Logs**: Erros serão registrados nos logs do sistema, o que pode ajudar a identificar problemas.

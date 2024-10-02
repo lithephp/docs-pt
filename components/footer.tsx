@@ -8,7 +8,7 @@ export default function Footer() {
         Construído por{" "}
           <Link
             className="px-1 underline underline-offset-2"
-            href="https://instagram.com/redeedite"
+            href="https://github.com/williamhumbwavali"
             target="_blank"
           >
             William Humbwavali
@@ -16,7 +16,7 @@ export default function Footer() {
           O código fonte está disponível no{" "}
           <Link
             className="px-1 underline underline-offset-2"
-            href="https://github.com/lithecore"
+            href="https://github.com/lithephp"
             target="_blank"
           >
             GitHub

@@ -3,19 +3,19 @@ title: CORS
 description: O middleware CORS (Cross-Origin Resource Sharing) no Lithe configura os cabeçalhos CORS para permitir ou restringir o acesso a recursos de diferentes origens.  
 ---
 
-## Instalação
+## Instalando o Middleware CORS
 
-Para instalar o middleware CORS para o Lithe, use o comando de instalação do módulo Line:
+Para instalar o middleware CORS, utilize o Composer:
 
 ```bash
-php line module:install cors
+composer require lithemod/cors
 ```
 
-Este comando baixará e instalará o middleware CORS em seu projeto.
+Você pode encontrar mais informações e o código fonte do módulo em [github.com/lithemod/cors](https://github.com/lithemod/cors).
 
 ## Usando o Middleware CORS
 
-O middleware CORS no Lithe é responsável por configurar os cabeçalhos de Compartilhamento de Recursos entre Origens, permitindo ou restringindo o acesso aos recursos da sua aplicação a partir de diferentes origens. Para configurá-lo em sua aplicação, adicione-o usando o método `use()`:
+O middleware CORS no Lithe é responsável por configurar os cabeçalhos de Compartilhamento de Recursos entre Origens, permitindo ou restringindo o acesso aos recursos da sua aplicação a partir de diferentes origens. Para configurá-lo em sua aplicação, adicione-o usando o método `use()` em uma instância de `\Lithe\App`:
 
 ```php
 use Lithe\Middleware\Configuration\cors;
@@ -27,11 +27,11 @@ $app->use(cors());
 
 O middleware CORS pode ser configurado com os seguintes parâmetros:
 
-- **origins**: Origem(ns) permitidas para acessar seus recursos. Pode ser uma string ou um array de strings. O padrão é `'*'` (qualquer origem).
-- **methods**: Métodos HTTP permitidos. O padrão é `'GET, POST, OPTIONS'`.
-- **headers**: Cabeçalhos permitidos. Pode ser uma string ou um array de strings. O padrão é `'Origin, X-Requested-With, Content-Type, Accept'`.
-- **credentials**: Indica se credenciais (como cookies ou cabeçalhos de autorização) são permitidas. O padrão é `true`.
-- **maxAge**: Tempo em segundos para o cache dos resultados de uma solicitação prévia. O padrão é `null`.
+- **origins**: Origem(ns) permitidas para acessar seus recursos. Pode ser uma string ou um array de strings. O padrão é '*' (qualquer origem).
+- **methods**: Métodos HTTP permitidos. O padrão é 'GET, POST, OPTIONS'.
+- **headers**: Cabeçalhos permitidos. Pode ser uma string ou um array de strings. O padrão é 'Origin, X-Requested-With, Content-Type, Accept'.
+- **credentials**: Indica se credenciais (como cookies ou cabeçalhos de autorização) são permitidas. O padrão é true.
+- **maxAge**: Tempo em segundos para o cache dos resultados de uma solicitação prévia. O padrão é null.
 
 Exemplo de configuração:
 
@@ -47,11 +47,11 @@ $app->use(cors([
 
 ### Comportamento do Middleware
 
-- **Origens Permitidas**: O middleware define o cabeçalho `Access-Control-Allow-Origin` com as origens permitidas.
-- **Métodos Permitidos**: Define o cabeçalho `Access-Control-Allow-Methods` com os métodos HTTP permitidos.
-- **Cabeçalhos Permitidos**: Define o cabeçalho `Access-Control-Allow-Headers` com os cabeçalhos permitidos.
-- **Credenciais**: Define o cabeçalho `Access-Control-Allow-Credentials` para permitir credenciais se configurado como `true`.
-- **Duração do Cache**: Define o cabeçalho `Access-Control-Max-Age` para especificar a duração do cache para a solicitação prévia.
+- **Origens Permitidas**: O middleware define o cabeçalho Access-Control-Allow-Origin com as origens permitidas.
+- **Métodos Permitidos**: Define o cabeçalho Access-Control-Allow-Methods com os métodos HTTP permitidos.
+- **Cabeçalhos Permitidos**: Define o cabeçalho Access-Control-Allow-Headers com os cabeçalhos permitidos.
+- **Credenciais**: Define o cabeçalho Access-Control-Allow-Credentials para permitir credenciais se configurado como true.
+- **Duração do Cache**: Define o cabeçalho Access-Control-Max-Age para especificar a duração do cache para a solicitação prévia.
 - **Tratamento de Solicitações OPTIONS**: O middleware trata as solicitações OPTIONS (prévias) retornando um status 200 OK e encerrando a resposta.
 
 ## Considerações

@@ -17,10 +17,10 @@ $app->get('/', function ($req) {
 });
 ```
 
-Você também pode especificar a interface `Lithe\Contracts\Http\Request` como tipo no fechamento de uma rota.
+Você também pode especificar a interface `Lithe\Http\Request` como tipo no fechamento de uma rota.
 
 ```php
-use Lithe\Contracts\Http\Request;
+use Lithe\Http\Request;
 
 $app->get('/', function (Request $req) {
     // ...
@@ -53,7 +53,7 @@ if ($req->is('admin/*')) {
 O método `method` retornará o verbo HTTP da requisição. Você pode usar o método `isMethod` para verificar se o verbo HTTP corresponde a uma determinada string:
 
 ```php
-$method = $req->method;
+$method = $req->method();
  
 if ($req->isMethod('post')) {
     // ...
@@ -127,9 +127,6 @@ Você pode passar um valor padrão como segundo argumento para o método `input`
 ```php
 $name = $req->input('name', 'William');
 ```
-
-Entendi, vou ajustar o guia do `query` para seguir o mesmo formato do guia de `cookies`. Aqui está a versão atualizada:
-
 
 #### Recuperando String de Consulta
 

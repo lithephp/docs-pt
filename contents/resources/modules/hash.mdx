@@ -1,7 +1,17 @@
 ---
-title: Hashing
-description: "O Lithe oferece um módulo de segurança chamado Hash com métodos para criar e verificar hashes de dados sensíveis usando o algoritmo Bcrypt. O Bcrypt é amplamente reconhecido por sua segurança e eficiência na proteção de senhas e outros dados sensíveis."
+title: Hash
+description: "O Lithe oferece um módulo de segurança chamado Hash com métodos para criar e verificar hashes de dados sensíveis usando o algoritmo Bcrypt. O Bcrypt é amplamente reconhecido por sua segurança e eficiência na proteção de senhas e outros dados sensíveis."  
 ---
+
+## Instalação
+
+Para instalar o pacote `lithemod/hash`, execute:
+
+```bash
+composer require lithemod/hash
+```
+
+O código-fonte está disponível em [github.com/lithemod/hash](https://github.com/lithemod/hash).
 
 ## Usando o Hash
 
@@ -9,33 +19,25 @@ description: "O Lithe oferece um módulo de segurança chamado Hash com métodos
 
 Você pode criar um hash a partir de uma string usando o método `make` fornecido pelo módulo de segurança do Lithe `Hash`. Todos os hashes são gerados usando o algoritmo Bcrypt.
 
-```php {11}
-use Lithe\Contracts\Http\Request;
-use Lithe\Contracts\Http\Response;
+```php
 use Lithe\Support\Security\Hash;
 
-$app = new \Lithe\App;
-
-$app->post('/usuario/registrar', function (Request $req, Response $res) {
-    $body = $req->body;
-
+$post('/usuario/registrar', function ($req, $res) {
     // Criando um hash para o campo 'password' do corpo da requisição
-    $hashedPassword = Hash::make($body->password);
+    $hashedPassword = Hash::make($req->input('input'));
 
     // ...
 
     // Retornando a resposta
     return $res->send("Usuário registrado com sucesso!");
 });
-
-$app->listen();
 ```
 
 ### Verificando um Hash
 
 Você pode verificar se uma string corresponde a um hash usando o método `check` fornecido pelo módulo de segurança do Lithe `Hash`.
 
-```php {3}
+```php
 use Lithe\Support\Security\Hash;
 
 $valid = Hash::check($plainPassword, $hashedPassword);
@@ -46,7 +48,7 @@ Se a string corresponder ao hash fornecido, o método retorna `true`. Caso contr
 
 Você pode verificar se um hash precisa ser rehash e, em caso afirmativo, criar um novo hash com um custo diferente usando o método `needsRehash` fornecido pelo módulo de segurança do Lithe `Hash`.
 
-```php {3}
+```php
 use Lithe\Support\Security\Hash;
 
 $needsRehash = Hash::needsRehash($hashedPassword, ['cost' => 12]);

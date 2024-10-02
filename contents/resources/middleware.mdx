@@ -1,28 +1,24 @@
 ---
 title: Middleware  
-description: O Lithe oferece uma variedade de middlewares que simplificam e aceleram o desenvolvimento de aplicações web, permitindo que você se concentre na construção de recursos específicos para sua aplicação.  
+description: O Lithe oferece uma variedade de middlewares que simplificam e aceleram o desenvolvimento de aplicações web, permitindo que você se concentre na criação de funcionalidades específicas para sua aplicação.  
 ---
 
 ## Middlewares do Lithe
 
-O Lithe oferece vários middlewares que você pode integrar ao seu projeto para aprimorar sua funcionalidade. Esses middlewares não estão incluídos por padrão e devem ser instalados separadamente. Aqui está uma lista de alguns middlewares comumente usados:
+O Lithe disponibiliza diversos middlewares criados pela equipe do Lithe, que podem ser integrados ao seu projeto para melhorar a funcionalidade e a eficiência da sua aplicação. Abaixo está uma lista de alguns middlewares populares:
 
 | Middleware | Descrição |
-|------------|-----------|
+|------------|-------------|
+| [Cors](/resources/middleware/cors) | Habilita CORS (Cross-Origin Resource Sharing), permitindo que sua aplicação aceite requisições de diferentes origens e domínios, essencial para integrar com APIs externas e comunicação entre diferentes serviços web. |
+| [Csrf](/resources/middleware/csrf) | Protege contra ataques CSRF (Cross-Site Request Forgery), garantindo que todas as requisições sejam originadas de usuários autenticados e autorizados, prevenindo ações indesejadas em nome de outros usuários. |
+| [Flash](/resources/middleware/flash) | Armazena mensagens temporárias para serem exibidas na próxima requisição, útil para mostrar notificações e feedback de ações do usuário, como envio de formulários ou alterações de dados. |
 | [Session](/resources/middleware/session) | Gerencia sessões de usuário, permitindo armazenar e recuperar informações persistentes entre requisições, como dados de login e preferências. |
-| [Flash](/resources/middleware/flash) | Armazena mensagens temporárias a serem exibidas na próxima requisição, útil para mostrar notificações e feedback sobre ações do usuário, como submissões de formulários ou alterações de dados. |
-| [Csrf](/resources/middleware/csrf) | Protege contra ataques CSRF (Cross-Site Request Forgery) garantindo que todas as requisições se originem de usuários autenticados e autorizados, prevenindo ações indesejadas em nome de outros usuários. |
-| [Cors](/resources/middleware/cors) | Habilita CORS (Cross-Origin Resource Sharing), permitindo que sua aplicação aceite requisições de diferentes origens e domínios, o que é essencial para integrar com APIs externas e comunicação entre diferentes serviços web. |
 
 ## Middlewares da Comunidade
 
-Além dos middlewares criados pela equipe do Lithe, a comunidade também desenvolveu vários middlewares úteis. Essas contribuições comunitárias oferecem funcionalidades adicionais e aprimoramentos:
+Além dos middlewares oficiais, a comunidade Lithe também contribui com middlewares que podem ser utilizados em seus projetos. Esses middlewares são desenvolvidos por qualquer pessoa e oferecem funcionalidades adicionais e aprimoramentos:
 
 | Middleware | Descrição |
-|------------|-----------|
+|------------|-------------|
 
-## Contribuindo para a Comunidade
-
-Você pode contribuir criando seu próprio middleware e enviando um pull request para o repositório [lithe_modules](https://github.com/lithecore/lithe_modules). Certifique-se de incluir um arquivo README.md descrevendo o middleware, suas funcionalidades e instruções de uso. Isso ajuda a expandir os recursos disponíveis e beneficia toda a comunidade Lithe.
-
-Sinta-se à vontade para explorar e contribuir para a comunidade desenvolvendo e compartilhando seus próprios middlewares.
+Explore essas opções e considere contribuir com suas próprias criações para enriquecer o ecossistema Lithe!

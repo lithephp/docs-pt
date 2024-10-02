@@ -1,5 +1,5 @@
 ---
-title: Router  
+title: Lithe\Http\Router  
 description: 'O Router é responsável por gerenciar as rotas e middlewares em uma aplicação PHP usando o Lithe. Ele permite definir rotas para diferentes métodos HTTP, adicionar middlewares e agrupar rotas.'  
 ---
 
@@ -18,11 +18,11 @@ Você pode utilizar o roteador como argumento para o método `use()` da instânc
   - **`$path`** (string): O caminho da rota.
   - **`$handler`** (callable|array): Um ou mais manipuladores (callbacks) que processam a requisição.
 
-  ```php
-  $router->get('/home', function($req, $res) {
-      $res->send('Página Inicial');
-  });
-  ```
+```php
+$router->get('/home', function($req, $res) {
+    $res->send('Página Inicial');
+});
+```
 
 ### `post(string $path, callable|array ...$handler): void`
 
@@ -31,11 +31,11 @@ Você pode utilizar o roteador como argumento para o método `use()` da instânc
   - **`$path`** (string): O caminho da rota.
   - **`$handler`** (callable|array): Um ou mais manipuladores (callbacks) que processam a requisição.
 
-  ```php
-  $router->post('/submit', function($req, $res) {
-      $res->send('Formulário Enviado');
-  });
-  ```
+```php
+$router->post('/submit', function($req, $res) {
+    $res->send('Formulário Enviado');
+});
+```
 
 ### `put(string $path, callable|array ...$handler): void`
 
@@ -44,11 +44,11 @@ Você pode utilizar o roteador como argumento para o método `use()` da instânc
   - **`$path`** (string): O caminho da rota.
   - **`$handler`** (callable|array): Um ou mais manipuladores (callbacks) que processam a requisição.
 
-  ```php
-  $router->put('/update', function($req, $res) {
-      $res->send('Recurso Atualizado');
-  });
-  ```
+```php
+$router->put('/update', function($req, $res) {
+    $res->send('Recurso Atualizado');
+});
+```
 
 ### `delete(string $path, callable|array ...$handler): void`
 
@@ -57,11 +57,11 @@ Você pode utilizar o roteador como argumento para o método `use()` da instânc
   - **`$path`** (string): O caminho da rota.
   - **`$handler`** (callable|array): Um ou mais manipuladores (callbacks) que processam a requisição.
 
-  ```php
-  $router->delete('/delete', function($req, $res) {
-      $res->send('Recurso Excluído');
-  });
-  ```
+```php
+$router->delete('/delete', function($req, $res) {
+    $res->send('Recurso Excluído');
+});
+```
 
 ### `patch(string $path, callable|array ...$handler): void`
 
@@ -70,11 +70,11 @@ Você pode utilizar o roteador como argumento para o método `use()` da instânc
   - **`$path`** (string): O caminho da rota.
   - **`$handler`** (callable|array): Um ou mais manipuladores (callbacks) que processam a requisição.
 
-  ```php
-  $router->patch('/modify', function($req, $res) {
-      $res->send('Recurso Modificado');
-  });
-  ```
+```php
+$router->patch('/modify', function($req, $res) {
+    $res->send('Recurso Modificado');
+});
+```
 
 ### `options(string $path, callable|array ...$handler): void`
 
@@ -83,11 +83,11 @@ Você pode utilizar o roteador como argumento para o método `use()` da instânc
   - **`$path`** (string): O caminho da rota.
   - **`$handler`** (callable|array): Um ou mais manipuladores (callbacks) que processam a requisição.
 
-  ```php
-  $router->options('/options', function($req, $res) {
-      $res->send('Opções Disponíveis');
-  });
-  ```
+```php
+$router->options('/options', function($req, $res) {
+    $res->send('Opções Disponíveis');
+});
+```
 
 ### `head(string $path, callable|array ...$handler): void`
 
@@ -96,11 +96,11 @@ Você pode utilizar o roteador como argumento para o método `use()` da instânc
   - **`$path`** (string): O caminho da rota.
   - **`$handler`** (callable|array): Um ou mais manipuladores (callbacks) que processam a requisição.
 
-  ```php
-  $router->head('/header', function($req, $res) {
-      $res->send('Informações do Cabeçalho');
-  });
-  ```
+```php
+$router->head('/header', function($req, $res) {
+    $res->send('Informações do Cabeçalho');
+});
+```
 
 ### `any(string $path, callable|array ...$handler): void`
 
@@ -109,11 +109,11 @@ Você pode utilizar o roteador como argumento para o método `use()` da instânc
   - **`$path`** (string): O caminho da rota.
   - **`$handler`** (callable|array): Um ou mais manipuladores (callbacks) que processam a requisição.
 
-  ```php
-  $router->any('/all-methods', function($req, $res) {
-      $res->send('Lida com Todos os Métodos');
-  });
-  ```
+```php
+$router->any('/all-methods', function($req, $res) {
+    $res->send('Lida com Todos os Métodos');
+});
+```
 
 ### `match(array $methods, string $path, callable|array ...$handler): void`
 
@@ -123,11 +123,11 @@ Você pode utilizar o roteador como argumento para o método `use()` da instânc
   - **`$path`** (string): O caminho da rota.
   - **`$handler`** (callable|array): Um ou mais manipuladores (callbacks) que processam a requisição.
 
-  ```php
-  $router->match(['GET', 'POST'], '/mixed', function($req, $res) {
-      $res->send('Lida com GET e POST');
-  });
-  ```
+```php
+$router->match(['GET', 'POST'], '/mixed', function($req, $res) {
+    $res->send('Lida com GET e POST');
+});
+```
 
 ### `use(string|callable|Router|array ...$middleware): void`
 
@@ -135,12 +135,12 @@ Você pode utilizar o roteador como argumento para o método `use()` da instânc
 - **Parâmetros**:
   - **`$middleware`** (string|callable|Router|array): Os middlewares ou roteadores a serem adicionados.
 
-  ```php
-  $router->use('/prefix', function($req, $res, $next) {
-      // Lógica do middleware
-      $next();
-  });
-  ```
+```php
+$router->use(function($req, $res, $next) {
+    // Lógica do middleware
+    $next();
+});
+```
 
 ### `route(string $path): object`
 
@@ -150,12 +150,12 @@ Você pode utilizar o roteador como argumento para o método `use()` da instânc
 - **Retorno**:
   - Um objeto anônimo para definir rotas com o prefixo fornecido.
 
-  ```php
-  $router->route('/user')
-      ->get(function($req, $res) {
-          $res->send('Lista de Usuários');
-      })
-      ->post(function($req, $res) {
-          $res->send('Cria um usuário');
-      });
-  ```
+```php
+$router->route('/user')
+    ->get(function($req, $res) {
+      $res->send('Lista de Usuários');
+    })
+    ->post(function($req, $res) {
+      $res->send('Cria um usuário');
+    });
+```

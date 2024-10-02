@@ -1,17 +1,17 @@
 ---
-title: Mensagens Flash  
+title: Flash 
 description: O middleware de Mensagens Flash no Lithe permite armazenar e recuperar mensagens temporárias entre solicitações.  
 ---
 
-## Instalação
+## Instalando o Middleware de Mensagens Flash
 
-Para instalar o middleware de Mensagens Flash para o Lithe, use o comando de instalação do módulo Line:
+Para instalar o middleware de Mensagens Flash, utilize o Composer:
 
 ```bash
-php line module:install flash
+composer require lithemod/session
 ```
 
-Este comando baixará e instalará o middleware de Mensagens Flash em seu projeto.
+Você pode encontrar mais informações e o código fonte do módulo em [github.com/lithemod/session](https://github.com/lithemod/session).
 
 ## Usando o Middleware de Mensagens Flash
 
@@ -19,15 +19,13 @@ O middleware de Mensagens Flash no Lithe permite armazenar mensagens temporária
 
 ### Configurando o Middleware Flash
 
-Para usar o middleware de Mensagens Flash, você deve adicioná-lo à sua aplicação com o método `use()`:
+Para usar o middleware de Mensagens Flash, adicione-o à sua aplicação com o método `use()`:
 
 ```php
 use Lithe\Middleware\Session\flash;
 
 $app->use(flash());
 ```
-
-Isso adiciona a funcionalidade de mensagem flash à sua aplicação, permitindo armazenar e recuperar mensagens temporárias.
 
 ### Definindo Mensagens Flash
 
@@ -36,13 +34,17 @@ Para definir uma mensagem flash, você pode usar o método mágico `__set` ou o 
 - **Usando o método mágico `__set`**:
 
   ```php
-  $req->flash->successMessage = 'Operação concluída com sucesso!';
+  $app->get('/set-message', function ($req, $res) {
+      $req->flash->successMessage = 'Operação concluída com sucesso!';
+  });
   ```
 
 - **Usando o método `set`**:
 
   ```php
-  $req->flash->set('successMessage', 'Operação concluída com sucesso!');
+  $app->get('/set-message', function ($req, $res) {
+      $req->flash->set('successMessage', 'Operação concluída com sucesso!');
+  });
   ```
 
 ### Recuperando Mensagens Flash
@@ -52,13 +54,19 @@ Para recuperar e remover uma mensagem flash da sessão, você pode usar o métod
 - **Usando o método mágico `__get`**:
 
   ```php
-  $message = $req->flash->successMessage;
+  $app->get('/get-message', function ($req, $res) {
+      $message = $req->flash->successMessage;
+      echo $message; // Exibe a mensagem
+  });
   ```
 
 - **Usando o método `get`**:
 
   ```php
-  $message = $req->flash->get('successMessage');
+  $app->get('/get-message', function ($req, $res) {
+      $message = $req->flash->get('successMessage');
+      echo $message; // Exibe a mensagem
+  });
   ```
 
 ### Verificando Mensagens Flash
@@ -68,13 +76,19 @@ Para verificar se uma ou mais mensagens flash existem na sessão, use o método 
 - **Verificação única**:
 
   ```php
-  $exists = $req->flash->has('successMessage');
+  $app->get('/check-message', function ($req, $res) {
+      $exists = $req->flash->has('successMessage');
+      echo $exists ? 'Mensagem existe!' : 'Mensagem não existe.';
+  });
   ```
 
 - **Verificações múltiplas**:
 
   ```php
-  $exists = $req->flash->has(['successMessage', 'errorMessage']);
+  $app->get('/check-messages', function ($req, $res) {
+      $exists = $req->flash->has(['successMessage', 'errorMessage']);
+      echo $exists ? 'Mensagens existem!' : 'Nenhuma mensagem existe.';
+  });
   ```
 
 ### Mantendo Mensagens Flash
@@ -82,7 +96,9 @@ Para verificar se uma ou mais mensagens flash existem na sessão, use o método 
 Se você deseja manter uma mensagem flash para a próxima solicitação (ou seja, torná-la disponível em mais de uma solicitação), use o método `keep`:
 
 ```php
-$req->flash->keep('successMessage');
+$app->get('/keep-message', function ($req, $res) {
+    $req->flash->keep('successMessage');
+});
 ```
 
 Isso reconfigura a mensagem para a próxima solicitação após a recuperação.
@@ -90,4 +106,4 @@ Isso reconfigura a mensagem para a próxima solicitação após a recuperação.
 ## Considerações
 
 - **Persistência**: As mensagens flash são removidas da sessão após a primeira recuperação, a menos que você use o método `keep` para preservá-las.
-- **Segurança**: Certifique-se de sanitizar as mensagens recuperadas para evitar problemas de segurança, como ataques XSS.
+- **Segurança**: Certifique-se de sanitizar as mensagens recuperadas para evitar problemas de segurança, como ataques XSS. A validação e a manipulação correta das mensagens são essenciais para manter a segurança da aplicação.

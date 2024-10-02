@@ -9,7 +9,7 @@ Para que o Lithe possa renderizar arquivos de modelo, você precisa configurar a
 
 ### 1. Diretório de Templates
 
-Defina o diretório onde os arquivos de modelo estão localizados. 
+Primeiramente, defina o diretório onde os arquivos de modelo estão localizados. Você pode fazer isso com o seguinte código:
 
 ```php
 $app->set('views', __DIR__ . '/views');
@@ -19,17 +19,17 @@ Por padrão, o Lithe utiliza o diretório `src/views` na raiz da aplicação par
 
 ### 2. Motor de Template
 
-Configure o mecanismo de template a ser usado pelo Lithe.
+Em seguida, configure o mecanismo de template que será utilizado pelo Lithe. Por exemplo, para usar o Blade, você deve definir:
 
 ```php
 $app->set('view engine', 'blade');
 ```
 
-O Lithe é compatível com vários motores de template populares, como Blade, Twig e PHP puro. Por padrão, o Lithe utiliza PHP puro.
+O Lithe é compatível com vários motores de template populares, como Blade, Twig e PHP puro. Vale ressaltar que, por padrão, o Lithe utiliza PHP puro como motor de template.
 
 ### 3. Instalação do Pacote
 
-Após configurar o motor de template, instale o pacote Composer correspondente ao mecanismo escolhido para garantir que tudo funcione corretamente.
+Após configurar o motor de template desejado, instale o pacote Composer correspondente ao mecanismo escolhido para garantir que tudo funcione corretamente.
 
 ---
 
@@ -98,7 +98,7 @@ composer require twig/twig
 **Passo 2:** Defina o motor de template
 
 ```php
-$app->set('view engine', 'twig');
+set('view engine', 'twig');
 ```
 
 **Passo 3:** Crie um arquivo de template Twig
@@ -129,7 +129,7 @@ Para aprender mais sobre <a href="https://laravel.com/docs/blade" target="_blank
 
 > Nota: Esta seção contém tópicos avançados. Caso não queira aprender sobre isso agora, sinta-se à vontade para pular esta seção.
 
-Use o método `engine` da classe `Lithe\App` para configurar um motor ou criar seu próprio motor de template. 
+Use o método `engine` da classe `Lithe\App` para configurar um motor de template ou para criar seu próprio motor personalizado. Isso permite que você escolha entre os motores disponíveis, como Blade ou Twig, ou desenvolva uma solução específica que atenda às suas necessidades, garantindo flexibilidade na renderização dos arquivos de modelo da sua aplicação.
 
 ```php
 $app->engine($name, $callback);

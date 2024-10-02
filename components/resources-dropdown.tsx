@@ -16,7 +16,7 @@ const NAVLINKS_RESOURCES = [
         href: '/resources/middleware',
     },
     {
-        title: "Lithe Modules",
+        title: "Módulos",
         href: '/resources/modules',
     },
 ];

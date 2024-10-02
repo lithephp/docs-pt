@@ -5,16 +5,16 @@ description: No Lithe, você pode personalizar a resposta para erros HTTP espec�
 
 ## Definindo Manipuladores Personalizados
 
-Para configurar a resposta da sua aplicação a erros HTTP específicos, registre manipuladores para os códigos de status desejados utilizando o método `httpException` na instância da aplicação Lithe. Este método aceita dois parâmetros: o código de status HTTP (por exemplo, 404, 500) e um manipulador que recebe os objetos da requisição e da resposta como parâmetros. Para erros 500, há um terceiro parâmetro adicional, o `exception`.
+Para configurar a resposta da sua aplicação a erros HTTP específicos, registre manipuladores para os códigos de status desejados utilizando o método `fail` da classe `Lithe\App`. Este método aceita dois parâmetros: o código de status HTTP (por exemplo, 404, 500) e um manipulador que recebe os objetos da requisição e da resposta como parâmetros. Para erros 500, há um terceiro parâmetro adicional, o `exception`.
 
 ```php
 // Manipulador para erro HTTP 400 (Bad Request)
-$app->httpException(400, function($req, $res) {
+$app->fail(400, function($req, $res) {
     $res->send('Página não encontrada.');
 });
 
 // Manipulador para erro HTTP 500 (Internal Server Error)
-$app->httpException(500, function($req, $res, $exception) {
+$app->fail(500, function($req, $res, $exception) {
     $res->send('Ocorreu um erro interno.');
 });
 ```
@@ -29,7 +29,7 @@ Lançar exceções HTTP é uma maneira eficaz de gerar respostas de erro especí
 
 
 ```php
-use Lithe\Contracts\Http\HttpException;
+use Lithe\Exceptions\Http\HttpException;
 
 $app->get('/some-route', function($req, $res) {
     // Lança uma exceção para erro 404 (Not Found)

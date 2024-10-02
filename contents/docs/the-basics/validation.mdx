@@ -19,8 +19,6 @@ $app = new \Lithe\App;
 $app->route('/post/create')
     ->get([PostController::class, 'create'])
     ->post([PostController::class, 'store']);
-
-$app->listen(); 
 ```
 
 A rota GET exibe um formulário para o usuário criar uma nova postagem no blog, enquanto a rota POST salva a postagem no banco de dados.
@@ -30,8 +28,8 @@ A rota GET exibe um formulário para o usuário criar uma nova postagem no blog,
 ```php
 namespace App\Http\Controllers;
 
-use Lithe\Contracts\Http\Request;
-use Lithe\Contracts\Http\Response;
+use Lithe\Http\Request;
+use Lithe\Http\Response;
 
 class PostController
 {
@@ -69,7 +67,9 @@ public static function store(Request $req, Response $res)
 {
     $validate = $req->validate([
         'title' => 'required|max:255',
-        'body' => 'required',
+        'body'  => 'required',
+        'status' => 'in:published,draft,pending',
+        'author' => 'name'
     ]);
 
     if (!$validate->passed()) {
@@ -82,6 +82,12 @@ public static function store(Request $req, Response $res)
                     break;
                 case 1010:
                     // Tratar erro de tamanho máximo para 'title'
+                    break;
+                case 1014:
+                    // Tratar erro de valores permitidos para 'status'
+                    break;
+                case 1015:
+                    // Tratar erro de formato do 'name'
                     break;
                 // Adicionar mais casos conforme necessário
             }
@@ -107,9 +113,10 @@ Aqui está uma lista de todas as regras de validação disponíveis e seus respe
 - **number** (código de erro: 1005): O campo deve ser um número.
 - **integer** (código de erro: 1006): O campo deve ser um número inteiro.
 - **boolean** (código de erro: 1007): O campo deve ser verdadeiro (`true`) ou falso (`false`).
-- **regex:pattern** (código de erro: 1008): O campo deve corresponder ao padrão especificado pela expressão regular `pattern`.
 - **min:length** (código de erro: 1009): O campo deve ter pelo menos `length` caracteres.
 - **max:length** (código de erro: 1010): O campo não pode exceder `length` caracteres.
 - **range:min,max** (código de erro: 1011): O campo deve estar dentro do intervalo de `min` a `max`.
 - **dateFormat:format** (código de erro: 1012): O campo deve estar no formato de data especificado por `format`.
 - **alphanumeric** (código de erro: 1013): O campo deve ser alfanumérico (apenas letras e números).
+- **in:values** (código de erro: 1014): O campo deve ser um dos valores especificados (ex: `in:published,draft`).
+- **name** (código de erro: 1015): O campo deve conter um nome válido (padrões específicos para nomes podem ser definidos).

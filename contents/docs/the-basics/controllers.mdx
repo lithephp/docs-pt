@@ -27,8 +27,7 @@ class UserController
      */
     public static function show($req, $res)
     {
-        $params = $req->params;
-        $id = $params->id;
+        $id = $req->param('id');
         
         return $res->view('user.profile', [
             'user' => User::findOrFail($id)

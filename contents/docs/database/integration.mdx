@@ -127,7 +127,7 @@ O método `configure` recebe dois parâmetros:
 
 1. **Nome da Configuração**: Um identificador único para sua configuração, que será utilizado posteriormente para referenciar esta conexão.
 
-2. **Callback de Configuração**: Uma função de callback que recebe um array de configuração como parâmetro. Dentro do callback, você pode definir e retornar a instância configurada do seu ORM ou driver de banco de dados.
+2. **Callback de Configuração**: Uma função de callback que recebe um objeto de configuração como parâmetro. Dentro do callback, você pode definir e retornar a instância configurada do seu ORM ou driver de banco de dados.
 
 ### Configuração Personalizada
 
@@ -139,11 +139,11 @@ use Lithe\Database\Manager as DB;
 DB::configure('my_custom_orm', function ($config) {
     // Configuração específica para o seu ORM ou driver
     return new MyCustomORM([
-        'driver' => $config['driver'],
-        'host' => $config['host'],
-        'database' => $config['name'],
-        'username' => $config['username'],
-        'password' => $config['password'],
+        'driver' => $config->driver,
+        'host' => $config->host,
+        'database' => $config->name,
+        'username' => $config->username,
+        'password' => $config->password,
     ]);
 });
 ```

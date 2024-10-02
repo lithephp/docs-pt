@@ -29,7 +29,7 @@ Para enviar arquivos via HTTP, o formulário HTML deve usar o atributo `enctype=
 
 ### Acessando Arquivos Enviados
 
-Para acessar um arquivo enviado com a requisição HTTP no Lithe, você pode usar o método `file` da instância `Request`. Este método retorna uma instância da classe `\Lithe\Component\Upload`, que pode ser usada para manipular o arquivo.
+Para acessar um arquivo enviado com a requisição HTTP no Lithe, você pode usar o método `file` da instância `Request`. Este método permite que você manipule o arquivo de forma conveniente, como obter informações sobre ele ou movê-lo para um diretório específico. 
 
 ```php
 $app->post('/upload', function ($req, $res) {

@@ -1,4 +1,5 @@
 import { RouteInterface } from "@/interfaces/route";
+
 export const ROUTES: Array<RouteInterface> = [
   {
     title: "Começando",
@@ -51,10 +52,6 @@ export const ROUTES: Array<RouteInterface> = [
         href: "/validation",
       },
       {
-        title: "Sessão",
-        href: "/session",
-      },
-      {
         title: "Uploads de arquivos",
         href: "/file-uploads",
       },
@@ -69,30 +66,12 @@ export const ROUTES: Array<RouteInterface> = [
         href: "/log",
       },
       {
+        title: "Eventos",
+        href: "/events",
+      },
+      {
         "title": "Exceções HTTP",
         "href": "/http-exceptions"
-      },
-      {
-        title: "Cache",
-        href: "/cache",
-      },      
-      {
-        title: "Mail",
-        href: "/mail",
-      },
-    ],
-  },
-  {
-    title: "Segurança",
-    href: "security",
-    items: [
-      {
-        title: "Criptografia",
-        href: "/encryption",
-      },
-      {
-        title: "Hashing",
-        href: "/hashing",
       },
     ],
   },
@@ -112,19 +91,37 @@ export const ROUTES: Array<RouteInterface> = [
         title: "Modelos",
         href: "/models",
       },
-      
+
+    ],
+  },
+  {
+    title: "Próximos passos",
+    href: "next-steps",
+    items: [
+      {
+        title: "Próximos Passos",
+        href: "/next-steps",
+      },
     ],
   },
 ];
 
 export const REFERENCE_ROUTES: Array<RouteInterface> = [
   {
-    title: "Lithe@1.0",
+    title: "Lithe@1.x",
     href: "lithe",
     items: [
       {
         title: "App",
         href: "/app",
+      },
+      {
+        title: "Line",
+        href: "/line",
+      },
+      {
+        title: "Manager",
+        href: "/manager",
       },
       {
         title: "Request",
@@ -143,9 +140,7 @@ export const REFERENCE_ROUTES: Array<RouteInterface> = [
 ];
 
 
-
 export const FLATTEND_ROUTES = flattendRoutes(ROUTES);
-
 export const FLATTEND_REFERENCE_ROUTES = flattendRoutes(REFERENCE_ROUTES);
 
 function flattendRoutes(routes: Array<RouteInterface>) {

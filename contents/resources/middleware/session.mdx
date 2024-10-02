@@ -1,21 +1,21 @@
 ---
-title: Sessão  
-description: O middleware de sessão no Lithe gerencia a configuração e o controle das sessões de usuário.  
+title: Session  
+description: O middleware de sessão no Lithe gerencia a configuração e o controle da sessão do usuário.  
 ---
 
-## Instalação
+## Instalando o Middleware de Sessão
 
-Para instalar o middleware de sessão para o Lithe, use o comando de instalação do módulo Line:
+Para instalar o middleware de Sessão, utilize o Composer:
 
 ```bash
-php line module:install lithe-session
+composer require lithemod/session
 ```
 
-Este comando baixará e instalará o middleware de sessão em seu projeto.
+Você pode encontrar mais informações e o código fonte do módulo em [github.com/lithemod/session](https://github.com/lithemod/session).
 
 ## Usando o Middleware de Sessão
 
-O Lithe inclui um middleware de sessão para gerenciar sessões de usuário e suas variáveis. Para configurar o middleware em sua aplicação, adicione-o usando o método `use()`:
+O Lithe inclui um middleware de sessão para gerenciar as sessões de usuários e suas variáveis. Para configurar o middleware na sua aplicação, adicione-o usando o método `use()`:
 
 ```php
 use Lithe\Middleware\Session\session;
@@ -23,117 +23,143 @@ use Lithe\Middleware\Session\session;
 $app->use(session());
 ```
 
-Isso garante que a sessão seja iniciada e configurada corretamente para todas as requisições.
+Isso garante que a sessão seja corretamente iniciada e configurada para todas as requisições.
 
 ### Configurando o Middleware de Sessão
 
 O middleware de sessão pode ser configurado com os seguintes parâmetros:
 
 - **lifetime**: Define a duração da sessão em segundos. O padrão é 2592000 segundos (30 dias).
-- **domain**: Define o domínio para o qual o cookie de sessão é válido. O padrão é `null`.
-- **secure**: Indica se o cookie de sessão deve ser enviado apenas por conexões seguras (HTTPS). O padrão é `false`.
-- **httponly**: Indica se o cookie de sessão deve ser acessível apenas através de requisições HTTP. O padrão é `true`.
-- **samesite**: Define o atributo SameSite do cookie de sessão. Pode ser `'Lax'`, `'Strict'`, ou `'None'`. O padrão é `'Lax'`.
-- **path**: Define o caminho onde os arquivos de sessão serão armazenados. O padrão é `'storage/framework/session'`.
+- **domain**: Define o domínio para o qual o cookie da sessão é válido. O padrão é `null`.
+- **secure**: Indica se o cookie da sessão deve ser enviado apenas em conexões seguras (HTTPS). O padrão é `false`.
+- **httponly**: Indica se o cookie da sessão deve ser acessível apenas através de requisições HTTP. O padrão é `true`.
+- **samesite**: Define o atributo SameSite do cookie da sessão. Pode ser `'Lax'`, `'Strict'` ou `'None'`. O padrão é `'Lax'`.
+- **path**: Define o caminho onde os arquivos de sessão serão armazenados.
 
 Exemplo de configuração:
 
 ```php
-$app->use(Session([
+$app->use(session([
     'lifetime' => 3600,
     'domain' => 'example.com',
     'secure' => true,
     'httponly' => true,
     'samesite' => 'Strict',
-    'path' => PROJECT_ROOT . '/storage/framework/session',
+    'path' => '/../storage/framework/session',
 ]));
 ```
 
 ### Usando Variáveis de Sessão
 
-Após a configuração, você pode acessar e manipular variáveis de sessão através do objeto `Request`. Aqui estão alguns métodos disponíveis:
+Após a configuração, você pode acessar e manipular variáveis de sessão através do objeto `Request`. Aqui estão alguns exemplos:
 
-- **put(string $name, mixed $value): void**
+#### Armazenando uma Variável de Sessão
 
-  Define uma variável de sessão.
+Para armazenar uma variável na sessão do usuário, utilize o seguinte código:
 
-  ```php
-  $req->session->put('user', 'John Doe');
-  ```
+```php
+$app->get('/set-user', function ($req, $res) {
+    $req->session->put('user', 'John Doe'); // Define a variável de sessão
+    return $res->send('Usuário definido na sessão!');
+});
+```
 
-- **get(string $name, mixed $default = null): mixed**
+#### Recuperando uma Variável de Sessão
 
-  Recupera o valor de uma variável de sessão. Retorna o valor padrão se a variável não estiver definida.
+Para recuperar o valor de uma variável de sessão, use:
 
-  ```php
-  $user = $req->session->get('user');
-  ```
+```php
+$app->get('/get-session', function ($req, $res) {
+    $user = $req->session->get('user', 'valor_padrao');
+    $res->send($user); // Exibe o nome do usuário
+});
+```
 
-- **forget(mixed $name): void**
+#### Removendo uma Variável de Sessão
 
-  Remove uma ou mais variáveis de sessão.
+Para remover uma variável de sessão, faça:
 
-  ```php
-  $req->session->forget('user');
-  ```
+```php
+$app->get('/forget-session', function ($req, $res) {
+    $req->session->forget('user'); // Remove a variável de sessão
+});
+```
 
-- **destroy(): void**
+#### Destroindo Todas as Variáveis de Sessão
 
-  Destrói todas as variáveis de sessão.
+Para destruir todas as variáveis de sessão, utilize:
 
-  ```php
-  $req->session->destroy();
-  ```
+```php
+$app->get('/destroy-session', function ($req, $res) {
+    $req->session->destroy(); // Destroi todas as variáveis de sessão
+});
+```
 
-- **isActive(): bool**
+#### Verificando se a Sessão Está Ativa
 
-  Verifica se a sessão está ativa.
+Para verificar se a sessão está ativa, use:
 
-  ```php
-  $isActive = $req->session->isActive();
-  ```
+```php
+$app->get('/is-session-active', function ($req, $res) {
+    $isActive = $req->session->isActive(); // Verifica se a sessão está ativa
+    $res->send($isActive ? 'A sessão está ativa.' : 'A sessão não está ativa.');
+});
+```
 
-- **regenerate(bool $deleteOldSession = true): bool**
+#### Regenerando o ID da Sessão
 
-  Regenera o ID da sessão. Se `$deleteOldSession` for `true`, a sessão antiga será deletada.
+Para regenerar o ID da sessão, faça:
 
-  ```php
-  $req->session->regenerate();
-  ```
+```php
+$app->get('/regenerate-session', function ($req, $res) {
+    $req->session->regenerate(); // Regenera o ID da sessão
+});
+```
 
-- **getId(): string|false**
+#### Recuperando o ID da Sessão
 
-  Recupera o ID da sessão atual.
+Para obter o ID atual da sessão, utilize:
 
-  ```php
-  $sessionId = $req->session->getId();
-  ```
+```php
+$app->get('/get-session-id', function ($req, $res) {
+    $sessionId = $req->session->getId(); // Recupera o ID da sessão
+    $res->send($sessionId); // Exibe o ID da sessão
+});
+```
 
-- **setId(string $sessionId): bool**
+#### Definindo um Novo ID para a Sessão
 
-  Define um novo ID para a sessão.
+Para definir um novo ID para a sessão, faça:
 
-  ```php
-  $req->session->setId('newSessionId');
-  ```
+```php
+$app->get('/set-session-id', function ($req, $res) {
+    $req->session->setId('newSessionId'); // Define um novo ID para a sessão
+});
+```
 
-- **all(): array**
+#### Recuperando Todas as Variáveis de Sessão
 
-  Recupera todas as variáveis de sessão.
+Para obter todas as variáveis de sessão, utilize:
 
-  ```php
-  $allSessionData = $req->session->all();
-  ```
+```php
+$app->get('/all-session-data', function ($req, $res) {
+    $allSessionData = $req->session->all(); // Recupera todas as variáveis de sessão
+    $res->send($allSessionData); // Exibe todas as variáveis de sessão
+});
+```
 
-- **has(string|array $names): bool**
+#### Verificando a Existência de Variáveis de Sessão
 
-  Verifica se uma ou mais variáveis de sessão existem.
+Para verificar se uma ou mais variáveis de sessão existem, utilize:
 
-  ```php
-  $hasUser = $req->session->has('user');
-  ```
+```php
+$app->get('/check-session', function ($req, $res) {
+    $hasUser = $req->session->has('user'); // Verifica se a variável user existe
+    $res->send($hasUser ? 'A variável user existe na sessão.' : 'A variável user não existe na sessão.');
+});
+```
 
 ## Considerações
 
-- **Criando o Diretório de Sessão**: O middleware garante que o diretório para armazenar sessões exista. Se não existir, ele será criado.
-- **Tratamento de Erros**: Se ocorrer um erro durante a configuração ou inicialização da sessão, o middleware o registrará e continuará a execução.
+- **Criando o Diretório de Sessão**: O middleware garante que o diretório para armazenar as sessões exista. Se não existir, ele será criado.
+- **Tratamento de Erros**: Se ocorrer um erro durante a configuração ou inicialização da sessão, o middleware irá registrá-lo e continuar a execução.

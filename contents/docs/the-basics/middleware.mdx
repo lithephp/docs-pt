@@ -57,13 +57,13 @@ php line make:middleware EnsureTokenIsValid
 Este comando colocará uma nova constante `EnsureTokenIsValid` dentro do diretório `src/http/middleware` do seu aplicativo. Neste middleware, só permitiremos acesso à rota se o token fornecido corresponder a um valor especificado. Caso contrário, redirecionaremos os usuários de volta para o URI inicial:
 
 ```php
-use Lithe\Contracts\Http\Request;
-use Lithe\Contracts\Http\Response;
+use Lithe\Http\Request;
+use Lithe\Http\Response;
 
 define('EnsureTokenIsValid', function (Request $req, Response $res, $next) {
-    $body = $req->body;
+    $token = $req->input('token');
 
-    if ($body->token !== 'my-secret-token') {
+    if ($token !== 'my-secret-token') {
         return $res->redirect('home');
     }
 
@@ -78,7 +78,7 @@ Como você pode ver, se o `token` fornecido não corresponder ao nosso token sec
 
 ## Carregando Middleware
 
-Para carregar a função de middleware, chame o metódo `use()` da classe `\Lithe\App`, especificando a função de middleware. Por exemplo, o código a seguir carrega a  função `myLogger` de middleware antes da rota para o caminho raiz (`/`).
+Para carregar uma função de middleware, você pode chamar o método `use()` da classe `\Lithe\App`, especificando a função de middleware desejada. Por exemplo, o código a seguir carrega a função de middleware `myLogger` antes de executar a rota para o caminho raiz (`/`):
 
 ```php {8}
 $app = new \Lithe\App;
@@ -93,8 +93,6 @@ $app->use($myLogger);
 $app->get('/', function ($req, $res, $next) {
     $res->send('Hello World!');
 });
-
-$app->listen(); 
 ```
 
 Sempre que o aplicativo recebe uma requisição, ele imprime a mensagem "LOGGED".
@@ -131,7 +129,7 @@ No exemplo abaixo mostra um middleware que trata requisição GET no caminho `/u
 ```php
 $app->get('/user/:id', function ($req, $res, $next) {
     // Se o ID do usuário for '0', passa para o próximo middleware
-    if ($req->params->id === '0') {
+    if ($req->param('id') === '0') {
         return $next();
     } 
 
@@ -152,7 +150,7 @@ Carregue middleware de nível de roteador usando as funções `use` e `METHOD`.
 O código de exemplo a seguir mostra um sistema de middleware usando middleware de nível de roteador:
 
 ```php
-$router = new \Lithe\Http\Router();
+$router = new \Lithe\Http\Router;
 
 // Middleware de nível de roteador para todas as rotas do roteador
 $router->use(function ($req, $res, $next) {
@@ -162,20 +160,18 @@ $router->use(function ($req, $res, $next) {
 
 $router->get('/user/:id', function ($req, $res, $next) {
     // Verifica se o ID do usuário é '0'; se for, redireciona para /
-    if ($req->params->id === '0') {
+    if ($req->param('id') === '0') {
         $res->redirect('/');
     }
     // Caso contrário, passa o controle para o próximo middleware na pilha
     $next()
 }, function ($req, $res, $next) {
-  echo $req->params->id;
+  echo $req->param('id');
   $res->render('special');
 });
 
 // Monta o roteador na aplicação
 $app->use('/api', $router);
-
-$app->listen(); 
 ```
 
 ### Middleware de terceiros
@@ -193,19 +189,17 @@ $app = new \Lithe\App;
 $app->use(session([
     'secure' => true
 ]));
-
-$app->listen(); 
 ```
 
 Para uma lista parcial de funções de middleware de terceiros comumente usadas com o Lithe, consulte: [Middleware de Terceiros](/resources/middleware).
 
 ## Middleware configurável
 
-Se você precisa que seu middleware seja configurável, exporte uma função que aceite uma array de opções ou outros parâmetros, e então retorne a implementação do middleware com base nos parâmetros de entrada.
+Se você precisa que seu middleware seja configurável, crie função que aceite uma array de opções ou outros parâmetros, e então retorne a implementação do middleware com base nos parâmetros de entrada.
 
-```php:my-middleware.php 
+```php
 <?php
-return function ($options) {
+function my_middleware ($options) {
     return function ($req, $res, $next) use ($options) {
         // Implementação do middleware com base na array de opções
         
@@ -217,7 +211,5 @@ return function ($options) {
 Agora, o middleware pode ser usado como mostrado abaixo.
 
 ```php
-$mw = require(__DIR__ .'/my-middleware.php');
-
-$app->use($mw(['option1' => '1', 'option2' => '2']));
+$app->use(my_middleware(['option1' => '1', 'option2' => '2']));
 ```
