@@ -293,7 +293,7 @@ Crie um arquivo de roteador chamado `birds.php` no diretório da aplicação, co
 
 ```php:src/birds.php 
 <?php
-use function Lithe\Orbs\Http\Router\{get, apply};
+use function Lithe\Orbis\Http\Router\{get, apply};
 
 // Middleware específico para este roteador
 $timeLog = function ($req, $res, $next) {
@@ -317,7 +317,7 @@ get('/sobre', function ($req, $res) {
 Então, carregue o módulo do roteador na aplicação:
 
 ```php:src/App.php
-use function Lithe\Orbs\Http\Router\{router};
+use function Lithe\Orbis\Http\Router\{router};
 // ...
 
 $birds = router(__DIR__ .'/birds');
