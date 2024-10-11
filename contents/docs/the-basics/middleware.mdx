@@ -24,7 +24,7 @@ Se a função de middleware atual não encerrar o ciclo de solicitação-respost
 
 O código a seguir mostra os elementos de uma chamada de função de middleware:
 ```php
-$app->get('/', function ($req, $res, $next) {
+$app->use('/', function ($req, $res, $next) {
     $next();
 });
 ```
@@ -117,8 +117,6 @@ Vincule middleware de nível de aplicação a uma instância do objeto de aplica
 
 Este exemplo mostra uma função de middleware sem caminho de montagem. A função é executada toda vez que o aplicativo recebe uma requisição.
 ```php
-$app = new \Lithe\App;
-
 $app->use(function ($req, $res, $next) {
     echo 'Hello World!';
     $next();

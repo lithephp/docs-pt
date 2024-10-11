@@ -241,27 +241,33 @@ $app->route('/livro')
 
 ---
 
-## A classe `Lithe\Http\Router`
+## Criando Roteadores Modulares
 
-Use a classe `Router` do Lithe para criar manipuladores de rota modulares e montáveis. Uma instância de `Router` é um sistema completo de middleware e roteamento; por esse motivo, ela é frequentemente referida como uma "mini-aplicação".
+A classe `Router` do Lithe permite criar manipuladores de rota modulares e montáveis. Isso proporciona um sistema completo de middleware e roteamento, frequentemente referida como uma "mini-aplicação". Vamos explorar como construir e integrar um roteador em sua aplicação de forma clara e organizada.
 
-O exemplo a seguir cria um roteador como um módulo, carrega uma função de middleware nele, define algumas rotas e monta o módulo do roteador em um caminho na aplicação principal.
+### Estrutura do Roteador
 
-### Sintaxe clássica
+Neste exemplo, você aprenderá a criar um roteador como um módulo separado, configurar middleware, definir rotas e, finalmente, integrar o módulo de roteador à sua aplicação principal. Isso não só melhora a organização do código, mas também facilita a manutenção e a escalabilidade.
 
-Crie um arquivo de roteador chamado `birds.php` no diretório da aplicação, com o seguinte conteúdo:
+### Sintaxe Clássica
+
+#### 1. Criação do Arquivo do Roteador
+
+Crie um arquivo chamado `birds.php` no diretório da sua aplicação. Este arquivo será responsável por definir as rotas relacionadas a pássaros.
 
 ```php:src/birds.php
 <?php 
 
+// Instancia a classe Router
 $router = new \Lithe\Http\Router;
 
 // Middleware específico para este roteador
 $timeLog = function ($req, $res, $next) {
     echo 'Time: ' . date('Y-m-d');
-    $next();
+    $next(); // Chama o próximo middleware ou rota
 };
 
+// Aplica o middleware ao roteador
 $router->use($timeLog);
 
 // Define a rota da página inicial
@@ -269,27 +275,40 @@ $router->get('/', function ($req, $res) {
     $res->send('Página inicial dos pássaros');
 });
 
-// Define a rota sobre
+// Define a rota "Sobre"
 $router->get('/sobre', function ($req, $res) {
     $res->send('Sobre os pássaros');
 });
 
-return $router;
+return $router; // Retorna o roteador para uso na aplicação principal
 ```
 
-Então, carregue o módulo do roteador na aplicação:
+- **Middleware**: O middleware `$timeLog` registra a data atual em cada requisição. A função `$next()` garante que a próxima etapa do processamento da requisição seja chamada, permitindo a execução das rotas definidas.
+
+#### 2. Integração do Roteador na Aplicação Principal
+
+Agora, você precisa carregar o módulo do roteador na aplicação principal. Abra o arquivo `App.php` e adicione o seguinte código:
 
 ```php:src/App.php
-$birds = require(__DIR__ .'/birds.php');
+$birds = require(__DIR__ . '/birds.php'); // Carrega o roteador de pássaros
 
-// ...
-
+// Monta o roteador na aplicação em um caminho específico
 $app->use('/birds', $birds);
 ```
 
-### Sintaxe funcional
+- **Montagem**: A função `$app->use('/birds', $birds)` vincula o roteador carregado ao caminho `/birds` da aplicação. Isso significa que todas as requisições para esse caminho serão gerenciadas pelo roteador definido.
 
-Crie um arquivo de roteador chamado `birds.php` no diretório da aplicação, com o seguinte conteúdo:
+### Sintaxe Funcional
+
+Outra maneira de estruturar seu roteador é usando uma abordagem funcional, que pode ser mais intuitiva em algumas situações.
+
+- Cada arquivo é tratado como uma instância separada do roteador, permitindo que você organize suas rotas de maneira mais intuitiva.
+- Com a modularidade, é mais fácil adicionar novos roteadores ou modificar existentes sem afetar outras partes da aplicação.
+- Funções como `get` e `post` são específicas para aquela instância do arquivo, o que ajuda na leitura e na manutenção do código.
+
+#### 1. Criação do Arquivo do Roteador
+
+Crie o arquivo `birds.php`, mas desta vez usando uma sintaxe funcional:
 
 ```php:src/birds.php 
 <?php
@@ -298,35 +317,35 @@ use function Lithe\Orbis\Http\Router\{get, apply};
 // Middleware específico para este roteador
 $timeLog = function ($req, $res, $next) {
     echo 'Time: ' . date('Y-m-d');
-    $next();
+    $next(); // Chama o próximo middleware ou rota
 };
 
-apply($timeLog);
+apply($timeLog); // Aplica o middleware ao roteador
 
 // Define a rota da página inicial
 get('/', function ($req, $res) {
     $res->send('Página inicial dos pássaros');
 });
 
-// Define a rota sobre
+// Define a rota "Sobre"
 get('/sobre', function ($req, $res) {
     $res->send('Sobre os pássaros');
 });
 ```
 
-Então, carregue o módulo do roteador na aplicação:
+- Aqui, usamos `apply($timeLog)` para aplicar o middleware, mantendo a sintaxe simples e clara.
+
+#### 2. Integração do Roteador na Aplicação Principal
+
+Como antes, você precisa carregar o roteador na aplicação:
 
 ```php:src/App.php
 use function Lithe\Orbis\Http\Router\{router};
-// ...
 
-$birds = router(__DIR__ .'/birds');
+$birds = router(__DIR__ . '/birds'); // Carrega o roteador
 
-// ...
-
+// Monta o roteador na aplicação
 $app->use('/birds', $birds);
 ```
 
-Com a sintaxe funcional, cada arquivo é tratado como uma instância separada do roteador ao utilizar a função `router`. Isso significa que as funções como `get` e `post` são específicas para aquela instância do arquivo, permitindo que você organize suas rotas de maneira modular e intuitiva. Essa abordagem facilita a manutenção e a clareza do código. É uma maneira incrível de estruturar seu código, não acha?
-
-A aplicação agora será capaz de lidar com solicitações para `/birds` e `/birds/about`, bem como chamar a função de middleware `$timeLog`, que é específica para a rota.
+Agora, sua aplicação estará pronta para lidar com requisições para `/birds` e `/birds/sobre`, além de invocar o middleware `$timeLog`, que é específico para o roteador.
