@@ -5,76 +5,103 @@ description: O módulo `Cache` no Lithe oferece uma maneira eficiente de armazen
 
 ## Instalação
 
-Para instalar o pacote `lithemod/cache`, execute:
+Para instalar o pacote **`lithemod/cache`**, execute o seguinte comando no diretório do seu projeto:
 
 ```bash
 composer require lithemod/cache
 ```
 
-O código-fonte está disponível em [github.com/lithemod/cache](http://github.com/lithemod/cache).
+Para mais detalhes, você pode verificar o código-fonte em [github.com/lithemod/cache](http://github.com/lithemod/cache).
+
+---
 
 ## Armazenando e Recuperando Dados em Cache
 
-### Armazenando Dados em Cache
+### Armazenando Dados no Cache
 
-Use o método `add` para armazenar dados. Este método recebe uma chave, os dados, o tempo de expiração em segundos (padrão é 3600 segundos) e o formato de serialização (opcional).
+Para armazenar dados no cache, utilize o método `add`. Este método requer uma chave única, os dados a serem armazenados, um tempo de expiração opcional (em segundos, o padrão é **3600 segundos**) e um formato de serialização opcional.
+
+Você pode armazenar dados em dois formatos:
+
+- **JSON**: Use este formato para estruturas de dados simples, como arrays ou objetos.
+- **Serialized**: Use este formato para tipos de dados complexos, que podem ser armazenados e recuperados em seu estado original.
+
+Veja como armazenar dados:
 
 ```php
 use Lithe\Support\Cache;
 
 $app->post('/store-data', function ($req, $res) {
-    $data = $req->input('data');
+    $data = $req->input('data'); // Supondo que $data seja um array
     $cacheKey = 'data_key';
 
-    Cache::add($cacheKey, $data);
+    // Armazenando como JSON
+    Cache::add($cacheKey, $data, 3600, 'json');
 
-    $res->send('Dados armazenados em cache.');
+    // Ou armazenando como serializado
+    // Cache::add($cacheKey, $data, 3600, 'serialize');
+
+    $res->send('Dados armazenados em cache com sucesso! 🎉');
 });
 ```
 
-### Recuperando Dados em Cache
+### Recuperando Dados do Cache
 
-Use o método `get` para recuperar dados. Ele retorna os dados armazenados ou `null` se não encontrados.
+Para recuperar dados armazenados em cache, use o método `get`. Este método retorna os dados armazenados ou `null` se os dados não forem encontrados no cache.
 
 ```php
 use Lithe\Support\Cache;
 
 $app->get('/get-data', function ($req, $res) {
     $cacheKey = 'data_key';
-    $data = Cache::get($cacheKey) ?? 'Dados não encontrados no cache.';
+    $data = Cache::get($cacheKey) ?? 'Dados não encontrados no cache. 😞';
 
     $res->json(['data' => $data]);
 });
 ```
 
-### Invalidando Itens em Cache
+### Invalidando Itens do Cache
 
-Use o método `invalidate` para remover um item do cache.
+Você pode remover itens específicos do cache usando o método `invalidate`. Este método pode aceitar uma única chave de cache ou um array de chaves, permitindo a invalidação em massa.
 
 ```php
 use Lithe\Support\Cache;
 
+// Invalidando um item
 $app->post('/invalidate-cache', function ($req, $res) {
     $cacheKey = 'data_key';
-
     Cache::invalidate($cacheKey);
 
-    $res->send('Cache invalidado.');
+    $res->send('Cache invalidado com sucesso! 🗑️');
+});
+
+// Invalidando múltiplos itens
+$app->post('/invalidate-multiple-cache', function ($req, $res) {
+    $cacheKeys = ['data_key', 'another_key'];
+    Cache::invalidate($cacheKeys);
+
+    $res->send('Múltiplos itens do cache invalidado com sucesso! 🗑️');
 });
 ```
 
 ### Recuperando Dados ou Executando um Callback
 
-Use o método `remember` para tentar recuperar dados do cache ou executar uma função de callback se não forem encontrados.
+O método `remember` permite que você recupere dados do cache ou execute uma função de callback para gerar os dados caso não sejam encontrados no cache.
 
 ```php
 use Lithe\Support\Cache;
 
 $app->get('/settings', function ($req, $res) {
     $settings = Cache::remember('app_settings', function() {
-        return ['theme' => 'dark', 'language' => 'en'];
+        return ['theme' => 'dark', 'language' => 'pt'];
     });
 
     $res->json($settings);
 });
 ```
+
+---
+
+## Considerações Finais
+
+Com o **módulo `Cache`**, você pode otimizar o desempenho da sua aplicação gerenciando dados em cache de forma eficaz. Você pode escolher entre os formatos JSON e serializado para armazenar dados com base nas suas necessidades. Certifique-se de definir uma estratégia de cache adequada com base nas necessidades específicas da sua aplicação e nos padrões de acesso aos dados. Boa codificação! 🚀
