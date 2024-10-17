@@ -37,50 +37,71 @@ Essas configurações são cruciais para estabelecer uma conexão eficaz e segur
 
 Lembre-se de substituir os marcadores (`localhost`, `lithe`, `root` e `senha vazia`) pelas suas credenciais reais do banco de dados. É altamente recomendável definir uma senha forte para proteger suas credenciais e garantir a segurança da conexão com o banco de dados.
 
-### Configuração para Eloquent
+### Configuração
 
-Para configurar o Lithe para utilizar o Eloquent, siga os passos abaixo:
+Para configurar o Lithe para utilizar diferentes métodos de conexão ao banco de dados, incluindo PDO, MySQLi ou Eloquent, siga os passos abaixo:
 
-**Passo 1:** Defina as variáveis de ambiente no arquivo `.env`:
+<Stepper>
+<StepperItem title="Defina as variáveis de ambiente no arquivo `.env`">
 
-```bash {1}
+<Tabs defaultValue="mysqli" className="pt-5 pb-1">
+  <TabsList className="">
+    <TabsTrigger value="mysqli">MySQLi</TabsTrigger>
+    <TabsTrigger value="pdo">PDO</TabsTrigger>
+    <TabsTrigger value="eloquent">Eloquent</TabsTrigger>
+  </TabsList>
+  <TabsContent value="eloquent">
+  ```bash {1}
 DB_CONNECTION_METHOD=eloquent
 DB_CONNECTION=mysql
+    ```
+   </TabsContent>
+  <TabsContent value="mysqli">
+  ```bash {1}
+DB_CONNECTION_METHOD=mysqli
+DB_CONNECTION=mysql
+    ```
+  </TabsContent>
+  <TabsContent value="pdo">
+  ```bash {1}
+DB_CONNECTION_METHOD=pdo
+DB_CONNECTION=mysql
 ```
+   </TabsContent>
+</Tabs>
 
-**Passo 2:** Instale o Eloquent utilizando o Composer:
+</StepperItem>
+<StepperItem title="Instale o pacote correspondente utilizando o Composer">
 
+<Tabs className="pt-5 pb-1">
+  <TabsList className="">
+    <TabsTrigger value="eloquent">Eloquent</TabsTrigger>
+  </TabsList>
+  <TabsContent value="eloquent">
 ```bash
 composer require illuminate/database
 ```
+   </TabsContent>
+</Tabs>
 
-Explore mais sobre o Eloquent em: [Documentação completa do Eloquent](https://laravel.com/docs/eloquent)
+</StepperItem>
 
-### Configuração para MySQLi
-
-Para configurar o Lithe para utilizar MySQLi, defina as variáveis de ambiente da seguinte forma:
-
-**Passo 1:** Configure as variáveis de ambiente no arquivo `.env`:
-
-```bash {1}
-DB_CONNECTION_METHOD=mysqli
-DB_CONNECTION=mysql
-```
-
-Explore mais sobre MySQLi na documentação do PHP: [Documentação do PHP - MySQLi](https://www.php.net/manual/en/book.mysqli.php)
+</Stepper>
 
 Estes passos detalhados facilitam a configuração de cada ORM ou driver de banco de dados com o Lithe, permitindo que você escolha e configure o método de conexão mais adequado para sua aplicação.
 
 ---
 
-## Inicialização da Conexão
+## Estabelecendo Conexão com o Banco de Dados
 
-Após configurar o arquivo `.env` com as variáveis necessárias para conexão ao banco de dados, o Lithe utiliza a classe `Manager` para carregar essas configurações e estabelecer a conexão correspondente. 
-### Classe `\Lithe\Database\Manager` e o Método `initialize`
+Após configurar o arquivo `.env` com as variáveis necessárias para a conexão ao banco de dados, o Lithe utiliza a classe `Manager` não apenas para carregar essas configurações, mas também para estabelecer e gerenciar a conexão correspondente.
 
-A classe `Manager` no Lithe é um componente responsável por gerenciar as operações de conexão com o banco de dados. Ela oferece um método crucial chamado `initialize`, que inicializa e retorna a conexão configurada, pronta para ser utilizada pela aplicação.
+### Gerenciamento de Conexões com a Classe `Manager`
+
+A classe `Manager` no Lithe é um componente fundamental para gerenciar as operações de conexão com o banco de dados. Ela disponibiliza um método crucial chamado `initialize`, que estabelece a conexão, e o método `connection`, que retorna a conexão configurada, pronta para ser utilizada pela aplicação.
 
 O método `initialize` prepara e estabelece a conexão conforme configurado pelas variáveis de ambiente. Isso inclui definir o tipo de conexão (`eloquent`, `pdo`, `mysqli`) e os detalhes específicos do banco de dados (como host, nome do banco de dados, usuário e senha).
+
 #### Usando o Método `initialize`
 
 No arquivo `src/database/config/database.php`, o método `initialize` já é chamado por padrão para configurar a conexão com o banco de dados:
@@ -88,28 +109,21 @@ No arquivo `src/database/config/database.php`, o método `initialize` já é cha
 ```php
 use Lithe\Database\Manager as DB;
 
-return DB::initialize();
+DB::initialize();
 ```
 
-Este método retorna a conexão configurada, pronta para ser utilizada pela aplicação. É essencial que ele esteja presente e seja chamado para garantir que a conexão esteja disponível para operações como migrações de banco de dados.
+É essencial que ele esteja presente e seja chamado para garantir que a conexão esteja disponível para operações como migrações de banco de dados.
 
-### Utilização na Aplicação
+### Integrando a Conexão na Aplicação
 
-Após inicializar a conexão utilizando o método estático `initialize()` da classe `Manager`, a conexão configurada estará disponível através da constante `DB_CONNECTION`. Isso permite que você execute consultas e operações de banco de dados de maneira eficiente e segura.
+Após inicializar a conexão utilizando o método estático `initialize()` da classe `Manager`, a conexão configurada estará acessível por meio do método estático `connection`. Isso possibilita a execução de consultas e operações de banco de dados de forma eficiente e segura.
 
-
-Utilizando Eloquent para consultas:
-
-```php
-use Illuminate\Database\Capsule\Manager as Database;
-
-$users = Database::table('users')->get();
-```
-
-Utilizando métodos convencionais com PDO:
+#### Utilizando métodos convencionais com PDO:
 
 ```php
-$pdo = DB_CONNECTION;
+use Lithe\Database\Manager as DB;
+
+$pdo = DB::connection();
 $users = $pdo->query('SELECT * FROM users')->fetchAll(PDO::FETCH_ASSOC);
 ```
 

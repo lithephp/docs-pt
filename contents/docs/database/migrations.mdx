@@ -24,23 +24,31 @@ Os templates de migração determinam como os arquivos de migração são gerado
 
 Para implementar migrações no Lithe usando diferentes templates como Eloquent ou MySQLi, é importante entender como cada um deles funciona e como criar os arquivos de migração correspondentes.
 
-### Migração com Eloquent
+### Migração de Banco de Dados
 
-O Eloquent é um ORM popular dentro do ecossistema PHP, amplamente utilizado para interagir com bancos de dados relacionais de forma simplificada. Aqui está como você poderia criar uma migração para a tabela `users`:
+O Lithe suporta diversas formas de migração para gerenciar bancos de dados de forma eficiente e simplificada. Aqui está um exemplo de como criar uma migração para a tabela `users`, independentemente de qual ORM ou método de conexão esteja sendo utilizado:
 
-1. **Criando a Migração**
+<Stepper>
+<StepperItem title="Criando a Migração">
 
-Execute o seguinte comando para criar uma migração usando o template Eloquent:
+Execute o seguinte comando para criar uma migração:
 
 ```bash
-php line make:migration CreateUsersTable --template=eloquent
+php line make:migration CreateUsersTable
 ```
 
 Isso criará um arquivo de migração dentro do diretório `src/database/migrations/`. Por exemplo, `YYYY_MM_DD_HHMMSS_CreateUsersTable.php`.
 
-2. **Exemplo de Arquivo de Migração (Eloquent)**
+</StepperItem>
+<StepperItem title="Exemplo de Arquivo de Migração">
 
-```php
+<Tabs className="pt-5 pb-1">
+  <TabsList className="">
+    <TabsTrigger value="eloquent">Eloquent</TabsTrigger>
+    <TabsTrigger value="mysqli">MySQLi</TabsTrigger>
+  </TabsList>
+  <TabsContent value="eloquent">
+  ```php
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Capsule\Manager as Capsule;
 
@@ -71,25 +79,10 @@ return new class
         Capsule::schema()->dropIfExists('users');
     }
 };
-```
-
-### Migração com MySQLi
-
-Para utilizar o MySQLi diretamente, sem um ORM específico como Eloquent, você precisa gerenciar manualmente as migrações no nível do SQL. Aqui está um exemplo básico para criar a tabela `users`:
-
-1. **Criando a Migração**
-
-Execute o comando para criar uma migração:
-
-```bash
-php line make:migration CreateUsersTable --template=mysqli
-```
-
-Isso criará um arquivo de migração dentro do diretório `src/database/migrations/`. Por exemplo, `YYYY_MM_DD_HHMMSS_CreateUsersTable.php`.
-
-2. **Exemplo de Arquivo de Migração (MySQLi)**
-
-```php
+    ```
+   </TabsContent>
+  <TabsContent value="mysqli">
+  ```php
 return new class
 {
     /**
@@ -125,43 +118,14 @@ return new class
         $db->query($query);
     }
 };
-
 ```
+  </TabsContent>
+</Tabs>
 
-### Migração com o Template Padrão
+</StepperItem>
 
-Se você estiver utilizando um ORM que não possui um template específico ou qualquer outra abordagem de banco de dados, o Lithe fornece um template padrão de migrações. Este template é projetado para ser flexível, recebendo a conexão com o banco de dados como argumento.
+</Stepper>
 
-#### Exemplo de Arquivo de Migração (Template Padrão)
-
-```php
-<?php 
-
-return new class
-{
-    /**
-     * Run the migrations.
-     *
-     * @param mixed $connection A configuração da conexão com o banco de dados.
-     * @return void
-     */
-    public function up(): void
-    {
-        // Lógica de migração
-    }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @param mixed $connection A configuração da conexão com o banco de dados.
-     * @return void
-     */
-    public function down(): void
-    {
-        // Lógica de reversão
-    }
-};
-```
 ---
 
 

@@ -66,10 +66,6 @@ export const ROUTES: Array<RouteInterface> = [
         href: "/log",
       },
       {
-        title: "Eventos",
-        href: "/events",
-      },
-      {
         "title": "Exceções HTTP",
         "href": "/http-exceptions"
       },

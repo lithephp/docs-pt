@@ -170,3 +170,7 @@ pre>code {
 .highlight-comp>code {
   background-color: transparent !important;
 }
+
+.font-jetbrains-mono {
+  font-family: 'JetBrains Mono';
+}

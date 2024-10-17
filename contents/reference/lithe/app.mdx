@@ -36,7 +36,7 @@ $app->use(function($req, $res, $next) {
 });
 ```
 
-### `set(string $key, mixed $value): void`**
+### `set(string $key, mixed $value): void`
   - **Descrição:** Define uma configuração global para a aplicação.
   - **Parâmetros:**
     - **`$key`** - Chave da configuração.
@@ -73,21 +73,3 @@ $app->route('/api')
           $res->send('Lista de Usuários');
     });
 ```
-
-### `on(string $event, callable $handler): void`
-- **Descrição:** Registra um manipulador de eventos para um evento específico.
-- **Parâmetros:**
-  - **`$event`** - Nome do evento.
-  - **`$handler`** - Função manipuladora a ser chamada quando o evento for emitido.
-
-### `off(string $event, callable $handler): void`
-- **Descrição:** Remove um manipulador de eventos para um evento específico.
-- **Parâmetros:**
-  - **`$event`** - Nome do evento.
-  - **`$handler`** - Função manipuladora a ser removida.
-
-### `emit(string $event, ...$args): void`
-- **Descrição:** Emite um evento, chamando todos os manipuladores registrados para esse evento.
-- **Parâmetros:**
-  - **`$event`** - Nome do evento.
-  - **`...$args`** - Quaisquer argumentos adicionais a serem passados para os manipuladores.

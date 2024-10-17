@@ -3,11 +3,12 @@ title: Motores de template
 description: O Lithe oferece flexibilidade ao permitir que você escolha entre diversos motores de template, como PHP puro, Blade e Twig. Além dos motores padrão, você pode configurar outros para otimizar a criação e a renderização de interfaces dinâmicas.
 ---
 
-## Configuração do Lithe
+## Configurando o Lithe para Renderização de Templates
 
 Para que o Lithe possa renderizar arquivos de modelo, você precisa configurar algumas opções no seu aplicativo. Siga os passos abaixo:
 
-### 1. Diretório de Templates
+<Stepper>
+<StepperItem title="Diretório de Templates">
 
 Primeiramente, defina o diretório onde os arquivos de modelo estão localizados. Você pode fazer isso com o seguinte código:
 
@@ -15,9 +16,8 @@ Primeiramente, defina o diretório onde os arquivos de modelo estão localizados
 $app->set('views', __DIR__ . '/views');
 ```
 
-Por padrão, o Lithe utiliza o diretório `src/views` na raiz da aplicação para armazenar os arquivos de modelo.
-
-### 2. Motor de Template
+</StepperItem>
+<StepperItem title="Motor de Template">
 
 Em seguida, configure o mecanismo de template que será utilizado pelo Lithe. Por exemplo, para usar o Blade, você deve definir:
 
@@ -25,28 +25,57 @@ Em seguida, configure o mecanismo de template que será utilizado pelo Lithe. Po
 $app->set('view engine', 'blade');
 ```
 
-O Lithe é compatível com vários motores de template populares, como Blade, Twig e PHP puro. Vale ressaltar que, por padrão, o Lithe utiliza PHP puro como motor de template.
-
-### 3. Instalação do Pacote
+</StepperItem>
+<StepperItem title="Instalação do Pacote">
 
 Após configurar o motor de template desejado, instale o pacote Composer correspondente ao mecanismo escolhido para garantir que tudo funcione corretamente.
+
+</StepperItem>
+
+</Stepper>
 
 ---
 
 ## Usando os Motores de Template
 
-### Usando PHP Puro
+O Lithe suporta diversos motores de template, como PHP nativo, Blade e Twig, oferecendo flexibilidade na renderização de views. Para utilizar um desses motores, siga os passos:
 
-Para usar PHP puro como motor de template:
+<Stepper>
+<StepperItem title="Defina o motor de template">
 
-**Passo 1:** Defina o motor de template
-
+<Tabs defaultValue="default" className="pt-5 pb-1">
+  <TabsList className="">
+    <TabsTrigger value="default">PHP nativo</TabsTrigger>
+    <TabsTrigger value="blade">Blade</TabsTrigger>
+     <TabsTrigger value="twig">Twig</TabsTrigger>
+  </TabsList>
+  <TabsContent value="default">
 ```php
 $app->set('view engine', 'default');
 ```
+   </TabsContent>
+  <TabsContent value="blade">
+```php
+$app->set('view engine', 'blade');
+```
+  </TabsContent>
+  <TabsContent value="twig">
+```php
+$app->set('view engine', 'twig');
+```
+   </TabsContent>
+</Tabs>
 
-**Passo 2:** Crie um arquivo de template PHP
+</StepperItem>
+<StepperItem title="Crie um arquivo de template Blade">
 
+<Tabs defaultValue="default" className="pt-5 pb-1">
+  <TabsList className="Crie um arquivo de template">
+    <TabsTrigger value="default">PHP nativo</TabsTrigger>
+    <TabsTrigger value="blade">Blade</TabsTrigger>
+     <TabsTrigger value="twig">Twig</TabsTrigger>
+  </TabsList>
+  <TabsContent value="default">
 No diretório `src/views`, crie `index.php` com o conteúdo:
 
 ```html
@@ -56,25 +85,8 @@ No diretório `src/views`, crie `index.php` com o conteúdo:
     </body>
 </html>
 ```
-
-### Usando Blade
-
-Para usar Blade:
-
-**Passo 1:** Instale o pacote via Composer
-
-```bash
-composer require jenssegers/blade
-```
-
-**Passo 2:** Defina o motor de template
-
-```php
-$app->set('view engine', 'blade');
-```
-
-**Passo 3:** Crie um arquivo de template Blade
-
+   </TabsContent>
+  <TabsContent value="blade">
 No diretório `src/views`, crie `index.blade.php` com o conteúdo:
 
 ```html
@@ -84,25 +96,8 @@ No diretório `src/views`, crie `index.blade.php` com o conteúdo:
     </body>
 </html>
 ```
-
-### Usando Twig
-
-Para usar Twig:
-
-**Passo 1:** Instale o pacote via Composer
-
-```bash
-composer require twig/twig
-```
-
-**Passo 2:** Defina o motor de template
-
-```php
-set('view engine', 'twig');
-```
-
-**Passo 3:** Crie um arquivo de template Twig
-
+  </TabsContent>
+  <TabsContent value="twig">
 No diretório `src/views`, crie `index.twig` com o conteúdo:
 
 ```html
@@ -112,6 +107,33 @@ No diretório `src/views`, crie `index.twig` com o conteúdo:
     </body>
 </html>
 ```
+   </TabsContent>
+</Tabs>
+
+</StepperItem>
+
+<StepperItem title="Instale o pacote via Composer">
+
+<Tabs className="pt-5 pb-1">
+  <TabsList className="">
+    <TabsTrigger value="blade">Blade</TabsTrigger>
+     <TabsTrigger value="twig">Twig</TabsTrigger>
+  </TabsList>
+  <TabsContent value="blade">
+```bash
+composer require jenssegers/blade
+```
+  </TabsContent>
+  <TabsContent value="twig">
+```bash
+composer require twig/twig
+```
+   </TabsContent>
+</Tabs>
+
+</StepperItem>
+
+</Stepper>
 
 ### Renderizando Templates
 
@@ -124,6 +146,8 @@ $app->get('/', function ($req, $res) {
 ```
 
 Para aprender mais sobre <a href="https://laravel.com/docs/blade" target="_blank">Blade</a> e <a href="https://twig.symfony.com/doc" target="_blank">Twig</a>, consulte a documentação oficial.
+
+---
 
 ## Motores de Template Personalizados
 

@@ -39,3 +39,13 @@ Manager::configure('mysql', function($dbConfig) {
 ```php
 $dbConnection = Manager::initialize();
 ```
+
+### `connection()`
+
+- **Descrição:** Obtém a instância atual da conexão com o banco de dados.
+
+- **Retorna:** A conexão atual do banco de dados, ou `null` se não estiver inicializada.
+
+```php
+$currentConnection = Manager::connection();
+```
