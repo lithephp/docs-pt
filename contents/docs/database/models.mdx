@@ -5,7 +5,7 @@ description: "Os modelos no Lithe representam a camada de acesso aos dados da ap
 
 ## Criando Modelos
 
-No Lithe, modelos são criados utilizando o comando Line `make:model`. Este comando cria um arquivo de modelo dentro do diretório `models/`.
+No Lithe, modelos são criados utilizando o comando Line `make:model`. Este comando cria um arquivo de modelo dentro do diretório `src/models/`.
 
 ```bash
 php line make:model NomeDoModelo --template=eloquent
@@ -22,9 +22,32 @@ O Lithe suporta diferentes templates para modelos, adaptados para diferentes ORM
 - **eloquent**: Template para modelos utilizando o ORM Eloquent.
 - **plain**: Template padrão para modelos customizados ou genéricos.
 
-### Arquivo de Modelo (Eloquent)
+### Arquivo de Modelo
 
-Ao criar um modelo usando o template Eloquent, você pode seguir este exemplo básico para um modelo de usuário:
+<Tabs defaultValue="plain" className="pt-5 pb-1">
+  <TabsList className="">
+    <TabsTrigger value="plain">Plain</TabsTrigger>
+    <TabsTrigger value="eloquent">Eloquent</TabsTrigger>
+  </TabsList>
+  <TabsContent value="plain">
+  Para modelos sem um ORM específico, você pode utilizar o template padrão e implementar a lógica do modelo conforme necessário:
+
+```php
+namespace App\Models;
+
+class User
+{
+    public $id;
+    public $name;
+    public $email;
+
+    // Your model logic goes here
+}
+```
+   </TabsContent>
+  <TabsContent value="eloquent">
+
+Ao criar um modelo usando o template Eloquent, você pode seguir este exemplo básico para um modelo:
 
 ```php
 namespace App\Models;
@@ -42,31 +65,16 @@ class User extends Model
     // Your model logic goes here
 }
 ```
-
-### Arquivo de Modelo (Padrão)
-
-Para modelos sem um ORM específico, você pode utilizar o template padrão e implementar a lógica do modelo conforme necessário:
-
-```php
-namespace App\Models;
-
-class User
-{
-    public $id;
-    public $name;
-    public $email;
-
-    // Your model logic goes here
-}
-```
+   </TabsContent>
+</Tabs>
 
 ---
 
 ## Utilização Automática de Modelos
 
-No Lithe, os modelos localizados em `smodels` são automaticamente disponibilizados para uso em toda a aplicação, sem a necessidade de importação explícita nos seus arquivos.
+No Lithe, os modelos localizados em `src/models/` são automaticamente disponibilizados para uso em toda a aplicação, sem a necessidade de importação explícita nos seus arquivos.
 
-Suponha que você tenha um modelo Eloquent `User` definido em `models/User.php`. Você pode utilizá-lo diretamente em suas rotas sem necessidade de qualquer inclusão manual:
+Suponha que você tenha um modelo Eloquent `User` definido em `src/models/User.php`. Você pode utilizá-lo diretamente em suas rotas sem necessidade de qualquer inclusão manual:
 
 ```php
 use App\Models\User;
@@ -78,12 +86,11 @@ $app->get('/users/:id=int', function ($req, $res) {
     $user = User::find($id);
 
     if (!$user) {
-        return $res->status(404)
-            ->json(['error' => 'Usuário não encontrado']);
+        $res->status(404)->json(['error' => 'Usuário não encontrado']);
     }
 
     // Retorna os dados do usuário como JSON, por exemplo
-    return $res->json($user);
+    $res->json($user);
 });
 ```
 
