@@ -161,13 +161,13 @@ $app->engine($name, $callback);
 
 Onde:
 - `$name`: Nome do motor de template.
-- `$callback`: Função de configuração do motor de template (aceita os seguintes itens como parâmetros: a localização do arquivo, a array de opções, e o caminho das views).
+- `$callback`: Função de configuração do motor de template (aceita os seguintes itens como parâmetros: a localização do arquivo, o caminho das views, e a array de opções).
 
 O código a seguir é um exemplo de implementação de um motor de template muito simples chamado `lithe.view`.
 
 ```php
 // Definição do motor de template "lithe.view"
-$app->engine('lithe.view', function ($file, $options, $views) {
+$app->engine('lithe.view', function ($file, $views, $options) {
     // Leitura do conteúdo do arquivo de template
     $content = file_get_contents($views . '/' . $file . '.lithe.view');
 
