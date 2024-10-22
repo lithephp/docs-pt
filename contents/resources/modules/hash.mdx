@@ -21,8 +21,9 @@ Você pode criar um hash a partir de uma string usando o método `make` fornecid
 
 ```php
 use Lithe\Support\Security\Hash;
+use function Lithe\Orbis\Http\Router\{post};
 
-$post('/usuario/registrar', function ($req, $res) {
+post('/usuario/registrar', function ($req, $res) {
     // Criando um hash para o campo 'password' do corpo da requisição
     $hashedPassword = Hash::make($req->input('input'));
 
