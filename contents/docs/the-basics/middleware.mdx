@@ -24,7 +24,7 @@ Se a função de middleware atual não encerrar o ciclo de solicitação-respost
 
 O código a seguir mostra os elementos de uma chamada de função de middleware:
 ```php
-$app->use('/', function ($req, $res, $next) {
+$app->use(function ($req, $res, $next) {
     $next();
 });
 ```
