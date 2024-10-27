@@ -20,7 +20,7 @@ export default function Home() {
             size: "lg"
           })}
         >
-          Aprenda Lithe
+          Começar
         </Link>
         <Link
           href={`/reference/${FLATTEND_REFERENCE_ROUTES[0].href}`}
