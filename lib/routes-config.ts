@@ -87,6 +87,10 @@ export const ROUTES: Array<RouteInterface> = [
         title: "Modelos",
         href: "/models",
       },
+      {
+        title: "Seeders",
+        href: "/seeders",
+      },
 
     ],
   },
