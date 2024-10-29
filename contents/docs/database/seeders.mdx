@@ -1,0 +1,85 @@
+---
+title: Seeders  
+description: "Os seeders permitem que você preencha seu banco de dados com dados iniciais ou de teste. Isso é especialmente útil durante o desenvolvimento, quando você precisa de dados fictícios para testar funcionalidades e o comportamento da aplicação."
+---
+
+## Gerando Seeders
+
+Você pode usar o comando `make:seeder` para gerar um seeder de banco de dados. O novo seeder será colocado no diretório `src/database/seeders` do seu projeto e será armazenado com o nome especificado, por exemplo, `NomeDoSeeder.php`.
+
+```bash
+php line make:seeder NomeDoSeeder
+```
+
+**Onde:**
+- `NomeDoSeeder`: Nome do seeder a ser criado.
+
+### Estrutura de um Seeder
+
+Um seeder é responsável por inserir dados no banco de dados. A estrutura de um seeder gerado pelo Lithe é a seguinte:
+
+```php
+class NomeDoSeeder
+{
+    /**
+     * Run the seeder.
+     *
+     * @param mixed $db A conexão de banco de dados, que pode ser de diferentes tipos.
+     * @return void
+     */
+    public function run($db): void
+    {
+        // Lógica para inserir dados no banco de dados
+    }
+}
+```
+
+Aqui, o parâmetro `$db` pode representar qualquer tipo de conexão de banco de dados suportada pelo Lithe, seja MySQLi, PDO, ou outra implementação. Isso torna os seeders flexíveis para diferentes contextos.
+
+### Exemplo de Seeder
+
+Aqui está um exemplo de um seeder que cria registros na tabela `users`:
+
+```php
+class CreateUsersSeeder
+{
+    public function run($db): void
+    {
+        $users = [
+            ['name' => 'John Doe', 'email' => 'john@example.com'],
+            ['name' => 'Jane Doe', 'email' => 'jane@example.com'],
+        ];
+
+        foreach ($users as $user) {
+            // Lógica para inserir cada usuário na tabela
+            // Exemplo: $db->query("INSERT INTO users (name, email) VALUES ('{$user['name']}', '{$user['email']}')");
+        }
+    }
+}
+```
+
+---
+
+## Executando Seeders
+
+Após criar os arquivos de seeder conforme os exemplos acima, você pode executá-los para popular seu banco de dados com dados de teste.
+
+Para executar todos os seeders, utilize o comando:
+
+```bash
+php line db:seed
+```
+
+### Executando um Seeder Específico
+
+Se você deseja executar um seeder específico, pode usar o comando `db:seed` com a opção `--class`:
+
+```bash
+php line db:seed --class=NomeDoSeeder
+```
+
+Isso executará apenas o seeder que você especificou.
+
+---
+
+Os seeders são uma ferramenta poderosa no Lithe para inserir dados iniciais em seu banco de dados. Usando os seeders, você pode garantir que sua aplicação tenha os dados necessários para testes e desenvolvimento, facilitando a manutenção e evolução do projeto. A flexibilidade dos seeders permite que você adapte a estrutura e os dados inseridos conforme suas necessidades, independentemente do tipo de conexão de banco de dados que você esteja utilizando.

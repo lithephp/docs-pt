@@ -54,21 +54,23 @@ Você também pode criar um novo middleware usando o comando Line `make:middlewa
 ```bash
 php line make:middleware EnsureTokenIsValid
 ```
-Este comando colocará uma nova constante `EnsureTokenIsValid` dentro do diretório `src/http/middleware` do seu aplicativo. Neste middleware, só permitiremos acesso à rota se o token fornecido corresponder a um valor especificado. Caso contrário, redirecionaremos os usuários de volta para o URI inicial:
+Este comando colocará uma nova class `EnsureTokenIsValid` dentro do diretório `src/http/middleware` do seu aplicativo. Neste middleware, só permitiremos acesso à rota se o token fornecido corresponder a um valor especificado. Caso contrário, redirecionaremos os usuários de volta para o URI inicial:
 
 ```php
 use Lithe\Http\Request;
 use Lithe\Http\Response;
 
-define('EnsureTokenIsValid', function (Request $req, Response $res, $next) {
-    $token = $req->input('token');
+class EnsureTokenIsValid {
+    public function __invoke(Request $req, Response $res, callable $next) {
+        $token = $req->input('token');
 
-    if ($token !== 'my-secret-token') {
-        return $res->redirect('home');
+        if ($token !== 'my-secret-token') {
+            return $res->redirect('home');
+        }
+
+        return $next();
     }
-
-    return $next();
-});
+}
 ```
 Como você pode ver, se o `token` fornecido não corresponder ao nosso token secreto, o middleware retornará um redirecionamento HTTP para o cliente; caso contrário, a solicitação será passada adiante na aplicação. Para passar a solicitação mais profundamente na aplicação (permitindo que o middleware "passe"), você deve chamar o retorno de chamada `$next`.
 
