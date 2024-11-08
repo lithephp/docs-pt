@@ -360,3 +360,68 @@ $app->use('/birds', $birds);
 
 
 Agora, sua aplicação estará preparada para lidar com requisições para `/birds` e `/birds/sobre`, além de invocar o middleware `$timeLog`, que é específico para o roteador. Um roteador pode conter outros roteadores, permitindo uma estrutura hierárquica que organiza melhor as rotas e funcionalidades da aplicação. Assim como na aplicação principal, os roteadores são montados da mesma maneira, facilitando a modularização e a manutenção do código. Isso promove uma melhor escalabilidade e clareza na organização das rotas.
+
+---
+
+## Organizando suas Rotas de Forma Modular e Automática
+
+O método `set('routes', ...)` facilita o registro de rotas, tornando o código mais limpo e organizado. Com ele, você só precisa estruturar suas pastas e arquivos de rotas, e o sistema cuidará de montá-las automaticamente.
+
+### Como Funciona
+
+Quando você usa `set('routes', ...)`, o sistema localiza e carrega automaticamente todos os arquivos PHP dentro da pasta especificada (e subpastas). As rotas são montadas com base na estrutura das pastas, e cada arquivo representa uma rota com seu próprio caminho:
+
+- Se você tiver um arquivo `cart.php`, ele criará a rota `/cart`.
+- Já o arquivo `admin/dashboard.php` criará a rota `/admin/dashboard`.
+
+Dentro do diretório de rotas, o arquivo `index.php` é sempre interpretado como a rota principal de uma pasta. Por exemplo, se você tiver um arquivo `index.php` no diretório de rotas, ele será mapeado para a rota `/`, representando a raiz da aplicação.
+
+Porém, ao utilizar subpastas, como `panel/index.php`, o sistema não irá mapear para a rota `/panel`, mas sim para `/panel/index`. Para garantir que a rota seja corretamente mapeada para `/panel`, você deve nomear o arquivo como `panel.php` (sem o `index.php`), assim:
+
+- `index.php` → mapeia para a rota `/`
+- `panel.php` → mapeia para a rota `/panel`
+
+Essa abordagem ajuda a evitar conflitos de rotas e torna a estrutura de arquivos mais clara e intuitiva.
+
+### Configuração
+
+#### Estrutura de Diretórios:
+
+```
+/routes
+    cart.php
+    checkout.php
+    /admin
+        dashboard.php
+        users.php
+```
+
+#### Definindo Rotas nos Arquivos:
+
+Em cada arquivo, você pode definir suas rotas usando o estilo de código que preferir, seja a **sintaxe funcional** ou a **sintaxe clássica**.
+
+**Arquivo `cart.php`:**
+
+```php
+get('/', function ($req, $res) { 
+  $res->send('Cart'); 
+});
+```
+
+**Arquivo `admin/dashboard.php`:**
+
+```php
+$router->get('/', function ($req, $res) { 
+  $res->send('Admin Dashboard'); 
+});
+```
+
+### Configuração da Aplicação
+
+Para definir o caminho das suas rotas e habilitar o carregamento automático, basta adicionar a seguinte configuração na sua aplicação:
+
+```php
+$app->set('routes', __DIR__ . '/routes');  // Define o caminho e carrega rotas automaticamente
+```
+
+A estrutura de diretórios facilita a visualização e manutenção de rotas. Basta organizar suas pastas e arquivos e deixar o sistema gerenciar os caminhos.
