@@ -369,19 +369,14 @@ O método `set('routes', ...)` facilita o registro de rotas, tornando o código 
 
 ### Como Funciona
 
-Quando você usa `set('routes', ...)`, o sistema localiza e carrega automaticamente todos os arquivos PHP dentro da pasta especificada (e subpastas). As rotas são montadas com base na estrutura das pastas, e cada arquivo representa uma rota com seu próprio caminho:
+Quando você usa `set('routes', ...)`, o sistema localiza e carrega automaticamente todos os arquivos PHP dentro da pasta especificada (e subpastas). As rotas são montadas com base na estrutura dos diretórios, e cada arquivo representa um roteador principal com seu próprio caminho:
 
-- Se você tiver um arquivo `cart.php`, ele criará a rota `/cart`.
-- Já o arquivo `admin/dashboard.php` criará a rota `/admin/dashboard`.
+- Se você tiver um arquivo **.php** na raiz do diretório de rotas (ou seja, `.php`), ele criará a rota `/`.
+- Se você tiver um arquivo **.php** dentro de uma pasta, como em `cart/.php`, ele criará a rota `/cart`.
+- Arquivos localizados dentro da mesma pasta do roteador principal serão montados neste, formando sub-rotas. Por exemplo, se existir um arquivo `dest.php` dentro de `cart/`, ele será integrado ao roteador de `cart/.php`, criando a rota `/cart/dest`.
+- De forma similar, se houver uma subpasta, como `cart/dest/`, contendo um arquivo **.php** (ou outros arquivos), ela será montada como roteador para a rota `/cart/dest` e todos os arquivos nela serão integrados a esse roteador.
 
-Dentro do diretório de rotas, o arquivo `index.php` é sempre interpretado como a rota principal de uma pasta. Por exemplo, se você tiver um arquivo `index.php` no diretório de rotas, ele será mapeado para a rota `/`, representando a raiz da aplicação.
-
-Porém, ao utilizar subpastas, como `panel/index.php`, o sistema não irá mapear para a rota `/panel`, mas sim para `/panel/index`. Para garantir que a rota seja corretamente mapeada para `/panel`, você deve nomear o arquivo como `panel.php` (sem o `index.php`), assim:
-
-- `index.php` → mapeia para a rota `/`
-- `panel.php` → mapeia para a rota `/panel`
-
-Essa abordagem ajuda a evitar conflitos de rotas e torna a estrutura de arquivos mais clara e intuitiva.
+Com essa abordagem, os *middlewares* e configurações definidos no roteador principal de cada diretório serão aplicados automaticamente a todas as rotas filhas.
 
 ### Configuração
 
@@ -389,22 +384,56 @@ Essa abordagem ajuda a evitar conflitos de rotas e torna a estrutura de arquivos
 
 ```
 /routes
-    cart.php
+    .php              // Roteador principal da aplicação (rota "/")
     checkout.php
+    /cart
+        .php          // Roteador principal do módulo "/cart"
+        dest.php      // Montado no roteador de /cart (rota "/cart/dest")
+        outro.php     // Montado no roteador de /cart (rota "/cart/outro")
     /admin
-        dashboard.php
-        users.php
+        dashboard.php // Monta a rota "/admin/dashboard"
+        users.php     // Montado no roteador de /admin/users
 ```
 
 #### Definindo Rotas nos Arquivos:
 
-Em cada arquivo, você pode definir suas rotas usando o estilo de código que preferir, seja a **sintaxe funcional** ou a **sintaxe clássica**.
+Em cada arquivo, você pode definir suas rotas utilizando o estilo que preferir, seja a **sintaxe funcional** ou a **sintaxe clássica**.
 
-**Arquivo `cart.php`:**
+**Arquivo `.php` (na raiz de `/routes`):**
 
 ```php
-get('/', function ($req, $res) { 
-  $res->send('Cart'); 
+$router->get('/', function ($req, $res) { 
+  $res->send('Bem-vindo à aplicação!');
+});
+```
+
+**Arquivo `checkout.php`:**
+
+```php
+$router->get('/', function ($req, $res) { 
+  $res->send('Página de Checkout'); 
+});
+```
+
+**Arquivo `.php` dentro de `/cart` (routes/cart/.php):**
+
+```php
+$router->get('/', function ($req, $res) { 
+  $res->send('Página do Carrinho'); 
+});
+
+// Middlewares aplicados a todas as rotas do módulo /cart
+$router->use(function ($req, $res, $next) {
+  // Lógica de verificação ou autenticação
+  $next();
+});
+```
+
+**Arquivo `dest.php` dentro de `/cart`:**
+
+```php
+$router->get('/', function ($req, $res) { 
+  $res->send('Detalhes do Carrinho');
 });
 ```
 
@@ -412,9 +441,18 @@ get('/', function ($req, $res) {
 
 ```php
 $router->get('/', function ($req, $res) { 
-  $res->send('Admin Dashboard'); 
+  $res->send('Dashboard Administrativo'); 
 });
 ```
+
+---
+
+Essa abordagem permite que o sistema:
+- Localize e carregue automaticamente todos os arquivos PHP (roteadores) da pasta de rotas e subpastas.
+- Mapeie os roteadores de forma hierárquica, de modo que os arquivos **.php** em cada diretório sejam os roteadores principais.
+- Monte os arquivos e subpastas como sub-rotas dos roteadores principais, garantindo que os *middlewares* definidos nesses roteadores sejam aplicados a todas as rotas filhas.
+
+Com isso, basta estruturar suas pastas e arquivos de acordo com a convenção para que o sistema cuide de montar as rotas automaticamente, deixando seu código mais limpo, modular e organizado.
 
 ### Configuração da Aplicação
 
