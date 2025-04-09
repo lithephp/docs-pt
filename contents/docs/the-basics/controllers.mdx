@@ -25,7 +25,7 @@ class UserController
     /**
      * Mostra o perfil de um usuário específico.
      */
-    public static function show($req, $res)
+    public function show($req, $res)
     {
         $id = $req->param('id');
         
@@ -60,7 +60,7 @@ class UserController
     /**
      * Middleware para verificar a autenticação.
      */
-    public static function loggedIn($req, $res, $next)
+    public function loggedIn($req, $res, $next)
     {
         $authenticated = false; // Sua lógica de autenticação
 
