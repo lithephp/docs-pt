@@ -10,22 +10,16 @@ description: Bem-vindo ao Lithe, um framework PHP que oferece simplicidade, flex
 Veja como é simples criar uma rota que busca um usuário pelo ID:
 
 ```php
-// Define uma rota GET que aceita um ID de usuário na URL
 get('/users/:id', function (Request $req) {
-    // Obtém o ID do usuário a partir dos parâmetros da URL
     $id = $req->param('id');
-    
-    // Busca o usuário no banco de dados pelo ID
     $user = User::find($id);
-    
-    // Se o usuário não for encontrado, retorna uma resposta com status 404 e uma mensagem de erro
+
     if (!$user) {
         return response()->status(404)->json([
             'erro' => 'Usuário não encontrado'
         ]);
     } 
 
-    // Se o usuário for encontrado, carrega a página de perfil com os dados do usuário
     return view('profile', compact('user'));
 });
 ```
