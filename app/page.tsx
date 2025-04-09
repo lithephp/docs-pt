@@ -7,10 +7,10 @@ export default function Home() {
   return (
     <div className="flex min-h-[88vh] flex-col items-center justify-center text-center px-2 py-8">
       <h1 className="text-3xl font-bold mb-4 sm:text-7xl">
-        Framework PHP Dinâmico e Adaptável
+        Lithe
       </h1>
       <p className="mb-8 sm:text-xl max-w-[800px] text-muted-foreground">
-        Lithe é um framework PHP flexível e eficiente para criar aplicações web robustas e ajustáveis às necessidades dos desenvolvedores.
+        Um framework PHP flexível e eficiente para criar aplicações web robustas e ajustáveis às necessidades dos desenvolvedores.
       </p>
       <div className="flex flex-row items-center gap-5">
         <Link
@@ -20,7 +20,7 @@ export default function Home() {
             size: "lg"
           })}
         >
-          Começar
+          Aprender Lithe
         </Link>
         <Link
           href={`/reference/${FLATTEND_REFERENCE_ROUTES[0].href}`}
