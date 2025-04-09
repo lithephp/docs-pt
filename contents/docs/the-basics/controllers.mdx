@@ -25,11 +25,11 @@ class UserController
     /**
      * Mostra o perfil de um usuário específico.
      */
-    public function show($req, $res)
+    public function show($req)
     {
         $id = $req->param('id');
         
-        return $res->view('user.profile', [
+        return view('user.profile', [
             'user' => User::findOrFail($id)
         ]);
     }
